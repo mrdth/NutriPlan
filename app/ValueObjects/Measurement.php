@@ -7,7 +7,7 @@ namespace App\ValueObjects;
 use App\Enums\MeasurementUnit;
 use JsonSerializable;
 
-class Measurement implements JsonSerializable
+class Measurement implements JsonSerializable, \Stringable
 {
     public function __construct(
         public readonly float $amount,

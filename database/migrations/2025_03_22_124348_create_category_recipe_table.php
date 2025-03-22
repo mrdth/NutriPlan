@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('category_recipe', function (Blueprint $table) {
+        Schema::create('category_recipe', function (Blueprint $table): void {
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('recipe_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

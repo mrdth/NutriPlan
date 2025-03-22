@@ -66,7 +66,7 @@ class RecipeController extends Controller
         if ($request->has('ingredients')) {
             $recipe->ingredients()->sync(
                 collect($request->input('ingredients'))
-                    ->mapWithKeys(fn ($ingredient) => [
+                    ->mapWithKeys(fn (array $ingredient): array => [
                         $ingredient['ingredient_id'] => [
                             'amount' => $ingredient['amount'],
                             'unit' => $ingredient['unit'],
@@ -134,7 +134,7 @@ class RecipeController extends Controller
         if ($request->has('ingredients')) {
             $recipe->ingredients()->sync(
                 collect($request->input('ingredients'))
-                    ->mapWithKeys(fn ($ingredient) => [
+                    ->mapWithKeys(fn (array $ingredient): array => [
                         $ingredient['ingredient_id'] => [
                             'amount' => $ingredient['amount'],
                             'unit' => $ingredient['unit'],

@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('recipes', function (Blueprint $table) {
+        Schema::table('recipes', function (Blueprint $table): void {
             $table->string('url')->nullable()->after('description');
             $table->string('author')->nullable()->after('url');
             $table->json('images')->nullable()->after('instructions');
@@ -22,7 +22,7 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('recipes', function (Blueprint $table) {
+        Schema::table('recipes', function (Blueprint $table): void {
             $table->dropColumn(['url', 'author', 'images']);
         });
     }

@@ -20,7 +20,7 @@ class RecipePolicy
             return true;
         }
 
-        return $user !== null && $user->id === $recipe->user_id;
+        return $user instanceof \App\Models\User && $user->id === $recipe->user_id;
     }
 
     public function create(User $user): bool

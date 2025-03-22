@@ -40,7 +40,7 @@ class IngredientFactory extends Factory
      */
     public function common(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'is_common' => true,
         ]);
     }
@@ -50,8 +50,8 @@ class IngredientFactory extends Factory
      */
     public function forRecipe(): static
     {
-        return $this->state(fn (array $attributes) => [])
-            ->afterCreating(function (Ingredient $ingredient) {
+        return $this->state(fn (array $attributes): array => [])
+            ->afterCreating(function (Ingredient $ingredient): void {
                 $ingredient->recipes()->attach(
                     Recipe::factory()->create(),
                     [

@@ -77,7 +77,7 @@ class RecipeSeeder extends Seeder
         Recipe::factory()
             ->count(50)
             ->create(['user_id' => $user->id])
-            ->each(function (Recipe $recipe) use ($categoryModels, $allIngredients) {
+            ->each(function (Recipe $recipe) use ($categoryModels, $allIngredients): void {
                 // Attach 1-3 random categories
                 $recipe->categories()->attach(
                     $categoryModels->random(fake()->numberBetween(1, 3))->pluck('id')
@@ -85,14 +85,12 @@ class RecipeSeeder extends Seeder
 
                 // Attach 3-10 random ingredients with amounts
                 $recipe->ingredients()->attach(
-                    $allIngredients->random(fake()->numberBetween(3, 10))->mapWithKeys(function ($ingredient) {
-                        return [
-                            $ingredient->id => [
-                                'amount' => fake()->randomFloat(2, 0.25, 10),
-                                'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
-                            ],
-                        ];
-                    })->toArray()
+                    $allIngredients->random(fake()->numberBetween(3, 10))->mapWithKeys(fn($ingredient) => [
+                        $ingredient->id => [
+                            'amount' => fake()->randomFloat(2, 0.25, 10),
+                            'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
+                        ],
+                    ])->toArray()
                 );
             });
     }

@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use function Pest\Laravel\{actingAs, delete, get, post, put};
-
 use App\Enums\MeasurementUnit;
 use App\Models\Category;
 use App\Models\Ingredient;
@@ -11,6 +9,10 @@ use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\delete;
+use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 

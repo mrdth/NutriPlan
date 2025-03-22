@@ -55,7 +55,7 @@ class RecipeFactory extends Factory
      */
     public function published(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'published_at' => now(),
         ]);
     }
@@ -65,7 +65,7 @@ class RecipeFactory extends Factory
      */
     public function draft(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'published_at' => null,
         ]);
     }

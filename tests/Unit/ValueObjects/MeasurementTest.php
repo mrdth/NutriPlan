@@ -38,4 +38,3 @@ test('it formats measurements nicely', function () {
     expect($measurements[1]->format())->toBe('2 g');
     expect($measurements[2]->format())->toBe('2.5 ml');
 });
-
