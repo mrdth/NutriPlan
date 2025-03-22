@@ -27,18 +27,21 @@ class RecipeFactory extends Factory
      */
     public function definition(): array
     {
+        $title = fake()->unique()->sentence(3);
+
         return [
             'user_id' => User::factory(),
-            'title' => fake()->unique()->sentence(3),
+
+            'title' => $title,
             'description' => fake()->paragraph(),
             'url' => fake()->optional()->url(),
             'author' => fake()->optional()->name(),
             'instructions' => fake()->paragraphs(3, true),
             'images' => fake()->optional()->randomElements([
-                fake()->imageUrl(),
-                fake()->imageUrl(),
-                fake()->imageUrl(),
-                fake()->imageUrl(),
+                'https://placehold.co/600x400?text=' . urlencode($title),
+                'https://placehold.co/600x400?text=' . urlencode($title),
+                'https://placehold.co/600x400?text=' . urlencode($title),
+                'https://placehold.co/600x400?text=' . urlencode($title),
             ], fake()->numberBetween(1, 4)),
             'prep_time' => fake()->numberBetween(5, 60),
             'cooking_time' => fake()->numberBetween(10, 180),

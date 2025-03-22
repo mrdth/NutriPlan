@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Recipe;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateRecipeRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user()->can('update', $this->route('recipe'));
+    }
+
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'instructions' => ['required', 'string'],
+            'prep_time' => ['required', 'integer', 'min:1'],
+            'cooking_time' => ['required', 'integer', 'min:1'],
+            'servings' => ['required', 'integer', 'min:1'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['exists:categories,id'],
+            'ingredients' => ['required', 'array', 'min:1'],
+            'ingredients.*.id' => ['required', 'exists:ingredients,id'],
+            'ingredients.*.amount' => ['required', 'numeric', 'min:0'],
+            'ingredients.*.unit' => ['required', 'string'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:5120'], // 5MB max per image
+            'published_at' => ['nullable', 'date'],
+        ];
+    }
+}
