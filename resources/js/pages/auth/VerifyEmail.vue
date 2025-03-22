@@ -27,18 +27,18 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit" class="space-y-6 text-center">
-            <Button 
-                :disabled="form.processing" 
+            <Button
+                :disabled="form.processing"
                 class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:ring-gray-700 dark:hover:bg-gray-700/50"
             >
                 <LoaderCircle v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
                 Resend verification email
             </Button>
 
-            <TextLink 
-                :href="route('logout')" 
-                method="post" 
-                as="button" 
+            <TextLink
+                :href="route('logout')"
+                method="post"
+                as="button"
                 class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
                 Log out

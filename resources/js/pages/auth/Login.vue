@@ -56,10 +56,10 @@ const submit = () => {
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <Label for="password" class="block text-sm font-medium text-gray-900 dark:text-white">Password</Label>
-                        <TextLink 
-                            v-if="canResetPassword" 
-                            :href="route('password.request')" 
-                            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" 
+                        <TextLink
+                            v-if="canResetPassword"
+                            :href="route('password.request')"
+                            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                             :tabindex="5"
                         >
                             Forgot password?
@@ -80,9 +80,9 @@ const submit = () => {
 
                 <div class="flex items-center justify-between" :tabindex="3">
                     <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox 
-                            id="remember" 
-                            v-model:checked="form.remember" 
+                        <Checkbox
+                            id="remember"
+                            v-model:checked="form.remember"
                             :tabindex="4"
                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:border-gray-700 dark:bg-gray-800 dark:ring-offset-gray-800 dark:focus:ring-indigo-500"
                         />
@@ -90,10 +90,10 @@ const submit = () => {
                     </Label>
                 </div>
 
-                <Button 
-                    type="submit" 
-                    class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400" 
-                    :tabindex="4" 
+                <Button
+                    type="submit"
+                    class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400"
+                    :tabindex="4"
                     :disabled="form.processing"
                 >
                     <LoaderCircle v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
@@ -103,8 +103,8 @@ const submit = () => {
 
             <div class="text-center text-sm text-gray-600 dark:text-gray-400">
                 Don't have an account?
-                <TextLink 
-                    :href="route('register')" 
+                <TextLink
+                    :href="route('register')"
                     :tabindex="5"
                     class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >

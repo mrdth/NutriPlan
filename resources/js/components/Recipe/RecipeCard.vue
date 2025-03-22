@@ -27,31 +27,24 @@ defineProps<Props>();
 const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    
+
     if (hours === 0) {
         return `${remainingMinutes}m`;
     }
-    
-    return remainingMinutes === 0 
-        ? `${hours}h` 
-        : `${hours}h ${remainingMinutes}m`;
+
+    return remainingMinutes === 0 ? `${hours}h` : `${hours}h ${remainingMinutes}m`;
 };
 </script>
 
 <template>
     <article class="group relative flex flex-col overflow-hidden rounded-lg border dark:border-gray-800">
         <div class="aspect-h-3 aspect-w-4 bg-gray-200 dark:bg-gray-800">
+            <img v-if="recipe.images?.length" :src="recipe.images[0]" :alt="recipe.title" class="h-full w-full object-cover object-center" />
             <img
-                v-if="recipe.images?.length"
-                :src="recipe.images[0]"
-                :alt="recipe.title"
+                v-else
+                src="https://placehold.co/600x400?text=No+image+available"
+                alt="No image available"
                 class="h-full w-full object-cover object-center"
-            />
-            <img 
-            v-else 
-            src="https://placehold.co/600x400?text=No+image+available" 
-            alt="No image available" 
-            class="h-full w-full object-cover object-center" 
             />
         </div>
 
@@ -63,7 +56,7 @@ const formatTime = (minutes: number): string => {
                 </Link>
             </h3>
 
-            <p v-if="recipe.description" class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+            <p v-if="recipe.description" class="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                 {{ recipe.description }}
             </p>
 

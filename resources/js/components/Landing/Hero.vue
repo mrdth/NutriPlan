@@ -10,7 +10,9 @@ defineProps<{
     <section class="relative overflow-hidden bg-white dark:bg-gray-900">
         <!-- Background pattern -->
         <div class="absolute inset-0 z-0 opacity-30 dark:opacity-20">
-            <div class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white/80 dark:bg-gray-800/80 shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:ring-gray-700 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+            <div
+                class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white/80 shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:bg-gray-800/80 dark:ring-gray-700 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"
+            ></div>
         </div>
 
         <div class="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
@@ -20,7 +22,8 @@ defineProps<{
                         Recipe Management for the Modern Kitchen
                     </h1>
                     <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                        Organize your recipes, plan your meals, and streamline your cooking with NutriPlan. The perfect solution for home cooks and food enthusiasts.
+                        Organize your recipes, plan your meals, and streamline your cooking with NutriPlan. The perfect solution for home cooks and
+                        food enthusiasts.
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
                         <Link

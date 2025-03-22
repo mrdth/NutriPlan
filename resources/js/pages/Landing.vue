@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import Hero from '@/components/Landing/Hero.vue';
-import Features from '@/components/Landing/Features.vue';
 import CallToAction from '@/components/Landing/CallToAction.vue';
+import Features from '@/components/Landing/Features.vue';
+import Hero from '@/components/Landing/Hero.vue';
+import { Head } from '@inertiajs/vue3';
 
 defineProps<{
     auth: {

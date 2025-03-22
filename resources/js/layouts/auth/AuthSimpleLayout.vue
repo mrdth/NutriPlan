@@ -12,7 +12,9 @@ defineProps<{
     <div class="relative isolate min-h-svh overflow-hidden bg-white dark:bg-gray-900">
         <!-- Background pattern -->
         <div class="absolute inset-0 z-0 opacity-30 dark:opacity-20">
-            <div class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white/80 dark:bg-gray-800/80 shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:ring-gray-700 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+            <div
+                class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white/80 shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:bg-gray-800/80 dark:ring-gray-700 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"
+            ></div>
         </div>
 
         <div class="relative z-10 mx-auto flex min-h-svh max-w-7xl flex-col items-center justify-center px-6 py-12 lg:px-8">
@@ -29,7 +31,9 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="mt-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div
+                    class="mt-10 rounded-xl bg-white/70 p-6 shadow-sm ring-1 ring-gray-900/5 backdrop-blur-sm dark:bg-gray-800/70 dark:ring-white/10"
+                >
                     <slot />
                 </div>
             </div>

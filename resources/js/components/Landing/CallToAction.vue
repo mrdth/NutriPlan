@@ -12,7 +12,7 @@ defineProps<{
             <div class="mx-auto max-w-2xl text-center">
                 <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
                     Ready to start cooking?
-                    <br>
+                    <br />
                     Join NutriPlan today.
                 </h2>
                 <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
@@ -33,9 +33,7 @@ defineProps<{
                     >
                         Go to Dashboard
                     </Link>
-                    <a href="#features" class="text-sm font-semibold leading-6 text-white">
-                        Learn more <span aria-hidden="true">→</span>
-                    </a>
+                    <a href="#features" class="text-sm font-semibold leading-6 text-white"> Learn more <span aria-hidden="true">→</span> </a>
                 </div>
             </div>
         </div>
@@ -44,13 +42,7 @@ defineProps<{
             class="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]"
             aria-hidden="true"
         >
-            <circle
-                cx="512"
-                cy="512"
-                r="512"
-                fill="url(#gradient)"
-                fill-opacity="0.7"
-            />
+            <circle cx="512" cy="512" r="512" fill="url(#gradient)" fill-opacity="0.7" />
             <defs>
                 <radialGradient id="gradient">
                     <stop stop-color="#7775D6" />

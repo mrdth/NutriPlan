@@ -38,14 +38,14 @@ const submit = () => {
             <div class="space-y-6">
                 <div class="space-y-2">
                     <Label for="email" class="block text-sm font-medium text-gray-900 dark:text-white">Email</Label>
-                    <Input 
-                        id="email" 
-                        type="email" 
-                        name="email" 
-                        autocomplete="email" 
-                        v-model="form.email" 
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700 sm:text-sm sm:leading-6" 
-                        readonly 
+                    <Input
+                        id="email"
+                        type="email"
+                        name="email"
+                        autocomplete="email"
+                        v-model="form.email"
+                        class="block w-full rounded-md border-0 bg-gray-50 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700 sm:text-sm sm:leading-6"
+                        readonly
                     />
                     <InputError :message="form.errors.email" />
                 </div>
@@ -79,9 +79,9 @@ const submit = () => {
                     <InputError :message="form.errors.password_confirmation" />
                 </div>
 
-                <Button 
-                    type="submit" 
-                    class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400" 
+                <Button
+                    type="submit"
+                    class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400"
                     :disabled="form.processing"
                 >
                     <LoaderCircle v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" />
