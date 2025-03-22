@@ -85,7 +85,7 @@ class RecipeSeeder extends Seeder
 
                 // Attach 3-10 random ingredients with amounts
                 $recipe->ingredients()->attach(
-                    $allIngredients->random(fake()->numberBetween(3, 10))->mapWithKeys(fn($ingredient) => [
+                    $allIngredients->random(fake()->numberBetween(3, 10))->mapWithKeys(fn ($ingredient) => [
                         $ingredient->id => [
                             'amount' => fake()->randomFloat(2, 0.25, 10),
                             'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
