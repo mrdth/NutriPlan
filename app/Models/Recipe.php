@@ -37,6 +37,13 @@ class Recipe extends Model
         'status',
     ];
 
+    protected $hidden = [
+        'user_id',
+        'published_at',
+        'created_at',
+        'updated_at',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

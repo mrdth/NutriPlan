@@ -7,12 +7,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Recipe\CreateRecipeRequest;
 use App\Http\Requests\Recipe\UpdateRecipeRequest;
 use App\Models\Recipe;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RecipeController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(): Response
     {
         $recipes = Recipe::query()
@@ -32,7 +35,15 @@ class RecipeController extends Controller
 
     public function store(CreateRecipeRequest $request): RedirectResponse
     {
-        $recipe = $request->user()->recipes()->create($request->validated());
+        $recipe = $request->user()->recipes()->create($request->only([
+            'title',
+            'description',
+            'instructions',
+            'prep_time',
+            'cooking_time',
+            'servings',
+            'published_at',
+        ]));
 
         if ($request->has('categories')) {
             $recipe->categories()->sync($request->input('categories'));
@@ -57,6 +68,8 @@ class RecipeController extends Controller
 
     public function edit(Recipe $recipe): Response
     {
+        $this->authorize('update', $recipe);
+
         $recipe->load(['categories', 'ingredients']);
 
         return Inertia::render('Recipes/Edit', [
@@ -66,13 +79,24 @@ class RecipeController extends Controller
 
     public function update(UpdateRecipeRequest $request, Recipe $recipe): RedirectResponse
     {
-        $recipe->update($request->validated());
+        $this->authorize('update', $recipe);
+
+        $recipe->update($request->safe([
+            'title',
+            'description',
+            'instructions',
+            'prep_time',
+            'cooking_time',
+            'servings',
+            'published_at',
+        ]));
 
         if ($request->has('categories')) {
             $recipe->categories()->sync($request->input('categories'));
         }
 
         if ($request->has('ingredients')) {
+
             $recipe->ingredients()->sync($request->input('ingredients'));
         }
 
@@ -82,6 +106,8 @@ class RecipeController extends Controller
 
     public function destroy(Recipe $recipe): RedirectResponse
     {
+        $this->authorize('delete', $recipe);
+
         $recipe->delete();
 
         return redirect()->route('recipes.index')
