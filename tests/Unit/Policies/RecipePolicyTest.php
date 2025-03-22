@@ -2,114 +2,84 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Policies;
-
 use App\Models\Recipe;
 use App\Models\User;
 use App\Policies\RecipePolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class RecipePolicyTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    private RecipePolicy $policy;
+beforeEach(function () {
+    $this->policy = new RecipePolicy();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+test('user can view any recipes', function () {
+    $user = User::factory()->create();
 
-        $this->policy = new RecipePolicy();
-    }
+    expect($this->policy->viewAny($user))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_view_any_recipes(): void
-    {
-        $user = User::factory()->create();
+test('user can view their own recipe', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()->for($user)->create();
 
-        $this->assertTrue($this->policy->viewAny($user));
-    }
+    expect($this->policy->view($user, $recipe))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_view_their_own_recipe(): void
-    {
-        $user = User::factory()->create();
-        $recipe = Recipe::factory()->for($user)->create();
+test('user can view other users published recipes', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $recipe = Recipe::factory()
+        ->for($otherUser)
+        ->published()
+        ->create();
 
-        $this->assertTrue($this->policy->view($user, $recipe));
-    }
+    expect($this->policy->view($user, $recipe))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_view_other_users_published_recipes(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $recipe = Recipe::factory()
-            ->for($otherUser)
-            ->published()
-            ->create();
+test('user cannot view other users draft recipes', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $recipe = Recipe::factory()
+        ->for($otherUser)
+        ->draft()
+        ->create();
 
-        $this->assertTrue($this->policy->view($user, $recipe));
-    }
+    expect($this->policy->view($user, $recipe))->toBeFalse();
+});
 
-    #[Test]
-    public function user_cannot_view_other_users_draft_recipes(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $recipe = Recipe::factory()
-            ->for($otherUser)
-            ->draft()
-            ->create();
+test('user can create recipe', function () {
+    $user = User::factory()->create();
 
-        $this->assertFalse($this->policy->view($user, $recipe));
-    }
+    expect($this->policy->create($user))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_create_recipe(): void
-    {
-        $user = User::factory()->create();
+test('user can update their own recipe', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()->for($user)->create();
 
-        $this->assertTrue($this->policy->create($user));
-    }
+    expect($this->policy->update($user, $recipe))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_update_their_own_recipe(): void
-    {
-        $user = User::factory()->create();
-        $recipe = Recipe::factory()->for($user)->create();
+test('user cannot update other users recipe', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $recipe = Recipe::factory()->for($otherUser)->create();
 
-        $this->assertTrue($this->policy->update($user, $recipe));
-    }
+    expect($this->policy->update($user, $recipe))->toBeFalse();
+});
 
-    #[Test]
-    public function user_cannot_update_other_users_recipe(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $recipe = Recipe::factory()->for($otherUser)->create();
+test('user can delete their own recipe', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()->for($user)->create();
 
-        $this->assertFalse($this->policy->update($user, $recipe));
-    }
+    expect($this->policy->delete($user, $recipe))->toBeTrue();
+});
 
-    #[Test]
-    public function user_can_delete_their_own_recipe(): void
-    {
-        $user = User::factory()->create();
-        $recipe = Recipe::factory()->for($user)->create();
+test('user cannot delete other users recipe', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $recipe = Recipe::factory()->for($otherUser)->create();
 
-        $this->assertTrue($this->policy->delete($user, $recipe));
-    }
-
-    #[Test]
-    public function user_cannot_delete_other_users_recipe(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $recipe = Recipe::factory()->for($otherUser)->create();
-
-        $this->assertFalse($this->policy->delete($user, $recipe));
-    }
-}
+    expect($this->policy->delete($user, $recipe))->toBeFalse();
+});
