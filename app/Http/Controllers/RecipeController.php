@@ -144,7 +144,7 @@ class RecipeController extends Controller
             );
         }
 
-        return redirect()->route('recipes.edit', $recipe)
+        return redirect()->route('recipes.show', $recipe)
             ->with('success', 'Recipe updated successfully.');
     }
 

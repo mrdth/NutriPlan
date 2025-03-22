@@ -11,7 +11,7 @@
                     </p>
                 </div>
                 <div v-if="page.props.auth.user.id === recipe.user.id" class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                    <Link :href="route('recipes.edit', recipe.id)">
+                    <Link :href="route('recipes.edit', recipe.slug)">
                         <Button>
                             <PencilIcon class="mr-2 h-4 w-4" />
                             Edit Recipe
