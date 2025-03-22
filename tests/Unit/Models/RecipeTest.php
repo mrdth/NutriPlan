@@ -6,10 +6,12 @@ namespace Tests\Unit\Models;
 
 use App\Enums\MeasurementUnit;
 use App\Enums\RecipeStatus;
+use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Recipe;
 use App\Models\User;
 use App\ValueObjects\Measurement;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -27,11 +29,44 @@ class RecipeTest extends TestCase
     }
 
     #[Test]
+    public function it_has_many_categories(): void
+    {
+        $recipe = Recipe::factory()
+            ->has(Category::factory()->count(2))
+            ->create();
+
+        $this->assertInstanceOf(Collection::class, $recipe->categories);
+        $this->assertCount(2, $recipe->categories);
+        $this->assertInstanceOf(Category::class, $recipe->categories->first());
+    }
+
+    #[Test]
+    public function it_has_many_ingredients(): void
+    {
+        $recipe = Recipe::factory()->create();
+        $ingredients = Ingredient::factory()->count(3)->create();
+
+        $recipe->ingredients()->attach(
+            $ingredients->mapWithKeys(fn ($ingredient) => [
+                $ingredient->id => [
+                    'amount' => fake()->randomFloat(2, 0.25, 10),
+                    'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
+                ],
+            ])->toArray()
+        );
+
+        $this->assertInstanceOf(Collection::class, $recipe->ingredients);
+        $this->assertCount(3, $recipe->ingredients);
+        $this->assertInstanceOf(Ingredient::class, $recipe->ingredients->first());
+    }
+
+    #[Test]
     public function it_can_be_published(): void
     {
         $recipe = Recipe::factory()->published()->create();
 
         $this->assertNotNull($recipe->published_at);
+        $this->assertEquals(RecipeStatus::PUBLISHED, $recipe->status);
     }
 
     #[Test]

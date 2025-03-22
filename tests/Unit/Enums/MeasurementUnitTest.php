@@ -26,7 +26,7 @@ class MeasurementUnitTest extends TestCase
         $this->assertTrue(MeasurementUnit::TEASPOON->isVolume());
         $this->assertTrue(MeasurementUnit::TABLESPOON->isVolume());
         $this->assertTrue(MeasurementUnit::CUP->isVolume());
-        
+
         $this->assertFalse(MeasurementUnit::GRAM->isVolume());
         $this->assertFalse(MeasurementUnit::PIECE->isVolume());
     }
@@ -36,7 +36,7 @@ class MeasurementUnitTest extends TestCase
     {
         $this->assertTrue(MeasurementUnit::GRAM->isWeight());
         $this->assertTrue(MeasurementUnit::KILOGRAM->isWeight());
-        
+
         $this->assertFalse(MeasurementUnit::MILLILITER->isWeight());
         $this->assertFalse(MeasurementUnit::PIECE->isWeight());
     }
@@ -46,7 +46,7 @@ class MeasurementUnitTest extends TestCase
     {
         $this->assertTrue(MeasurementUnit::PIECE->isUnit());
         $this->assertTrue(MeasurementUnit::PINCH->isUnit());
-        
+
         $this->assertFalse(MeasurementUnit::GRAM->isUnit());
         $this->assertFalse(MeasurementUnit::MILLILITER->isUnit());
     }
