@@ -2,54 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\ValueObjects;
-
 use App\Enums\MeasurementUnit;
 use App\ValueObjects\Measurement;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class MeasurementTest extends TestCase
-{
-    #[Test]
-    public function it_can_be_created_from_amount_and_unit_string(): void
-    {
-        $measurement = Measurement::from(2.5, 'cup');
+test('it can be created from amount and unit string', function () {
+    $measurement = Measurement::from(2.5, 'cup');
 
-        $this->assertEquals(2.5, $measurement->amount);
-        $this->assertEquals(MeasurementUnit::CUP, $measurement->unit);
-    }
+    expect($measurement->amount)->toBe(2.5);
+    expect($measurement->unit)->toBe(MeasurementUnit::CUP);
+});
 
-    #[Test]
-    public function it_can_be_converted_to_json(): void
-    {
-        $measurement = new Measurement(2.5, MeasurementUnit::CUP);
+test('it can be converted to json', function () {
+    $measurement = new Measurement(2.5, MeasurementUnit::CUP);
 
-        $this->assertEquals([
-            'amount' => 2.5,
-            'unit' => 'cup',
-        ], $measurement->jsonSerialize());
-    }
+    expect($measurement->jsonSerialize())->toBe([
+        'amount' => 2.5,
+        'unit' => 'cup',
+    ]);
+});
 
-    #[Test]
-    public function it_can_be_converted_to_string(): void
-    {
-        $measurement = new Measurement(2.5, MeasurementUnit::CUP);
+test('it can be converted to string', function () {
+    $measurement = new Measurement(2.5, MeasurementUnit::CUP);
 
-        $this->assertEquals('2.5 cup', (string) $measurement);
-    }
+    expect((string) $measurement)->toBe('2.5 cup');
+});
 
-    #[Test]
-    public function it_formats_measurements_nicely(): void
-    {
-        $measurements = [
-            new Measurement(2.5, MeasurementUnit::CUP),
-            new Measurement(2.0, MeasurementUnit::GRAM),
-            new Measurement(2.50, MeasurementUnit::MILLILITER),
-        ];
+test('it formats measurements nicely', function () {
+    $measurements = [
+        new Measurement(2.5, MeasurementUnit::CUP),
+        new Measurement(2.0, MeasurementUnit::GRAM),
+        new Measurement(2.50, MeasurementUnit::MILLILITER),
+    ];
 
-        $this->assertEquals('2.5 cup', $measurements[0]->format());
-        $this->assertEquals('2 g', $measurements[1]->format());
-        $this->assertEquals('2.5 ml', $measurements[2]->format());
-    }
-}
+    expect($measurements[0]->format())->toBe('2.5 cup');
+    expect($measurements[1]->format())->toBe('2 g');
+    expect($measurements[2]->format())->toBe('2.5 ml');
+});
+
