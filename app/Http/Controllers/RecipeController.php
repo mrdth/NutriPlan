@@ -30,7 +30,21 @@ class RecipeController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Recipes/Create');
+        return Inertia::render('Recipes/Create', [
+            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name']),
+            'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
+            'measurementUnits' => [
+                ['value' => 'g', 'label' => 'Grams'],
+                ['value' => 'kg', 'label' => 'Kilograms'],
+                ['value' => 'ml', 'label' => 'Milliliters'],
+                ['value' => 'l', 'label' => 'Liters'],
+                ['value' => 'tsp', 'label' => 'Teaspoons'],
+                ['value' => 'tbsp', 'label' => 'Tablespoons'],
+                ['value' => 'cup', 'label' => 'Cups'],
+                ['value' => 'piece', 'label' => 'Pieces'],
+                ['value' => 'pinch', 'label' => 'Pinch'],
+            ],
+        ]);
     }
 
     public function store(CreateRecipeRequest $request): RedirectResponse
