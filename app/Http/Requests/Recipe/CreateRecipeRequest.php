@@ -25,7 +25,7 @@ class CreateRecipeRequest extends FormRequest
             'categories' => ['nullable', 'array'],
             'categories.*' => ['exists:categories,id'],
             'ingredients' => ['required', 'array', 'min:1'],
-            'ingredients.*.id' => ['required', 'exists:ingredients,id'],
+            'ingredients.*.ingredient_id' => ['required', 'exists:ingredients,id'],
             'ingredients.*.amount' => ['required', 'numeric', 'min:0'],
             'ingredients.*.unit' => ['required', 'string'],
             'images' => ['nullable', 'array'],

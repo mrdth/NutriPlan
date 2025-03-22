@@ -50,7 +50,16 @@ class RecipeController extends Controller
         }
 
         if ($request->has('ingredients')) {
-            $recipe->ingredients()->sync($request->input('ingredients'));
+            $recipe->ingredients()->sync(
+                collect($request->input('ingredients'))
+                    ->mapWithKeys(fn ($ingredient) => [
+                        $ingredient['ingredient_id'] => [
+                            'amount' => $ingredient['amount'],
+                            'unit' => $ingredient['unit'],
+                        ],
+                    ])
+                    ->toArray()
+            );
         }
 
         return redirect()->route('recipes.edit', $recipe)
@@ -96,7 +105,16 @@ class RecipeController extends Controller
         }
 
         if ($request->has('ingredients')) {
-            $recipe->ingredients()->sync($request->input('ingredients'));
+            $recipe->ingredients()->sync(
+                collect($request->input('ingredients'))
+                    ->mapWithKeys(fn ($ingredient) => [
+                        $ingredient['ingredient_id'] => [
+                            'amount' => $ingredient['amount'],
+                            'unit' => $ingredient['unit'],
+                        ],
+                    ])
+                    ->toArray()
+            );
         }
 
         return redirect()->route('recipes.edit', $recipe)
