@@ -97,6 +97,19 @@ class RecipeController extends Controller
 
         return Inertia::render('Recipes/Edit', [
             'recipe' => $recipe,
+            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name']),
+            'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
+            'measurementUnits' => [
+                ['value' => 'g', 'label' => 'Grams'],
+                ['value' => 'kg', 'label' => 'Kilograms'],
+                ['value' => 'ml', 'label' => 'Milliliters'],
+                ['value' => 'l', 'label' => 'Liters'],
+                ['value' => 'tsp', 'label' => 'Teaspoons'],
+                ['value' => 'tbsp', 'label' => 'Tablespoons'],
+                ['value' => 'cup', 'label' => 'Cups'],
+                ['value' => 'piece', 'label' => 'Pieces'],
+                ['value' => 'pinch', 'label' => 'Pinch'],
+            ],
         ]);
     }
 
