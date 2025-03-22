@@ -13,6 +13,7 @@ export interface Recipe {
   images: string[] | null
   slug: string
   status: string
+  created_at: string
   user: User
   categories: Array<{
     id: number
