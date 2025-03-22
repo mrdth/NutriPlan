@@ -20,6 +20,7 @@ class Recipe extends Model
         'prep_time' => 'integer',
         'servings' => 'integer',
         'published_at' => 'datetime',
+        'images' => 'array',
     ];
 
     protected $appends = [
