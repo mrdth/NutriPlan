@@ -25,6 +25,11 @@ class Recipe extends Model
             ->saveSlugsTo('slug');
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected $casts = [
         'cooking_time' => 'integer',
         'prep_time' => 'integer',
