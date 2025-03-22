@@ -63,7 +63,13 @@
                     <div v-for="(ingredient, index) in form.ingredients" :key="index" class="flex items-end gap-4">
                         <div class="flex-1">
                             <Label :for="'ingredient-' + index">Ingredient</Label>
-                            <Combobox :id="'ingredient-' + index" v-model="ingredient.ingredient_id" :options="ingredients" class="mt-1" />
+                            <Combobox
+                                :id="'ingredient-' + index"
+                                v-model="ingredient.ingredient_id"
+                                :options="ingredients"
+                                :selected="ingredients.find(i => i.id === ingredient.ingredient_id)"
+                                class="mt-1"
+                            />
                             <InputError :message="form.errors['ingredients.' + index + '.ingredient_id']" />
                         </div>
 
@@ -142,6 +148,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { Recipe } from '@/types/recipe';
 import { useForm } from '@inertiajs/vue3';
+import type { FormDataConvertible } from '@inertiajs/core';
 import { PlusIcon, TrashIcon } from 'lucide-vue-next';
 
 const props = withDefaults(
@@ -172,6 +179,7 @@ interface FormData {
     }>;
     images: File[];
     published_at: string | null;
+    [key: string]: FormDataConvertible;
 }
 
 const form = useForm<FormData>({

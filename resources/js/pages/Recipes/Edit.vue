@@ -41,6 +41,7 @@ defineProps<{
                     :measurement-units="measurementUnits"
                     :action="route('recipes.update', recipe.id)"
                     method="put"
+                    @submit="form => form.put(route('recipes.update', recipe.slug))"
                 />
             </div>
         </div>

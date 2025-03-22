@@ -33,17 +33,19 @@ interface Props {
   modelValue: number
   options: Array<{ id: number; name: string }>
   placeholder?: string
+  selected?: { id: number; name: string }
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Search...',
+  selected: undefined,
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: number): void
 }>()
 
-const search = ref('')
+const search = ref(props.options.find(o => o.id === props.modelValue)?.name || '')
 const open = ref(false)
 const containerRef = ref(null)
 
@@ -60,6 +62,7 @@ const filteredOptions = computed(() => {
 const selectOption = (id: number) => {
   emit('update:modelValue', id)
   open.value = false
-  search.value = props.options.find(o => o.id === id)?.name || ''
+  const option = props.options.find(o => o.id === id)
+  search.value = option?.name || ''
 }
 </script>
