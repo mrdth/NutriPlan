@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models;
-
 use App\Enums\MeasurementUnit;
 use App\Enums\RecipeStatus;
 use App\Models\Category;
@@ -13,95 +11,79 @@ use App\Models\User;
 use App\ValueObjects\Measurement;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class RecipeTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    #[Test]
-    public function it_belongs_to_a_user(): void
-    {
-        $recipe = Recipe::factory()->create();
+test('it belongs to a user', function () {
+    $recipe = Recipe::factory()->create();
 
-        $this->assertInstanceOf(User::class, $recipe->user);
-    }
+    expect($recipe->user)->toBeInstanceOf(User::class);
+});
 
-    #[Test]
-    public function it_has_many_categories(): void
-    {
-        $recipe = Recipe::factory()
-            ->has(Category::factory()->count(2))
-            ->create();
+test('it has many categories', function () {
+    $recipe = Recipe::factory()
+        ->has(Category::factory()->count(2))
+        ->create();
 
-        $this->assertInstanceOf(Collection::class, $recipe->categories);
-        $this->assertCount(2, $recipe->categories);
-        $this->assertInstanceOf(Category::class, $recipe->categories->first());
-    }
+    expect($recipe->categories)
+        ->toBeInstanceOf(Collection::class)
+        ->toHaveCount(2)
+        ->first()->toBeInstanceOf(Category::class);
+});
 
-    #[Test]
-    public function it_has_many_ingredients(): void
-    {
-        $recipe = Recipe::factory()->create();
-        $ingredients = Ingredient::factory()->count(3)->create();
+test('it has many ingredients', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredients = Ingredient::factory()->count(3)->create();
 
-        $recipe->ingredients()->attach(
-            $ingredients->mapWithKeys(fn ($ingredient) => [
-                $ingredient->id => [
-                    'amount' => fake()->randomFloat(2, 0.25, 10),
-                    'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
-                ],
-            ])->toArray()
-        );
+    $recipe->ingredients()->attach(
+        $ingredients->mapWithKeys(fn ($ingredient) => [
+            $ingredient->id => [
+                'amount' => fake()->randomFloat(2, 0.25, 10),
+                'unit' => fake()->randomElement(array_column(MeasurementUnit::cases(), 'value')),
+            ],
+        ])->toArray()
+    );
 
-        $this->assertInstanceOf(Collection::class, $recipe->ingredients);
-        $this->assertCount(3, $recipe->ingredients);
-        $this->assertInstanceOf(Ingredient::class, $recipe->ingredients->first());
-    }
+    expect($recipe->ingredients)
+        ->toBeInstanceOf(Collection::class)
+        ->toHaveCount(3)
+        ->first()->toBeInstanceOf(Ingredient::class);
+});
 
-    #[Test]
-    public function it_can_be_published(): void
-    {
-        $recipe = Recipe::factory()->published()->create();
+test('it can be published', function () {
+    $recipe = Recipe::factory()->published()->create();
 
-        $this->assertNotNull($recipe->published_at);
-        $this->assertEquals(RecipeStatus::PUBLISHED, $recipe->status);
-    }
+    expect($recipe->published_at)->not->toBeNull()
+        ->and($recipe->status)->toBe(RecipeStatus::PUBLISHED);
+});
 
-    #[Test]
-    public function it_can_be_a_draft(): void
-    {
-        $recipe = Recipe::factory()->draft()->create();
+test('it can be a draft', function () {
+    $recipe = Recipe::factory()->draft()->create();
 
-        $this->assertNull($recipe->published_at);
-        $this->assertEquals(RecipeStatus::DRAFT, $recipe->status);
-    }
+    expect($recipe->published_at)->toBeNull()
+        ->and($recipe->status)->toBe(RecipeStatus::DRAFT);
+});
 
-    #[Test]
-    public function it_can_get_measurement_for_ingredient(): void
-    {
-        $recipe = Recipe::factory()->create();
-        $ingredient = Ingredient::factory()->create();
+test('it can get measurement for ingredient', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create();
 
-        $recipe->ingredients()->attach($ingredient, [
-            'amount' => 2.5,
-            'unit' => MeasurementUnit::CUP->value,
-        ]);
+    $recipe->ingredients()->attach($ingredient, [
+        'amount' => 2.5,
+        'unit' => MeasurementUnit::CUP->value,
+    ]);
 
-        $measurement = $recipe->getMeasurementForIngredient($ingredient);
+    $measurement = $recipe->getMeasurementForIngredient($ingredient);
 
-        $this->assertInstanceOf(Measurement::class, $measurement);
-        $this->assertEquals(2.5, $measurement->amount);
-        $this->assertEquals(MeasurementUnit::CUP, $measurement->unit);
-    }
+    expect($measurement)
+        ->toBeInstanceOf(Measurement::class)
+        ->and($measurement->amount)->toBe(2.5)
+        ->and($measurement->unit)->toBe(MeasurementUnit::CUP);
+});
 
-    #[Test]
-    public function it_returns_null_measurement_for_non_existent_ingredient(): void
-    {
-        $recipe = Recipe::factory()->create();
-        $ingredient = Ingredient::factory()->create();
+test('it returns null measurement for non existent ingredient', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create();
 
-        $this->assertNull($recipe->getMeasurementForIngredient($ingredient));
-    }
-}
+    expect($recipe->getMeasurementForIngredient($ingredient))->toBeNull();
+});
