@@ -8,7 +8,6 @@ use App\Enums\MeasurementUnit;
 use App\Models\Ingredient;
 use App\Models\Recipe;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Ingredient>
