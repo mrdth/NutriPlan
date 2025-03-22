@@ -96,7 +96,6 @@ class RecipeController extends Controller
         }
 
         if ($request->has('ingredients')) {
-
             $recipe->ingredients()->sync($request->input('ingredients'));
         }
 
