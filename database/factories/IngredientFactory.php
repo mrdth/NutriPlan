@@ -29,11 +29,8 @@ class IngredientFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->word();
-        
         return [
-            'name' => Str::title($name),
-            'slug' => Str::slug($name),
+            'name' => fake()->unique()->word(),
             'description' => fake()->optional()->sentence(),
             'is_common' => false,
         ];

@@ -27,11 +27,8 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->words(2, true);
-        
         return [
-            'name' => Str::title($name),
-            'slug' => Str::slug($name),
+            'name' => fake()->unique()->words(2, true),
             'description' => fake()->optional()->sentence(),
             'is_active' => true,
         ];

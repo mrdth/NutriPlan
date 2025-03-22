@@ -29,7 +29,7 @@ class RecipeFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'title' => fake()->sentence(3),
+            'title' => fake()->unique()->sentence(3),
             'description' => fake()->paragraph(),
             'url' => fake()->optional()->url(),
             'author' => fake()->optional()->name(),
