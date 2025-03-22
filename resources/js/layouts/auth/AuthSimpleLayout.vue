@@ -9,22 +9,29 @@ defineProps<{
 </script>
 
 <template>
-    <div class="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
-        <div class="w-full max-w-sm">
-            <div class="flex flex-col gap-8">
+    <div class="relative isolate min-h-svh overflow-hidden bg-white dark:bg-gray-900">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 z-0 opacity-30 dark:opacity-20">
+            <div class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white/80 dark:bg-gray-800/80 shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:ring-gray-700 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto flex min-h-svh max-w-7xl flex-col items-center justify-center px-6 py-12 lg:px-8">
+            <div class="w-full max-w-sm space-y-8">
                 <div class="flex flex-col items-center gap-4">
-                    <Link :href="route('home')" class="flex flex-col items-center gap-2 font-medium">
-                        <div class="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                            <AppLogoIcon class="size-9 fill-current text-[var(--foreground)] dark:text-white" />
+                    <Link :href="route('home')" class="flex flex-col items-center gap-2">
+                        <div class="mb-1 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 dark:bg-indigo-500">
+                            <AppLogoIcon class="size-8 fill-current text-white" />
                         </div>
-                        <span class="sr-only">{{ title }}</span>
                     </Link>
                     <div class="space-y-2 text-center">
-                        <h1 class="text-xl font-medium">{{ title }}</h1>
-                        <p class="text-center text-sm text-muted-foreground">{{ description }}</p>
+                        <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ title }}</h1>
+                        <p class="text-center text-sm text-gray-600 dark:text-gray-300">{{ description }}</p>
                     </div>
                 </div>
-                <slot />
+
+                <div class="mt-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+                    <slot />
+                </div>
             </div>
         </div>
     </div>
