@@ -2,47 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models;
-
 use App\Models\Ingredient;
 use App\Models\Recipe;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class IngredientTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    #[Test]
-    public function it_can_be_added_to_a_recipe_with_amount_and_unit(): void
-    {
-        $ingredient = Ingredient::factory()->create();
-        $recipe = Recipe::factory()->create();
+test('it can be added to a recipe with amount and unit', function () {
+    $ingredient = Ingredient::factory()->create();
+    $recipe = Recipe::factory()->create();
 
-        $ingredient->recipes()->attach($recipe, [
-            'amount' => 2.5,
-            'unit' => 'cups',
-        ]);
+    $ingredient->recipes()->attach($recipe, [
+        'amount' => 2.5,
+        'unit' => 'cups',
+    ]);
 
-        $this->assertTrue($ingredient->recipes->contains($recipe));
-        $this->assertEquals(2.5, $ingredient->recipes->first()->pivot->amount);
-        $this->assertEquals('cups', $ingredient->recipes->first()->pivot->unit);
-    }
+    expect($ingredient->recipes->contains($recipe))->toBeTrue();
+    expect($ingredient->recipes->first()->pivot->amount)->toBe(2.5);
+    expect($ingredient->recipes->first()->pivot->unit)->toBe('cups');
+});
 
-    #[Test]
-    public function it_can_be_marked_as_common(): void
-    {
-        $ingredient = Ingredient::factory()->common()->create();
+test('it can be marked as common', function () {
+    $ingredient = Ingredient::factory()->common()->create();
 
-        $this->assertTrue($ingredient->is_common);
-    }
+    expect($ingredient->is_common)->toBeTrue();
+});
 
-    #[Test]
-    public function it_is_not_common_by_default(): void
-    {
-        $ingredient = Ingredient::factory()->create();
+test('it is not common by default', function () {
+    $ingredient = Ingredient::factory()->create();
 
-        $this->assertFalse($ingredient->is_common);
-    }
-}
+    expect($ingredient->is_common)->toBeFalse();
+});
