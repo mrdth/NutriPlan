@@ -13,8 +13,23 @@ class RecipeIngredient extends Pivot
 {
     protected $casts = [
         'amount' => 'float',
-        'unit' => MeasurementUnit::class,
     ];
+
+    /**
+     * Get the unit attribute.
+     */
+    public function getUnitAttribute(string|MeasurementUnit|null $value): ?MeasurementUnit
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof MeasurementUnit) {
+            return $value;
+        }
+
+        return MeasurementUnit::tryFrom($value);
+    }
 
     public function recipe(): BelongsTo
     {

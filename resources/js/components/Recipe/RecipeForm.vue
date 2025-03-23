@@ -89,7 +89,7 @@
 
                         <div class="w-32">
                             <Label :for="'unit-' + index">Unit</Label>
-                            <Select :id="'unit-' + index" v-model="ingredient.unit" :options="measurementUnits" class="mt-1" required />
+                            <Select :id="'unit-' + index" v-model="ingredient.unit" :options="measurementUnits" class="mt-1" :allow-empty="true" />
                             <InputError :message="form.errors['ingredients.' + index + '.unit']" />
                         </div>
 
@@ -175,7 +175,7 @@ interface FormData {
     ingredients: Array<{
         ingredient_id: number;
         amount: number;
-        unit: string;
+        unit: string | null;
     }>;
     images: File[];
     published_at: string | null;

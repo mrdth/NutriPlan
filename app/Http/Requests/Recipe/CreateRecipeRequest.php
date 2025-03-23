@@ -27,7 +27,7 @@ class CreateRecipeRequest extends FormRequest
             'ingredients' => ['required', 'array', 'min:1'],
             'ingredients.*.ingredient_id' => ['required', 'exists:ingredients,id'],
             'ingredients.*.amount' => ['required', 'numeric', 'min:0'],
-            'ingredients.*.unit' => ['required', 'string'],
+            'ingredients.*.unit' => ['nullable', 'string'],
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'max:5120'], // 5MB max per image
             'published_at' => ['nullable', 'date'],

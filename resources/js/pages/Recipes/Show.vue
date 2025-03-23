@@ -60,7 +60,10 @@
                     <ul class="space-y-2">
                         <li v-for="ingredient in recipe.ingredients" :key="ingredient.id" class="flex items-center text-gray-700 dark:text-gray-300">
                             <div class="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 dark:bg-gray-400" />
-                            <span class="font-medium">{{ ingredient.pivot.amount }} {{ ingredient.pivot.unit }}</span>
+                            <span class="font-medium">
+                                {{ ingredient.pivot.amount }}
+                                <template v-if="ingredient.pivot.unit">{{ ingredient.pivot.unit }}</template>
+                            </span>
                             <span class="ml-1">{{ ingredient.name }}</span>
                         </li>
                     </ul>

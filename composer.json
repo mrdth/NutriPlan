@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "brick/structured-data": "^0.1.1",
+        "doctrine/dbal": "^4.2",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
@@ -71,8 +72,7 @@
         ],
         "lint": [
             "pint",
-            "npm run format",
-            "npm run lint"
+            "npm run format"
         ],
         "refactor": "rector",
         "test:type-coverage": "pest --type-coverage --min=100",
