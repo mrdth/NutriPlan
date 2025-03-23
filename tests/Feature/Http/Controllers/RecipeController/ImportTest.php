@@ -28,7 +28,7 @@ it('imports a recipe from a URL', function () {
         'url' => 'https://example.com/recipe',
     ]);
 
-    $response->assertRedirect(route('recipes.edit', ['recipe' => $recipe]))
+    $response->assertRedirect(route('recipes.show', ['recipe' => $recipe]))
         ->assertSessionHas('success', 'Recipe imported successfully. Please review and make any necessary adjustments.');
 
     $this->assertDatabaseHas('recipes', [
@@ -58,7 +58,7 @@ it('imports a recipe with categories', function () {
         'url' => 'https://example.com/recipe',
     ]);
 
-    $response->assertRedirect(route('recipes.edit', ['recipe' => $recipe]));
+    $response->assertRedirect(route('recipes.show', ['recipe' => $recipe]));
 
     expect($recipe->fresh()->categories)->toHaveCount(2)
         ->and($recipe->fresh()->categories->pluck('name'))->toContain('Dinner', 'Italian');
