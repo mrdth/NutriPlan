@@ -18,7 +18,22 @@
   - [x] Add a link to the categories page from the navigation menu in the sidebar.
   - [x] Update the `RecipeCard` component to link the category chips to the filtered recipes page.
   - [x] Update the `Recipe.Show` page to link the category chips to the filtered recipes page.
-4. [ ] Add nutrition information for recipes.
+4. [ ] Implement Collections
+  - [ ] Create a new page to show the collections for the user.
+    - [ ] Add a 'New Collection' button. (the same as the 'New Recipe' button on the Recipes.Index page)
+      - [ ] Display a modal with a form to create a new collection.
+        - The form should have fields for the collection name and description.
+        - The form should have a submit button.
+    - [ ] Show the collections as a list.
+      - Each item in the list should have:
+        - The collection name
+        - The description
+        - The number of recipes in the collection
+        - A link to the collection
+          - We can reuse the recipes.index page, but with a filtered list of recipes.
+    - [ ] Add a link to the collections page from the navigation menu in the sidebar.
+  - [ ] Update the `Recipe.Show` page to show the collections the current user has added this recipe to.
+5. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
   - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.
   - [ ] Update the `RecipeParser` to extract nutrition information from the recipe source.
