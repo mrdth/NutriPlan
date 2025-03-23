@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
+
+    Route::post('ingredients', [IngredientController::class, 'store'])->name('ingredients.store');
 });
 
 require __DIR__.'/settings.php';

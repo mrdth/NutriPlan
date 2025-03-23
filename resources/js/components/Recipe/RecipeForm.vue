@@ -70,12 +70,15 @@
                     <div v-for="(ingredient, index) in form.ingredients" :key="index" class="flex items-end gap-4">
                         <div class="flex-1">
                             <Label :for="'ingredient-' + index">Ingredient</Label>
-                            <Combobox
+                            <ComboboxWithCreate
                                 :id="'ingredient-' + index"
                                 v-model="ingredient.ingredient_id"
                                 :options="ingredients"
                                 :selected="ingredients.find((i) => i.id === ingredient.ingredient_id)"
+                                :allow-create="true"
+                                create-endpoint="/ingredients"
                                 class="mt-1"
+                                @option-created="handleNewIngredient"
                             />
                             <InputError :message="form.errors['ingredients.' + index + '.ingredient_id']" />
                         </div>
@@ -146,7 +149,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Combobox } from '@/components/ui/combobox';
+import { Combobox, ComboboxWithCreate } from '@/components/ui/combobox';
 import { FileInput } from '@/components/ui/file-input';
 import { Input } from '@/components/ui/input';
 import { InputError } from '@/components/ui/input-error';
@@ -232,6 +235,11 @@ const addIngredient = () => {
 
 const removeIngredient = (index: number) => {
     form.ingredients.splice(index, 1);
+};
+
+const handleNewIngredient = (newIngredient: { id: number; name: string }) => {
+    // Add the new ingredient to the ingredients list
+    props.ingredients.push(newIngredient);
 };
 
 const emit = defineEmits<{

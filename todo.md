@@ -26,9 +26,9 @@
     - Selected categories should be pre-selected
     - Selecting a category should add it to the list of selected categories
     - Unselecting a category should remove it from the list of selected categories
-5. [ ] Improved Ingredient Input
+5. [x] Improved Ingredient Input
   - Currently when adding / updating a recipe, the ingredient input is a select, allowing only existing ingredients to be selected.
-  - [ ] Allow new ingredients to be added.
+  - [x] Allow new ingredients to be added.
 6. [ ] Filtering Categories
   - [ ] Add a filter to the categories page to filter the list of categories.
     - [ ] The filter should be a text input field.
