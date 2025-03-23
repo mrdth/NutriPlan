@@ -33,9 +33,13 @@ final class RecipeParser
         protected $ingredients = [],
         protected $steps = [],
         protected $yield = '',
-        protected $totalTime = '',
-        protected $images = []
+        protected $prep_time = 0,
+        protected $cooking_time = 0,
+        protected $servings = 0,
+        protected $images = [],
+        protected ?IngredientParser $ingredient_parser = null
     ) {
+        $this->ingredient_parser = $ingredient_parser ?? new IngredientParser();
     }
 
     public function parse(Item $item): Recipe
@@ -47,18 +51,37 @@ final class RecipeParser
             }
         }
 
-        return Recipe::firstOrNew([
+        $recipe = Recipe::firstOrNew([
             'title' => $this->title,
             'url' => $this->url,
         ])->fill([
             'author' => $this->author,
             'description' => $this->description,
-            'ingredients' => $this->ingredients,
-            'steps' => $this->steps,
-            'yield' => $this->yield,
-            'totalTime' => $this->totalTime,
-            'images' => $this->images,
+            'instructions' => implode("\n\n", $this->steps),
+            'prep_time' => $this->prep_time,
+            'cooking_time' => $this->cooking_time,
+            'servings' => $this->servings ?: (int) $this->yield,
+            'images' => array_values(array_filter($this->images)),
         ]);
+
+        // Parse and attach ingredients
+        $ingredients_data = [];
+        foreach ($this->ingredients as $ingredient_string) {
+            $parsed = $this->ingredient_parser->parse($ingredient_string);
+            $ingredients_data[$parsed['ingredient']->id] = [
+                'amount' => $parsed['amount'],
+                'unit' => $parsed['unit'],
+            ];
+        }
+
+        if ($recipe->exists) {
+            $recipe->ingredients()->sync($ingredients_data);
+        } else {
+            $recipe->save();
+            $recipe->ingredients()->attach($ingredients_data);
+        }
+
+        return $recipe;
     }
 
     protected function parse_name($values): void
@@ -73,12 +96,38 @@ final class RecipeParser
 
     public function parse_recipeyield($values): void
     {
-        $this->yield = (is_array($values) ? $values[0] : $values);
+        $value = is_array($values) ? $values[0] : $values;
+
+        // Try to extract a number from the yield string
+        if (preg_match('/\d+/', $value, $matches)) {
+            $this->servings = (int) $matches[0];
+        }
+
+        $this->yield = $value;
     }
 
-    public function parse_totaltime($values): void
+    public function parse_preptime($values): void
     {
-        $this->totalTime = (is_array($values) ? $values[0] : $values);
+        $time = is_array($values) ? $values[0] : $values;
+
+        if (preg_match('/PT(\d+H)?(\d+M)?/', $time, $matches)) {
+            $hours = isset($matches[1]) ? (int) rtrim($matches[1], 'H') : 0;
+            $minutes = isset($matches[2]) ? (int) rtrim($matches[2], 'M') : 0;
+
+            $this->prep_time = ($hours * 60) + $minutes;
+        }
+    }
+
+    public function parse_cooktime($values): void
+    {
+        $time = is_array($values) ? $values[0] : $values;
+
+        if (preg_match('/PT(\d+H)?(\d+M)?/', $time, $matches)) {
+            $hours = isset($matches[1]) ? (int) rtrim($matches[1], 'H') : 0;
+            $minutes = isset($matches[2]) ? (int) rtrim($matches[2], 'M') : 0;
+
+            $this->cooking_time = ($hours * 60) + $minutes;
+        }
     }
 
     public function parse_image($values): void
