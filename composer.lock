@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c8053ff80bdaede7fbaa14a1dbf48be6",
+    "content-hash": "79d409844d601d4da18b052c7dfc63e9",
     "packages": [
         {
             "name": "brick/math",
@@ -65,6 +65,55 @@
                 }
             ],
             "time": "2025-02-28T13:11:00+00:00"
+        },
+        {
+            "name": "brick/structured-data",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/brick/structured-data.git",
+                "reference": "1e1e1c8c87c392e65bb9c91e0f3cd732b4574fe9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/brick/structured-data/zipball/1e1e1c8c87c392e65bb9c91e0f3cd732b4574fe9",
+                "reference": "1e1e1c8c87c392e65bb9c91e0f3cd732b4574fe9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "php": "^7.2 || ^8.0",
+                "sabre/uri": "^2.1"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^8.0 || ^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Brick\\StructuredData\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Microdata, RDFa Lite & JSON-LD structured data reader",
+            "keywords": [
+                "JSON-LD",
+                "brick",
+                "microdata",
+                "rdfa",
+                "structured data"
+            ],
+            "support": {
+                "issues": "https://github.com/brick/structured-data/issues",
+                "source": "https://github.com/brick/structured-data/tree/0.1.1"
+            },
+            "time": "2020-12-06T00:36:03+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -3359,6 +3408,66 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
+        },
+        {
+            "name": "sabre/uri",
+            "version": "2.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sabre-io/uri.git",
+                "reference": "b76524c22de90d80ca73143680a8e77b1266c291"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sabre-io/uri/zipball/b76524c22de90d80ca73143680a8e77b1266c291",
+                "reference": "b76524c22de90d80ca73143680a8e77b1266c291",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.63",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan-phpunit": "^1.4",
+                "phpstan/phpstan-strict-rules": "^1.6",
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/functions.php"
+                ],
+                "psr-4": {
+                    "Sabre\\Uri\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Evert Pot",
+                    "email": "me@evertpot.com",
+                    "homepage": "http://evertpot.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Functions for making sense out of URIs.",
+            "homepage": "http://sabre.io/uri/",
+            "keywords": [
+                "rfc3986",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "forum": "https://groups.google.com/group/sabredav-discuss",
+                "issues": "https://github.com/sabre-io/uri/issues",
+                "source": "https://github.com/fruux/sabre-uri"
+            },
+            "time": "2024-08-27T12:18:16+00:00"
         },
         {
             "name": "spatie/laravel-sluggable",
