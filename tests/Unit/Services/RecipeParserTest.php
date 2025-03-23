@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Category;
-use App\Models\Recipe;
 use App\Services\RecipeParser;
 use Brick\StructuredData\Item;
 use Illuminate\Support\Facades\Auth;

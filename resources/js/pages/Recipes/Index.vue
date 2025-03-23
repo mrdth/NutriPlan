@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Pagination from '@/components/Pagination.vue';
+import ImportRecipeModal from '@/components/Recipe/ImportRecipeModal.vue';
 import RecipeCard from '@/components/Recipe/RecipeCard.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { DownloadIcon, PlusIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { PlusIcon, DownloadIcon } from 'lucide-vue-next';
-import ImportRecipeModal from '@/components/Recipe/ImportRecipeModal.vue';
 
 interface Props {
     recipes: {
@@ -50,7 +50,7 @@ const showImportModal = ref(false);
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Recipes</h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Browse through our collection of delicious recipes</p>
                 </div>
-                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none space-x-4">
+                <div class="mt-4 space-x-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Button variant="outline" @click="showImportModal = true">
                         <DownloadIcon class="mr-2 h-4 w-4" />
                         Import Recipe
@@ -62,10 +62,8 @@ const showImportModal = ref(false);
                         </Button>
                     </Link>
                 </div>
-                
-                <ImportRecipeModal
-                    v-model:open="showImportModal"
-                />
+
+                <ImportRecipeModal v-model:open="showImportModal" />
             </div>
 
             <div v-if="recipes.data.length === 0" class="mt-16 text-center">

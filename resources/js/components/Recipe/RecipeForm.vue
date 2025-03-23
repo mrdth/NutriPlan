@@ -67,7 +67,7 @@
                                 :id="'ingredient-' + index"
                                 v-model="ingredient.ingredient_id"
                                 :options="ingredients"
-                                :selected="ingredients.find(i => i.id === ingredient.ingredient_id)"
+                                :selected="ingredients.find((i) => i.id === ingredient.ingredient_id)"
                                 class="mt-1"
                             />
                             <InputError :message="form.errors['ingredients.' + index + '.ingredient_id']" />
@@ -147,8 +147,8 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { Recipe } from '@/types/recipe';
-import { useForm } from '@inertiajs/vue3';
 import type { FormDataConvertible } from '@inertiajs/core';
+import { useForm } from '@inertiajs/vue3';
 import { PlusIcon, TrashIcon } from 'lucide-vue-next';
 
 const props = withDefaults(

@@ -20,7 +20,7 @@ class ImportRecipeRequest extends FormRequest
                 'required',
                 'url',
                 'max:2048',
-                function ($attribute, $value, $fail) {
+                function (string $attribute, mixed $value, callable $fail): void {
                     $parsed = parse_url($value);
                     if (empty($parsed['scheme']) || !in_array($parsed['scheme'], ['http', 'https'])) {
                         $fail('The URL must use either http or https protocol.');

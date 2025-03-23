@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 final class RecipeParser
 {
-    public static function fromItems($items, string $url): ?Recipe
+    /**
+     * @param array<int, Item>|Item $items
+     */
+    public static function fromItems(array|Item $items, string $url): ?Recipe
     {
         foreach ($items as $item) {
             if (Str::contains(Str::lower(implode(',', $item->getTypes())), 'recipe')) {
@@ -28,18 +31,22 @@ final class RecipeParser
     }
 
     public function __construct(
-        protected $title = '',
-        protected $description = '',
-        protected $url = '',
-        protected $author = '',
-        protected $ingredients = [],
-        protected $steps = [],
-        protected $yield = '',
-        protected $prep_time = 0,
-        protected $cooking_time = 0,
-        protected $servings = 0,
-        protected $images = [],
-        protected $categories = [],
+        protected string $title = '',
+        protected string $description = '',
+        protected string $url = '',
+        protected string $author = '',
+        /** @var array<int, string> */
+        protected array $ingredients = [],
+        /** @var array<int, string> */
+        protected array $steps = [],
+        protected string $yield = '',
+        protected int $prep_time = 0,
+        protected int $cooking_time = 0,
+        protected int $servings = 0,
+        /** @var array<int, string> */
+        protected array $images = [],
+        /** @var array<int, string> */
+        protected array $categories = [],
         protected ?IngredientParser $ingredient_parser = null
     ) {
         $this->ingredient_parser = $ingredient_parser ?? new IngredientParser();
@@ -70,7 +77,7 @@ final class RecipeParser
 
         // Handle categories
         $category_names = array_unique(array_filter($this->categories));
-        $categories = collect($category_names)->map(function ($name) {
+        $categories = collect($category_names)->map(function (string $name): Category {
             return Category::firstOrCreate(
                 ['name' => trim($name)],
                 ['is_active' => true]
@@ -104,17 +111,26 @@ final class RecipeParser
         return $recipe;
     }
 
-    protected function parse_name($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    protected function parse_name(array|string $values): void
     {
         $this->title = (is_array($values) ? $values[0] : $values);
     }
 
-    protected function parse_description($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    protected function parse_description(array|string $values): void
     {
         $this->description = (is_array($values) ? $values[0] : $values);
     }
 
-    public function parse_recipeyield($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    public function parse_recipeyield(array|string $values): void
     {
         $value = is_array($values) ? $values[0] : $values;
 
@@ -126,7 +142,10 @@ final class RecipeParser
         $this->yield = $value;
     }
 
-    public function parse_preptime($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    public function parse_preptime(array|string $values): void
     {
         $time = is_array($values) ? $values[0] : $values;
 
@@ -138,7 +157,10 @@ final class RecipeParser
         }
     }
 
-    public function parse_cooktime($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    public function parse_cooktime(array|string $values): void
     {
         $time = is_array($values) ? $values[0] : $values;
 
@@ -150,7 +172,10 @@ final class RecipeParser
         }
     }
 
-    public function parse_image($values): void
+    /**
+     * @param array<int, Item|string> $values
+     */
+    public function parse_image(array $values): void
     {
         foreach ($values as $item) {
             if ($item instanceof Item) {
@@ -176,18 +201,24 @@ final class RecipeParser
         }
     }
 
-    public function parse_recipeingredient($values): void
+    /**
+     * @param array<int, string>|string $values
+     */
+    public function parse_recipeingredient(array|string $values): void
     {
         if (is_array($values)) {
             $this->ingredients = array_merge(
-                collect($values)->transform(function ($item) {
+                collect($values)->transform(function (string $item): string {
                     return html_entity_decode($item);
                 })->toArray()
             );
         }
     }
 
-    public function parse_recipeinstructions($values): void
+    /**
+     * @param array<int, Item|string> $values
+     */
+    public function parse_recipeinstructions(array $values): void
     {
         foreach ($values as $item) {
             if ($item instanceof Item) {
@@ -205,7 +236,10 @@ final class RecipeParser
         }
     }
 
-    public function parse_author($values): void
+    /**
+     * @param array<int, Item|string> $values
+     */
+    public function parse_author(array $values): void
     {
         foreach ($values as $item) {
             if ($item instanceof Item) {
@@ -223,27 +257,33 @@ final class RecipeParser
         }
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function parseCommaSeparatedString(string $value): array
     {
         return collect(explode(',', $value))
-            ->map(fn ($item) => trim($item))
+            ->map(fn (string $item): string => trim($item))
             ->filter()
             ->toArray();
     }
 
-    public function parse_keywords($values): void
+    /**
+     * @param array<int, string|array<int, string>>|string $values
+     */
+    public function parse_keywords(array|string $values): void
     {
         if (is_array($values)) {
-            $keywords = collect($values)->map(function ($item) {
+            $keywords = collect($values)->map(function (string|array $item): array|string {
                 $value = is_array($item) ? $item[0] : $item;
-                return Str::contains($value, ',') 
+                return Str::contains($value, ',')
                     ? $this->parseCommaSeparatedString($value)
                     : $value;
             })->flatten()->toArray();
 
             $this->categories = array_merge($this->categories, $keywords);
         } else {
-            $categories = Str::contains($values, ',') 
+            $categories = Str::contains($values, ',')
                 ? $this->parseCommaSeparatedString($values)
                 : [$values];
 
@@ -251,19 +291,22 @@ final class RecipeParser
         }
     }
 
-    public function parse_recipecategory($values): void
+    /**
+     * @param array<int, string|array<int, string>>|string $values
+     */
+    public function parse_recipecategory(array|string $values): void
     {
         if (is_array($values)) {
-            $categories = collect($values)->map(function ($item) {
+            $categories = collect($values)->map(function (string|array $item): array|string {
                 $value = is_array($item) ? $item[0] : $item;
-                return Str::contains($value, ',') 
+                return Str::contains($value, ',')
                     ? $this->parseCommaSeparatedString($value)
                     : $value;
             })->flatten()->toArray();
 
             $this->categories = array_merge($this->categories, $categories);
         } else {
-            $categories = Str::contains($values, ',') 
+            $categories = Str::contains($values, ',')
                 ? $this->parseCommaSeparatedString($values)
                 : [$values];
 

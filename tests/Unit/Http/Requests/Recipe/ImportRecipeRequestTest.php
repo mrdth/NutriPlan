@@ -2,7 +2,6 @@
 
 use App\Http\Requests\Recipe\ImportRecipeRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
     $this->user = createUser();

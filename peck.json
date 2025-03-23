@@ -2,7 +2,13 @@
     "preset": "laravel",
     "ignore": {
         "words": [
-            "php"
+            "php",
+            "recipeyield",
+            "preptime",
+            "cooktime",
+            "recipeingredient",
+            "recipeinstructions",
+            "recipecategory"
         ],
         "paths": []
     }
