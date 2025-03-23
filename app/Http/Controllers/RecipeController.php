@@ -95,7 +95,7 @@ class RecipeController extends Controller
             );
         }
 
-        return redirect()->route('recipes.edit', $recipe)
+        return redirect()->route('recipes.show', $recipe)
             ->with('success', 'Recipe created successfully.');
     }
 
@@ -193,7 +193,7 @@ class RecipeController extends Controller
         try {
             $recipe = $action->handle($request->input('url'));
 
-            return redirect()->route('recipes.edit', $recipe)
+            return redirect()->route('recipes.show', $recipe)
                 ->with('success', 'Recipe imported successfully. Please review and make any necessary adjustments.');
 
         } catch (NoStructuredDataException) {
