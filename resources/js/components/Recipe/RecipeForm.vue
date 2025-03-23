@@ -11,7 +11,7 @@
             <!-- Description -->
             <div>
                 <Label for="description">Description</Label>
-                <Textarea id="description" v-model="form.description" class="mt-1" />
+                <Textarea id="description" v-model="form.description" class="mt-1 p-3" />
                 <InputError :message="form.errors.description" />
             </div>
 
@@ -41,17 +41,24 @@
                 <Label>Categories</Label>
                 <div class="mt-1 flex flex-wrap gap-2">
                     <Badge
-                        v-for="category in categories"
+                        v-for="category in selectedCategories"
                         :key="category.id"
                         variant="outline"
-                        class="cursor-pointer"
-                        :class="{
-                            'bg-primary text-primary-foreground hover:bg-primary/90': form.categories.includes(category.id),
-                        }"
+                        class="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
                         @click="toggleCategory(category.id)"
                     >
                         {{ category.name }}
+                        <XIcon class="ml-1 h-3 w-3" />
                     </Badge>
+                </div>
+
+                <div class="mt-2">
+                    <Combobox
+                        :model-value="0"
+                        :options="availableCategories"
+                        placeholder="Search for categories..."
+                        @update:model-value="addCategory"
+                    />
                 </div>
                 <InputError :message="form.errors.categories" />
             </div>
@@ -108,7 +115,7 @@
             <!-- Instructions -->
             <div>
                 <Label for="instructions">Instructions</Label>
-                <Textarea id="instructions" v-model="form.instructions" class="mt-1" required rows="10" />
+                <Textarea id="instructions" v-model="form.instructions" class="mt-1 p-3" required rows="10" />
                 <InputError :message="form.errors.instructions" />
             </div>
 
@@ -149,7 +156,8 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Recipe } from '@/types/recipe';
 import type { FormDataConvertible } from '@inertiajs/core';
 import { useForm } from '@inertiajs/vue3';
-import { PlusIcon, TrashIcon } from 'lucide-vue-next';
+import { PlusIcon, TrashIcon, XIcon } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 const props = withDefaults(
     defineProps<{
@@ -202,10 +210,15 @@ const form = useForm<FormData>({
 
 const toggleCategory = (id: number) => {
     const index = form.categories.indexOf(id);
-    if (index === -1) {
-        form.categories.push(id);
-    } else {
+    if (index !== -1) {
         form.categories.splice(index, 1);
+    }
+};
+
+const addCategory = (id: number) => {
+    if (id === 0) return; // Skip if no category is selected
+    if (!form.categories.includes(id)) {
+        form.categories.push(id);
     }
 };
 
@@ -228,4 +241,12 @@ const emit = defineEmits<{
 const submit = () => {
     emit('submit', form);
 };
+
+const selectedCategories = computed(() => {
+    return props.categories.filter((category) => form.categories.includes(category.id));
+});
+
+const availableCategories = computed(() => {
+    return props.categories.filter((category) => !form.categories.includes(category.id));
+});
 </script>
