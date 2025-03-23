@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ClockIcon, UsersIcon } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     recipe: {
@@ -12,17 +13,19 @@ interface Props {
         cooking_time: number;
         servings: number;
         images: string[];
+        url: string | null;
         user: {
             name: string;
         };
         categories: {
             id: number;
             name: string;
+            recipe_count: number;
         }[];
     };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
@@ -34,6 +37,20 @@ const formatTime = (minutes: number): string => {
 
     return remainingMinutes === 0 ? `${hours}h` : `${hours}h ${remainingMinutes}m`;
 };
+
+const topCategories = computed(() => {
+    return [...props.recipe.categories].sort((a, b) => b.recipe_count - a.recipe_count).slice(0, 3);
+});
+
+const sitename = computed(() => {
+    if (!props.recipe.url) return null;
+    try {
+        const url = new URL(props.recipe.url);
+        return url.hostname.replace(/^www\./, '');
+    } catch {
+        return null;
+    }
+});
 </script>
 
 <template>
@@ -56,7 +73,7 @@ const formatTime = (minutes: number): string => {
                 </Link>
             </h3>
 
-            <p v-if="recipe.description" class="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+            <p v-if="recipe.description" class="text-sm text-gray-500 dark:text-gray-400">
                 {{ recipe.description }}
             </p>
 
@@ -72,9 +89,18 @@ const formatTime = (minutes: number): string => {
                     </div>
                 </div>
 
-                <div v-if="recipe.categories.length" class="flex flex-wrap gap-1">
+                <div class="flex flex-wrap items-center gap-1">
+                    <a
+                        v-if="recipe.url && sitename"
+                        :href="recipe.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-800 dark:text-blue-200 dark:hover:bg-blue-700"
+                    >
+                        {{ sitename }}
+                    </a>
                     <span
-                        v-for="category in recipe.categories"
+                        v-for="category in topCategories"
                         :key="category.id"
                         class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                     >
