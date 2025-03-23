@@ -19,7 +19,7 @@ class VerifyEmailController extends Controller
         }
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->intended(route('recipes.index', absolute: false).'?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
@@ -28,6 +28,6 @@ class VerifyEmailController extends Controller
             event(new Verified($user));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        return redirect()->intended(route('recipes.index', absolute: false).'?verified=1');
     }
 }
