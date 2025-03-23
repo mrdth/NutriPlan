@@ -22,7 +22,7 @@ defineProps<{
                 <div class="flex flex-col items-center gap-4">
                     <Link :href="route('home')" class="flex flex-col items-center gap-2">
                         <div class="mb-1 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 dark:bg-indigo-500">
-                            <AppLogoIcon class="size-8 fill-current text-white" />
+                            <AppLogoIcon class="size-12 fill-current text-white" />
                         </div>
                     </Link>
                     <div class="space-y-2 text-center">
