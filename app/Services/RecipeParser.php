@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Exception;
 use App\Models\Recipe;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use Brick\StructuredData\Item;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,7 @@ final class RecipeParser
         protected $cooking_time = 0,
         protected $servings = 0,
         protected $images = [],
+        protected $categories = [],
         protected ?IngredientParser $ingredient_parser = null
     ) {
         $this->ingredient_parser = $ingredient_parser ?? new IngredientParser();
@@ -65,6 +67,22 @@ final class RecipeParser
             'images' => array_values(array_filter($this->images)),
             'user_id' => Auth::id(),
         ]);
+
+        // Handle categories
+        $category_names = array_unique(array_filter($this->categories));
+        $categories = collect($category_names)->map(function ($name) {
+            return Category::firstOrCreate(
+                ['name' => trim($name)],
+                ['is_active' => true]
+            );
+        });
+
+        if ($recipe->exists) {
+            $recipe->categories()->sync($categories->pluck('id'));
+        } else {
+            $recipe->save();
+            $recipe->categories()->attach($categories->pluck('id'));
+        }
 
         // Parse and attach ingredients
         $ingredients_data = [];
@@ -202,6 +220,54 @@ final class RecipeParser
             } else {
                 $this->author = html_entity_decode($item);
             }
+        }
+    }
+
+    protected function parseCommaSeparatedString(string $value): array
+    {
+        return collect(explode(',', $value))
+            ->map(fn ($item) => trim($item))
+            ->filter()
+            ->toArray();
+    }
+
+    public function parse_keywords($values): void
+    {
+        if (is_array($values)) {
+            $keywords = collect($values)->map(function ($item) {
+                $value = is_array($item) ? $item[0] : $item;
+                return Str::contains($value, ',') 
+                    ? $this->parseCommaSeparatedString($value)
+                    : $value;
+            })->flatten()->toArray();
+
+            $this->categories = array_merge($this->categories, $keywords);
+        } else {
+            $categories = Str::contains($values, ',') 
+                ? $this->parseCommaSeparatedString($values)
+                : [$values];
+
+            $this->categories = array_merge($this->categories, $categories);
+        }
+    }
+
+    public function parse_recipecategory($values): void
+    {
+        if (is_array($values)) {
+            $categories = collect($values)->map(function ($item) {
+                $value = is_array($item) ? $item[0] : $item;
+                return Str::contains($value, ',') 
+                    ? $this->parseCommaSeparatedString($value)
+                    : $value;
+            })->flatten()->toArray();
+
+            $this->categories = array_merge($this->categories, $categories);
+        } else {
+            $categories = Str::contains($values, ',') 
+                ? $this->parseCommaSeparatedString($values)
+                : [$values];
+
+            $this->categories = array_merge($this->categories, $categories);
         }
     }
 }

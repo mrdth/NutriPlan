@@ -41,7 +41,6 @@ class FetchRecipe
             foreach ($parsers as $parser) {
                 try {
                     $items = (new HTMLReader($parser))->read($html, $recipe_url);
-
                     if ($recipe = RecipeParser::fromItems($items, $recipe_url)) {
                         return $recipe;
                     }
