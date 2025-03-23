@@ -29,9 +29,11 @@
                 <!-- Categories -->
                 <div v-if="recipe.categories.length > 0" class="mt-6">
                     <div class="flex flex-wrap gap-2">
-                        <Badge v-for="category in recipe.categories" :key="category.id" variant="secondary">
-                            {{ category.name }}
-                        </Badge>
+                        <Link v-for="category in recipe.categories" :key="category.id" :href="route('categories.show', category.slug)">
+                            <Badge variant="secondary" class="cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700">
+                                {{ category.name }}
+                            </Badge>
+                        </Link>
                     </div>
                 </div>
 

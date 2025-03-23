@@ -8,10 +8,13 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Recipe;
 use App\Actions\FetchRecipe;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Recipe\CreateRecipeRequest;
 use App\Http\Requests\Recipe\ImportRecipeRequest;
 use App\Http\Requests\Recipe\UpdateRecipeRequest;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Exceptions\RecipeImport\ConnectionFailedException;
 use App\Exceptions\RecipeImport\NoStructuredDataException;
@@ -20,22 +23,34 @@ class RecipeController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $recipes = Recipe::query()
-            ->with(['user', 'categories'])
-            ->latest()
-            ->paginate(12);
+        $query = Recipe::query()
+            ->with(['user', 'categories' => function (Builder|BelongsToMany $query): void {
+                $query->withCount('recipes');
+            }])
+            ->latest();
+
+        // Filter by category if provided in the request
+        if ($request->has('category')) {
+            $categoryId = $request->input('category');
+            $query->whereHas('categories', function (Builder|BelongsToMany $query) use ($categoryId): void {
+                $query->where('categories.id', $categoryId);
+            });
+        }
+
+        $recipes = $query->paginate(12);
 
         return Inertia::render('Recipes/Index', [
             'recipes' => $recipes,
+            'filter' => $request->only('category'),
         ]);
     }
 
     public function create(): Response
     {
         return Inertia::render('Recipes/Create', [
-            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name']),
+            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
             'measurementUnits' => [
                 ['value' => 'g', 'label' => 'Grams'],
@@ -86,7 +101,13 @@ class RecipeController extends Controller
 
     public function show(Recipe $recipe): Response
     {
-        $recipe->load(['user', 'categories', 'ingredients']);
+        $recipe->load([
+            'user',
+            'categories' => function (Builder|BelongsToMany $query): void {
+                $query->select(['categories.id', 'categories.name', 'categories.slug']);
+            },
+            'ingredients'
+        ]);
 
         return Inertia::render('Recipes/Show', [
             'recipe' => $recipe,
@@ -97,11 +118,16 @@ class RecipeController extends Controller
     {
         $this->authorize('update', $recipe);
 
-        $recipe->load(['categories', 'ingredients']);
+        $recipe->load([
+            'categories' => function (Builder|BelongsToMany $query): void {
+                $query->select(['categories.id', 'categories.name', 'categories.slug']);
+            },
+            'ingredients'
+        ]);
 
         return Inertia::render('Recipes/Edit', [
             'recipe' => $recipe,
-            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name']),
+            'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
             'measurementUnits' => [
                 ['value' => 'g', 'label' => 'Grams'],

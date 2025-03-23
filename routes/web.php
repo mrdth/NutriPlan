@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +16,9 @@ Route::get('dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('recipes', RecipeController::class);
     Route::post('recipes/import', [RecipeController::class, 'import'])->name('recipes.import');
+
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
 });
 
 require __DIR__.'/settings.php';

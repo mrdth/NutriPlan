@@ -20,6 +20,7 @@ interface Props {
         categories: {
             id: number;
             name: string;
+            slug: string;
             recipe_count: number;
         }[];
     };
@@ -103,13 +104,14 @@ const sitename = computed(() => {
                     >
                         {{ sitename }}
                     </a>
-                    <span
+                    <Link
                         v-for="category in topCategories"
                         :key="category.id"
-                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                        :href="route('categories.show', category.slug)"
+                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                     >
                         {{ category.name }}
-                    </span>
+                    </Link>
                 </div>
             </div>
         </div>

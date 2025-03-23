@@ -18,6 +18,7 @@ export interface Recipe {
     categories: Array<{
         id: number;
         name: string;
+        slug: string;
     }>;
     ingredients: Array<{
         id: number;

@@ -9,15 +9,15 @@
   - [x] Update the `unit` column in the `ingredient_recipe` table to allow null values.
   - [x] Update the `RecipeForm` component to allow null values.
   - [x] Update the form requests to allow null values.
-3. [ ] Visualizing Categories
-  - [ ] Create a new page to show the categories.
+3. [x] Visualizing Categories
+  - [x] Create a new page to show the categories.
     - Use some kind of word cloud or tag cloud to visualize the categories.
     - The size of each word should be proportional to the number of recipes it is used on.
     - Clicking on a word should navigate to the recipes that use that category.
       - We can reuse the recipes.index page, but with a filtered list of recipes.
-  - [ ] Add a link to the categories page from the navigation menu in the sidebar.
-  - [ ] Update the `RecipeCard` component to link the category chips to the filtered recipes page.
-  - [ ] Update the `Recipe.Show` page to link the category chips to the filtered recipes page.
+  - [x] Add a link to the categories page from the navigation menu in the sidebar.
+  - [x] Update the `RecipeCard` component to link the category chips to the filtered recipes page.
+  - [x] Update the `Recipe.Show` page to link the category chips to the filtered recipes page.
 4. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
   - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.
