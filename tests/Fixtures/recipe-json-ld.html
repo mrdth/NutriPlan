@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON-LD Recipe</title>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "Recipe",
+        "name": "JSON-LD Recipe",
+        "description": "A recipe using JSON-LD format",
+        "recipeCategory": "Dinner",
+        "author": {
+            "@type": "Person",
+            "name": "Test Chef"
+        },
+        "recipeIngredient": [
+            "Ingredient 1",
+            "Ingredient 2"
+        ],
+        "recipeInstructions": [
+            {
+                "@type": "HowToStep",
+                "text": "Step 1"
+            },
+            {
+                "@type": "HowToStep",
+                "text": "Step 2"
+            }
+        ],
+        "prepTime": "PT15M",
+        "cookTime": "PT30M",
+        "recipeYield": "4"
+    }
+    </script>
+</head>
+<body>
+    <h1>JSON-LD Recipe</h1>
+</body>
+</html>

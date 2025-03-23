@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RDFa Recipe</title>
+</head>
+<body>
+    <div vocab="https://schema.org/" typeof="Recipe">
+        <h1 property="name">RDFa Recipe</h1>
+        <p property="description">A recipe using RDFa format</p>
+        <span property="recipeCategory">Breakfast</span>
+        
+        <div property="author" typeof="Person">
+            <span property="name">Test Chef</span>
+        </div>
+        
+        <ul>
+            <li property="recipeIngredient">Ingredient 1</li>
+            <li property="recipeIngredient">Ingredient 2</li>
+        </ul>
+        
+        <div property="recipeInstructions" typeof="HowToStep">
+            <span property="text">Step 1</span>
+        </div>
+        <div property="recipeInstructions" typeof="HowToStep">
+            <span property="text">Step 2</span>
+        </div>
+        
+        <meta property="prepTime" content="PT15M">
+        <meta property="cookTime" content="PT30M">
+        <meta property="recipeYield" content="4">
+    </div>
+</body>
+</html>

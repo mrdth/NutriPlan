@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microdata Recipe</title>
+</head>
+<body>
+    <div itemscope itemtype="https://schema.org/Recipe">
+        <h1 itemprop="name">Microdata Recipe</h1>
+        <p itemprop="description">A recipe using Microdata format</p>
+        <span itemprop="recipeCategory">Lunch</span>
+        
+        <div itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Test Chef</span>
+        </div>
+        
+        <ul>
+            <li itemprop="recipeIngredient">Ingredient 1</li>
+            <li itemprop="recipeIngredient">Ingredient 2</li>
+        </ul>
+        
+        <div itemprop="recipeInstructions" itemscope itemtype="https://schema.org/HowToStep">
+            <span itemprop="text">Step 1</span>
+        </div>
+        <div itemprop="recipeInstructions" itemscope itemtype="https://schema.org/HowToStep">
+            <span itemprop="text">Step 2</span>
+        </div>
+        
+        <meta itemprop="prepTime" content="PT15M">
+        <meta itemprop="cookTime" content="PT30M">
+        <meta itemprop="recipeYield" content="4">
+    </div>
+</body>
+</html>
