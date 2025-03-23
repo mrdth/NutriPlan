@@ -14,6 +14,7 @@ Route::get('dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('recipes', RecipeController::class);
+    Route::post('recipes/import', [RecipeController::class, 'import'])->name('recipes.import');
 });
 
 require __DIR__.'/settings.php';

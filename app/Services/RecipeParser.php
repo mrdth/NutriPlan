@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Recipe;
-use Brick\StructuredData\Item;
 use Exception;
+use App\Models\Recipe;
 use Illuminate\Support\Str;
+use Brick\StructuredData\Item;
+use Illuminate\Support\Facades\Auth;
 
 final class RecipeParser
 {
-    public static function fromItems($items, $url): ?Recipe
+    public static function fromItems($items, string $url): ?Recipe
     {
         foreach ($items as $item) {
             if (Str::contains(Str::lower(implode(',', $item->getTypes())), 'recipe')) {
@@ -62,6 +63,7 @@ final class RecipeParser
             'cooking_time' => $this->cooking_time,
             'servings' => $this->servings ?: (int) $this->yield,
             'images' => array_values(array_filter($this->images)),
+            'user_id' => Auth::id(),
         ]);
 
         // Parse and attach ingredients

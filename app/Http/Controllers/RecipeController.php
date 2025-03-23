@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Recipe\CreateRecipeRequest;
-use App\Http\Requests\Recipe\UpdateRecipeRequest;
-use App\Models\Recipe;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Recipe;
+use App\Actions\FetchRecipe;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Recipe\CreateRecipeRequest;
+use App\Http\Requests\Recipe\ImportRecipeRequest;
+use App\Http\Requests\Recipe\UpdateRecipeRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Exceptions\RecipeImport\ConnectionFailedException;
+use App\Exceptions\RecipeImport\NoStructuredDataException;
 
 class RecipeController extends Controller
 {
@@ -156,5 +160,32 @@ class RecipeController extends Controller
 
         return redirect()->route('recipes.index')
             ->with('success', 'Recipe deleted successfully.');
+    }
+
+    public function import(ImportRecipeRequest $request, FetchRecipe $action): RedirectResponse
+    {
+        try {
+            $recipe = $action->handle($request->input('url'));
+
+            return redirect()->route('recipes.edit', $recipe)
+                ->with('success', 'Recipe imported successfully. Please review and make any necessary adjustments.');
+
+        } catch (NoStructuredDataException $e) {
+            return back()->withErrors([
+                'url' => 'We could not find any recipe data on this page. The website may not use standard recipe markup.',
+            ]);
+
+        } catch (ConnectionFailedException $e) {
+            return back()->withErrors([
+                'url' => 'Could not connect to the recipe website. Please check the URL and try again.',
+            ]);
+
+        } catch (\Exception $e) {
+            report($e); // Log unexpected errors
+
+            return back()->withErrors([
+                'url' => 'An unexpected error occurred while importing the recipe. Please try again later.',
+            ]);
+        }
     }
 }
