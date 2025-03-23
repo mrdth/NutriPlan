@@ -40,7 +40,7 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect(route('dashboard').'?verified=1');
+    $response->assertRedirect(route('recipes.index').'?verified=1');
 });
 
 test('already verified user is redirected', function () {
@@ -56,5 +56,5 @@ test('already verified user is redirected', function () {
 
     $response = actingAs($user)->get($verificationUrl);
 
-    $response->assertRedirect(route('dashboard').'?verified=1');
+    $response->assertRedirect(route('recipes.index').'?verified=1');
 });

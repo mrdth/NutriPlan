@@ -23,7 +23,7 @@ test('verified user is redirected to dashboard', function () {
     $response = actingAs($user)
         ->post(route('verification.send'));
 
-    $response->assertRedirect(route('dashboard'));
+    $response->assertRedirect(route('recipes.index'));
 });
 
 test('unverified user receives verification email', function () {
