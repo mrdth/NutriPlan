@@ -18,22 +18,25 @@
   - [x] Add a link to the categories page from the navigation menu in the sidebar.
   - [x] Update the `RecipeCard` component to link the category chips to the filtered recipes page.
   - [x] Update the `Recipe.Show` page to link the category chips to the filtered recipes page.
-4. [ ] Update categories on recipe edit page
-  - [ ] Update the `RecipeForm` component to show only selected categories
+4. [x] Update categories on recipe edit page
+  - [x] Update the `RecipeForm` component to show only selected categories
     - Clicking a category chip should remove it from the list of selected categories
     - All categories should still be passed to the front end
-  - [ ] Add a searchable select for categories. 
+  - [x] Add a searchable select for categories. 
     - Selected categories should be pre-selected
     - Selecting a category should add it to the list of selected categories
     - Unselecting a category should remove it from the list of selected categories
-5. [ ] Filtering Categories
+5. [ ] Improved Ingredient Input
+  - Currently when adding / updating a recipe, the ingredient input is a select, allowing only existing ingredients to be selected.
+  - [ ] Allow new ingredients to be added.
+6. [ ] Filtering Categories
   - [ ] Add a filter to the categories page to filter the list of categories.
     - [ ] The filter should be a text input field.
     - [ ] The filter should be debounced to prevent too many requests.
     - [ ] The filter should filter the list of categories.
       - [ ] The filter should be case-insensitive.
       - [ ] The filter should be fuzzy.
-6. [ ] Implement Collections
+7. [ ] Implement Collections
   - [ ] Create a new page to show the collections for the user.
     - [ ] Add a 'New Collection' button. (the same as the 'New Recipe' button on the Recipes.Index page)
       - [ ] Display a modal with a form to create a new collection.
