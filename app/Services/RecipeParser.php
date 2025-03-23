@@ -31,25 +31,25 @@ final class RecipeParser
     }
 
     public function __construct(
-        protected string $title = '',
-        protected string $description = '',
-        protected string $url = '',
-        protected string $author = '',
+        private string $title = '',
+        private string $description = '',
+        private readonly string $url = '',
+        private string $author = '',
         /** @var array<int, string> */
-        protected array $ingredients = [],
+        private array $ingredients = [],
         /** @var array<int, string> */
-        protected array $steps = [],
-        protected string $yield = '',
-        protected int $prep_time = 0,
-        protected int $cooking_time = 0,
-        protected int $servings = 0,
+        private array $steps = [],
+        private string $yield = '',
+        private int $prep_time = 0,
+        private int $cooking_time = 0,
+        private int $servings = 0,
         /** @var array<int, string> */
-        protected array $images = [],
+        private array $images = [],
         /** @var array<int, string> */
-        protected array $categories = [],
-        protected ?IngredientParser $ingredient_parser = null
-    ) {
-        $this->ingredient_parser = $ingredient_parser ?? new IngredientParser();
+        private array $categories = [],
+        private readonly IngredientParser $ingredient_parser = new IngredientParser()
+    )
+    {
     }
 
     public function parse(Item $item): Recipe
@@ -70,19 +70,17 @@ final class RecipeParser
             'instructions' => implode("\n\n", $this->steps),
             'prep_time' => $this->prep_time,
             'cooking_time' => $this->cooking_time,
-            'servings' => $this->servings ?: (int) $this->yield,
+            'servings' => $this->servings !== 0 ? $this->servings : (int) $this->yield,
             'images' => array_values(array_filter($this->images)),
             'user_id' => Auth::id(),
         ]);
 
         // Handle categories
         $category_names = array_unique(array_filter($this->categories));
-        $categories = collect($category_names)->map(function (string $name): Category {
-            return Category::firstOrCreate(
-                ['name' => trim($name)],
-                ['is_active' => true]
-            );
-        });
+        $categories = collect($category_names)->map(fn(string $name): Category => Category::firstOrCreate(
+            ['name' => trim($name)],
+            ['is_active' => true]
+        ));
 
         if ($recipe->exists) {
             $recipe->categories()->sync($categories->pluck('id'));
@@ -114,7 +112,7 @@ final class RecipeParser
     /**
      * @param array<int, string>|string $values
      */
-    protected function parse_name(array|string $values): void
+    private function parse_name(array|string $values): void
     {
         $this->title = (is_array($values) ? $values[0] : $values);
     }
@@ -122,7 +120,7 @@ final class RecipeParser
     /**
      * @param array<int, string>|string $values
      */
-    protected function parse_description(array|string $values): void
+    private function parse_description(array|string $values): void
     {
         $this->description = (is_array($values) ? $values[0] : $values);
     }
@@ -182,21 +180,15 @@ final class RecipeParser
                 foreach ($item->getProperties() as $name => $values) {
                     $name = Str::replace(['http://schema.org/', 'https://schema.org/'], '', Str::lower($name));
                     // $name may be one of [url, height, thumbnail, width]
-                    if ($name == "url") {
-                        // If it's relative
-                        if (Str::contains($values[0], ["http://", "https://"])) {
-                            $this->images[] = $values[0];
-                        }
+                    // If it's relative
+                    if ($name == "url" && Str::contains($values[0], ["http://", "https://"])) {
+                        $this->images[] = $values[0];
                     }
                 }
-            } else {
-                if (is_array($item)) {
-                    throw new Exception("Handle image items are array of strings");
-                } else {
-                    if (Str::contains($item, ["http://", "https://"])) {
-                        $this->images[] = $item;
-                    }
-                }
+            } elseif (is_array($item)) {
+                throw new Exception("Handle image items are array of strings");
+            } elseif (Str::contains($item, ["http://", "https://"])) {
+                $this->images[] = $item;
             }
         }
     }
@@ -208,9 +200,7 @@ final class RecipeParser
     {
         if (is_array($values)) {
             $this->ingredients = array_merge(
-                collect($values)->transform(function (string $item): string {
-                    return html_entity_decode($item);
-                })->toArray()
+                collect($values)->transform(fn(string $item): string => html_entity_decode($item))->toArray()
             );
         }
     }
@@ -260,7 +250,7 @@ final class RecipeParser
     /**
      * @return array<int, string>
      */
-    protected function parseCommaSeparatedString(string $value): array
+    private function parseCommaSeparatedString(string $value): array
     {
         return collect(explode(',', $value))
             ->map(fn (string $item): string => trim($item))

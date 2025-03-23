@@ -41,14 +41,14 @@ class FetchRecipe
             foreach ($parsers as $parser) {
                 try {
                     $items = (new HTMLReader($parser))->read($html, $recipe_url);
-                    if ($recipe = RecipeParser::fromItems($items, $recipe_url)) {
+                    if (($recipe = RecipeParser::fromItems($items, $recipe_url)) instanceof \App\Models\Recipe) {
                         return $recipe;
                     }
                 } catch (Throwable $e) {
                     $lastError = $e;
                     Log::warning('Parser failed', [
                         'url' => $recipe_url,
-                        'parser' => get_class($parser),
+                        'parser' => $parser::class,
                         'error' => $e->getMessage(),
                     ]);
                     continue;

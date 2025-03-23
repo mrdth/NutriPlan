@@ -11,7 +11,7 @@ class ConnectionFailedException extends Exception
     public function __construct(string $url, string $error = '')
     {
         $message = "Failed to connect to {$url}";
-        if ($error) {
+        if ($error !== '' && $error !== '0') {
             $message .= ": {$error}";
         }
         parent::__construct($message);

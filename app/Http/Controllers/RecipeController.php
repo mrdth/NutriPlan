@@ -170,12 +170,12 @@ class RecipeController extends Controller
             return redirect()->route('recipes.edit', $recipe)
                 ->with('success', 'Recipe imported successfully. Please review and make any necessary adjustments.');
 
-        } catch (NoStructuredDataException $e) {
+        } catch (NoStructuredDataException) {
             return back()->withErrors([
                 'url' => 'We could not find any recipe data on this page. The website may not use standard recipe markup.',
             ]);
 
-        } catch (ConnectionFailedException $e) {
+        } catch (ConnectionFailedException) {
             return back()->withErrors([
                 'url' => 'Could not connect to the recipe website. Please check the URL and try again.',
             ]);

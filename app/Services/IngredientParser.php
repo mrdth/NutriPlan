@@ -87,8 +87,8 @@ class IngredientParser
         // Clean up the ingredient name
         $name = trim($name);
         $name = preg_replace('/^of\s+/', '', $name); // Remove leading "of"
-        $name = preg_replace('/,.*$/', '', $name); // Remove anything after a comma
-        $name = trim($name);
+        $name = preg_replace('/,.*$/', '', (string) $name); // Remove anything after a comma
+        $name = trim((string) $name);
 
         // Find or create the ingredient
         $ingredient = Ingredient::firstOrCreate(
