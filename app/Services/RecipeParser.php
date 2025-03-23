@@ -48,8 +48,7 @@ final class RecipeParser
         /** @var array<int, string> */
         private array $categories = [],
         private readonly IngredientParser $ingredient_parser = new IngredientParser()
-    )
-    {
+    ) {
     }
 
     public function parse(Item $item): Recipe
@@ -77,7 +76,7 @@ final class RecipeParser
 
         // Handle categories
         $category_names = array_unique(array_filter($this->categories));
-        $categories = collect($category_names)->map(fn(string $name): Category => Category::firstOrCreate(
+        $categories = collect($category_names)->map(fn (string $name): Category => Category::firstOrCreate(
             ['name' => trim($name)],
             ['is_active' => true]
         ));
@@ -200,7 +199,7 @@ final class RecipeParser
     {
         if (is_array($values)) {
             $this->ingredients = array_merge(
-                collect($values)->transform(fn(string $item): string => html_entity_decode($item))->toArray()
+                collect($values)->transform(fn (string $item): string => html_entity_decode($item))->toArray()
             );
         }
     }

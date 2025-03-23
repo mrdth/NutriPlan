@@ -55,30 +55,34 @@ const sitename = computed(() => {
 
 <template>
     <article class="group relative flex flex-col overflow-hidden rounded-lg border dark:border-gray-800">
-        <div class="aspect-h-3 aspect-w-4 bg-gray-200 dark:bg-gray-800">
-            <img v-if="recipe.images?.length" :src="recipe.images[0]" :alt="recipe.title" class="h-full w-full object-cover object-center" />
+        <Link :href="route('recipes.show', recipe.slug)" class="aspect-h-3 aspect-w-4 relative block overflow-hidden bg-gray-200 dark:bg-gray-800">
+            <img
+                v-if="recipe.images?.length"
+                :src="recipe.images[0]"
+                :alt="recipe.title"
+                class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+            />
             <img
                 v-else
                 src="https://placehold.co/600x400?text=No+image+available"
                 alt="No image available"
-                class="h-full w-full object-cover object-center"
+                class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
             />
-        </div>
+        </Link>
 
         <div class="flex flex-1 flex-col space-y-2 p-4">
             <h3 class="text-sm font-medium text-gray-900 dark:text-white">
                 <Link :href="route('recipes.show', recipe.slug)">
-                    <span aria-hidden="true" class="absolute inset-0" />
                     {{ recipe.title }}
                 </Link>
             </h3>
 
-            <p v-if="recipe.description" class="text-sm text-gray-500 dark:text-gray-400">
+            <p v-if="recipe.description" class="line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
                 {{ recipe.description }}
             </p>
 
-            <div class="mt-auto flex items-center justify-between text-xs">
-                <div class="flex items-center space-x-4 text-gray-600 dark:text-gray-400">
+            <div class="mt-auto space-y-6">
+                <div class="flex items-center justify-between space-x-4 text-xs text-gray-600 dark:text-gray-400">
                     <div class="flex items-center space-x-1">
                         <ClockIcon class="h-4 w-4" />
                         <span>{{ formatTime(recipe.prep_time + recipe.cooking_time) }}</span>
@@ -89,20 +93,20 @@ const sitename = computed(() => {
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-1">
+                <div class="flex flex-wrap items-center gap-1 text-xs">
                     <a
                         v-if="recipe.url && sitename"
                         :href="recipe.url"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-800 dark:text-blue-200 dark:hover:bg-blue-700"
+                        class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 font-medium text-blue-800 hover:bg-blue-200 dark:bg-blue-800 dark:text-blue-200 dark:hover:bg-blue-700"
                     >
                         {{ sitename }}
                     </a>
                     <span
                         v-for="category in topCategories"
                         :key="category.id"
-                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                     >
                         {{ category.name }}
                     </span>
