@@ -44,7 +44,7 @@ const showImportModal = ref(false);
     <AppLayout>
         <Head title="Recipes" />
 
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Recipes</h1>
