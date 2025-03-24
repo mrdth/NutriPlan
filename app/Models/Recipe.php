@@ -45,7 +45,6 @@ class Recipe extends Model
     protected $hidden = [
         'user_id',
         'published_at',
-        'created_at',
         'updated_at',
     ];
 

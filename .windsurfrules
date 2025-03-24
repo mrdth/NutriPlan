@@ -55,6 +55,5 @@ database/migrations
 	•	Keep UI minimal.
 
 5. Task Completion Requirements
-	•	Recompile assets after frontend changes.
 	•	Follow all rules before marking tasks complete.
 
