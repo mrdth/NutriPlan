@@ -76,7 +76,12 @@
                         <!-- Instructions -->
                         <div class="mt-8">
                             <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Instructions</h2>
-                            <div class="prose prose-gray dark:prose-invert max-w-none" v-html="formatInstructions(recipe.instructions)" />
+                            <ul class="list-none space-y-6">
+                                <li v-for="(step, index) in parseInstructions(recipe.instructions)" :key="index" class="text-gray-700 dark:text-gray-300">
+                                    <h3 class="font-medium text-lg text-gray-900 dark:text-white mb-2">Step {{ index + 1 }}</h3>
+                                    <p>{{ step }}</p>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     
@@ -116,11 +121,9 @@ defineProps<{
     recipe: Recipe;
 }>();
 
-const formatInstructions = (instructions: string): string => {
+const parseInstructions = (instructions: string): string[] => {
     return instructions
         .split('\n')
-        .filter((line) => line.trim())
-        .map((line) => `<p>${line}</p>`)
-        .join('');
+        .filter((line) => line.trim());
 };
 </script>

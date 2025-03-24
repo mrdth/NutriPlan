@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Enums\MeasurementUnit;
 use App\Models\Ingredient;
-use Illuminate\Support\Str;
 
 class IngredientParser
 {
@@ -92,7 +91,6 @@ class IngredientParser
 
         // Find or create the ingredient
         $ingredient = Ingredient::firstOrCreate(
-            ['slug' => Str::slug($name)],
             ['name' => $name]
         );
 

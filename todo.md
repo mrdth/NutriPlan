@@ -52,7 +52,7 @@
           - We can reuse the recipes.index page, but with a filtered list of recipes.
     - [ ] Add a link to the collections page from the navigation menu in the sidebar.
   - [ ] Update the `Recipe.Show` page to show the collections the current user has added this recipe to.
-7. [ ] Add nutrition information for recipes.
+8. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
   - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.
   - [ ] Update the `RecipeParser` to extract nutrition information from the recipe source.
