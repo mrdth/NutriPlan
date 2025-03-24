@@ -29,13 +29,13 @@
 5. [x] Improved Ingredient Input
   - Currently when adding / updating a recipe, the ingredient input is a select, allowing only existing ingredients to be selected.
   - [x] Allow new ingredients to be added.
-6. [ ] Filtering Categories
-  - [ ] Add a filter to the categories page to filter the list of categories.
-    - [ ] The filter should be a text input field.
-    - [ ] The filter should be debounced to prevent too many requests.
-    - [ ] The filter should filter the list of categories.
-      - [ ] The filter should be case-insensitive.
-      - [ ] The filter should be fuzzy.
+6. [x] Filtering Categories
+  - [x] Add a filter to the categories page to filter the list of categories.
+    - [x] The filter should be a text input field.
+    - [x] The filter should be debounced to prevent too many requests.
+    - [x] The filter should filter the list of categories.
+      - [x] The filter should be case-insensitive.
+      - [x] The filter should be fuzzy.
 7. [ ] Implement Collections
   - [ ] Create a new page to show the collections for the user.
     - [ ] Add a 'New Collection' button. (the same as the 'New Recipe' button on the Recipes.Index page)
