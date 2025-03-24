@@ -237,14 +237,15 @@ const removeIngredient = (index: number) => {
     form.ingredients.splice(index, 1);
 };
 
-const handleNewIngredient = (newIngredient: { id: number; name: string }) => {
-    // Add the new ingredient to the ingredients list
-    props.ingredients.push(newIngredient);
-};
-
 const emit = defineEmits<{
     (e: 'submit', form: ReturnType<typeof useForm<FormData>>): void;
+    (e: 'new-ingredient', ingredient: { id: number; name: string }): void;
 }>();
+
+const handleNewIngredient = (newIngredient: { id: number; name: string }) => {
+    // Emit event to add the new ingredient to the ingredients list
+    emit('new-ingredient', newIngredient);
+};
 
 const submit = () => {
     emit('submit', form);

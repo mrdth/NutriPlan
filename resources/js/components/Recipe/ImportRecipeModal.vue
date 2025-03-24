@@ -34,10 +34,6 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/vue3';
 import { Loader2Icon } from 'lucide-vue-next';
 
-const props = defineProps<{
-    open: boolean;
-}>();
-
 const emit = defineEmits<{
     'update:open': [value: boolean];
 }>();

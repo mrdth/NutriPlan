@@ -147,11 +147,9 @@ interface Collection {
     recipes_count: number;
 }
 
-interface Props {
+defineProps<{
     collections: Collection[];
-}
-
-const props = defineProps<Props>();
+}>();
 
 const isNewCollectionModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
