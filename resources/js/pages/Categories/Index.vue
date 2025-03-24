@@ -121,7 +121,7 @@ watch(
             randomizeCloudElementPositions();
         }, 100);
     },
-    { deep: true }
+    { deep: true },
 );
 </script>
 
@@ -140,7 +140,7 @@ watch(
             </div>
 
             <!-- Filter input -->
-            <div class="mt-4 mx-auto">
+            <div class="mx-auto mt-4">
                 <div class="relative rounded-md shadow-sm">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg
@@ -168,42 +168,44 @@ watch(
             </div>
 
             <!-- Fixed height container for all states -->
-            <div class="mt-12 min-h-[400px] flex items-center justify-center">
+            <div class="mt-12 flex min-h-[400px] items-center justify-center">
                 <!-- No categories state -->
-                <div v-if="filteredCategories.length === 0 && !isFiltering" class="text-center w-full">
+                <div v-if="filteredCategories.length === 0 && !isFiltering" class="w-full text-center">
                     <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">No categories</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Categories will appear here once recipes have been tagged with them.</p>
                 </div>
 
                 <!-- Loading state -->
-                <div v-else-if="isFiltering" class="text-center w-full">
+                <div v-else-if="isFiltering" class="w-full text-center">
                     <p class="text-sm text-gray-500 dark:text-gray-400">Filtering categories...</p>
                 </div>
 
                 <!-- No results state -->
-                <div v-else-if="filteredCategories.length === 0 && debouncedFilterText" class="text-center w-full">
+                <div v-else-if="filteredCategories.length === 0 && debouncedFilterText" class="w-full text-center">
                     <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">No matching categories</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try a different filter term.</p>
                 </div>
 
                 <!-- Categories cloud -->
                 <div v-else class="w-full">
-                    <div ref="cloudContainer" class="flex flex-wrap justify-center gap-4 py-8 container mx-auto">
-                    <Link
-                        v-for="category in shuffledCategories"
-                        :key="category.id"
-                        :href="route('categories.show', category.slug)"
-                        class="category-tag transition-all duration-300 hover:scale-110 hover:shadow-md"
-                        :style="{
-                            fontSize: `${getFontSize(category.recipes_count)}rem`,
-                            opacity: getOpacity(category.recipes_count),
-                        }"
-                    >
-                        <span class="inline-block rounded-full bg-gray-100 px-4 py-2 font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200">
-                            {{ category.name }}
-                            <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">({{ category.recipes_count }})</span>
-                        </span>
-                    </Link>
+                    <div ref="cloudContainer" class="container mx-auto flex flex-wrap justify-center gap-4 py-8">
+                        <Link
+                            v-for="category in shuffledCategories"
+                            :key="category.id"
+                            :href="route('categories.show', category.slug)"
+                            class="category-tag transition-all duration-300 hover:scale-110 hover:shadow-md"
+                            :style="{
+                                fontSize: `${getFontSize(category.recipes_count)}rem`,
+                                opacity: getOpacity(category.recipes_count),
+                            }"
+                        >
+                            <span
+                                class="inline-block rounded-full bg-gray-100 px-4 py-2 font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                            >
+                                {{ category.name }}
+                                <span class="ml-1 text-xs text-gray-500 dark:text-gray-400">({{ category.recipes_count }})</span>
+                            </span>
+                        </Link>
                     </div>
                 </div>
             </div>

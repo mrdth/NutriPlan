@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { ClockIcon, UsersIcon } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { InputError } from '@/components/ui/input-error';
+import { Label } from '@/components/ui/label';
+import { Link, useForm } from '@inertiajs/vue3';
+import { ClockIcon, EllipsisVerticalIcon, FolderPlusIcon, UsersIcon } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     recipe: {
@@ -26,7 +31,16 @@ interface Props {
     };
 }
 
+interface Collection {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+}
+
 const props = defineProps<Props>();
+const isAddToCollectionModalOpen = ref(false);
+const collections = ref<Collection[]>([]);
 
 const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
@@ -40,6 +54,7 @@ const formatTime = (minutes: number): string => {
 };
 
 const topCategories = computed(() => {
+    if (!props.recipe.categories) return [];
     return [...props.recipe.categories].sort((a, b) => b.recipe_count - a.recipe_count).slice(0, 3);
 });
 
@@ -52,6 +67,41 @@ const sitename = computed(() => {
         return null;
     }
 });
+
+const form = useForm({
+    collection_id: '',
+    recipe_id: props.recipe.id,
+});
+
+const openAddToCollectionModal = async () => {
+    try {
+        const response = await fetch(route('collections.index'), {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        collections.value = data.collections || [];
+        isAddToCollectionModalOpen.value = true;
+    } catch (error) {
+        console.error('Failed to fetch collections:', error);
+    }
+};
+
+const addToCollection = () => {
+    form.post(route('collections.add-recipe'), {
+        onSuccess: () => {
+            isAddToCollectionModalOpen.value = false;
+            form.collection_id = '';
+        },
+    });
+};
 </script>
 
 <template>
@@ -115,5 +165,66 @@ const sitename = computed(() => {
                 </div>
             </div>
         </div>
+        
+        <!-- Add to Collection Button (Bottom Anchored) -->
+        <div class="absolute bottom-0 right-0 p-2">
+            <DropdownMenu>
+                <DropdownMenuTrigger as="div">
+                    <Button variant="ghost" size="icon" class="h-7 w-7 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm hover:bg-white dark:hover:bg-gray-700">
+                        <EllipsisVerticalIcon class="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem @click="openAddToCollectionModal">
+                        <FolderPlusIcon class="mr-2 h-4 w-4" />
+                        Add to Collection
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
     </article>
+
+    <!-- Add to Collection Modal -->
+    <Dialog :open="isAddToCollectionModalOpen" @update:open="isAddToCollectionModalOpen = $event">
+        <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>Add to Collection</DialogTitle>
+                <DialogDescription> Add this recipe to one of your collections. </DialogDescription>
+            </DialogHeader>
+            <form @submit.prevent="addToCollection">
+                <div class="space-y-4 py-4">
+                    <div v-if="collections.length === 0" class="text-center">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">You don't have any collections yet. Create a collection first.</p>
+                        <div class="mt-4">
+                            <Link
+                                :href="route('collections.index')"
+                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            >
+                                Go to Collections
+                            </Link>
+                        </div>
+                    </div>
+                    <div v-else class="space-y-2">
+                        <Label for="collection">Select a Collection</Label>
+                        <select
+                            id="collection"
+                            v-model="form.collection_id"
+                            class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                            required
+                        >
+                            <option value="" disabled>Select a collection</option>
+                            <option v-for="collection in collections" :key="collection.id" :value="collection.id">
+                                {{ collection.name }}
+                            </option>
+                        </select>
+                        <InputError :message="form.errors.collection_id" />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="outline" @click="isAddToCollectionModalOpen = false">Cancel</Button>
+                    <Button type="submit" :disabled="form.processing || collections.length === 0">Add</Button>
+                </DialogFooter>
+            </form>
+        </DialogContent>
+    </Dialog>
 </template>

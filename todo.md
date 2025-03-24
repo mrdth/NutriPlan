@@ -36,22 +36,29 @@
     - [x] The filter should filter the list of categories.
       - [x] The filter should be case-insensitive.
       - [x] The filter should be fuzzy.
-7. [ ] Implement Collections
-  - [ ] Create a new page to show the collections for the user.
-    - [ ] Add a 'New Collection' button. (the same as the 'New Recipe' button on the Recipes.Index page)
-      - [ ] Display a modal with a form to create a new collection.
+7. [x] Implement Collections
+  - [x] Create a new page to show the collections for the user.
+    - [x] Add a 'New Collection' button. (the same as the 'New Recipe' button on the Recipes.Index page)
+      - [x] Display a modal with a form to create a new collection.
         - The form should have fields for the collection name and description.
         - The form should have a submit button.
         - The form should have a cancel button.
-    - [ ] Show the collections as a list.
+    - [x] Show the collections as a list.
       - Each item in the list should have:
         - The collection name
         - The description
         - The number of recipes in the collection
         - A link to the collection
           - We can reuse the recipes.index page, but with a filtered list of recipes.
-    - [ ] Add a link to the collections page from the navigation menu in the sidebar.
-  - [ ] Update the `Recipe.Show` page to show the collections the current user has added this recipe to.
+    - [x] Add a link to the collections page from the navigation menu in the sidebar.
+  - [x] Update the `Recipe.Show` page to show the collections the current user has added this recipe to.
+  - [x] Update the `RecipeCard` component to allow adding a recipe to a collection.
+    - Add a menu to the bottom right of the card.
+    - Add a button to the menu to add the recipe to a collection.
+      - The menu should be triggered by a click on the button, which should be the 'ellipsis-vertical' icon.
+      - [x] Display a modal with a form to add the recipe to a collection.
+        - The form should have a select for the collection.
+        - The form should have a submit button.
 8. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
   - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.

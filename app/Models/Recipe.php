@@ -65,6 +65,11 @@ class Recipe extends Model
             ->using(RecipeIngredient::class);
     }
 
+    public function collections(): BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class);
+    }
+
     public function getStatusAttribute(): RecipeStatus
     {
         return RecipeStatus::fromPublishedAt($this->published_at?->toDateTimeString());

@@ -21,7 +21,7 @@
             </div>
 
             <div class="mt-8 overflow-hidden bg-white p-6 shadow-xl dark:bg-gray-800 sm:rounded-lg">
-                <div class="flex flex-col md:flex-row gap-8">
+                <div class="flex flex-col gap-8 md:flex-row">
                     <!-- Main content column -->
                     <div class="flex-1">
                         <!-- Description -->
@@ -62,7 +62,11 @@
                         <div class="mt-8">
                             <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Ingredients</h2>
                             <ul class="space-y-2">
-                                <li v-for="ingredient in recipe.ingredients" :key="ingredient.id" class="flex items-center text-gray-700 dark:text-gray-300">
+                                <li
+                                    v-for="ingredient in recipe.ingredients"
+                                    :key="ingredient.id"
+                                    class="flex items-center text-gray-700 dark:text-gray-300"
+                                >
                                     <div class="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 dark:bg-gray-400" />
                                     <span class="font-medium">
                                         {{ ingredient.pivot.amount }}
@@ -77,16 +81,20 @@
                         <div class="mt-8">
                             <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Instructions</h2>
                             <ul class="list-none space-y-6">
-                                <li v-for="(step, index) in parseInstructions(recipe.instructions)" :key="index" class="text-gray-700 dark:text-gray-300">
-                                    <h3 class="font-medium text-lg text-gray-900 dark:text-white mb-2">Step {{ index + 1 }}</h3>
+                                <li
+                                    v-for="(step, index) in parseInstructions(recipe.instructions)"
+                                    :key="index"
+                                    class="text-gray-700 dark:text-gray-300"
+                                >
+                                    <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">Step {{ index + 1 }}</h3>
                                     <p>{{ step }}</p>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    
+
                     <!-- Image carousel column -->
-                    <div v-if="recipe.images && recipe.images.length > 0" class="md:w-1/3 h-80">
+                    <div v-if="recipe.images && recipe.images.length > 0" class="h-80 md:w-1/3">
                         <Carousel :images="recipe.images" :autoplay="true" :interval="5000" />
                     </div>
                 </div>
@@ -122,8 +130,6 @@ defineProps<{
 }>();
 
 const parseInstructions = (instructions: string): string[] => {
-    return instructions
-        .split('\n')
-        .filter((line) => line.trim());
+    return instructions.split('\n').filter((line) => line.trim());
 };
 </script>
