@@ -102,6 +102,7 @@ class RecipeController extends Controller
             'categories' => function (Builder|BelongsToMany $query): void {
                 $query->select(['categories.id', 'categories.name', 'categories.slug']);
             },
+            'nutritionInformation',
             'ingredients'
         ]);
 
@@ -118,6 +119,7 @@ class RecipeController extends Controller
             'categories' => function (Builder|BelongsToMany $query): void {
                 $query->select(['categories.id', 'categories.name', 'categories.slug']);
             },
+            'nutritionInformation',
             'ingredients'
         ]);
 

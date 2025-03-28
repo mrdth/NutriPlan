@@ -131,6 +131,9 @@
                 <InputError :message="form.errors.images" />
             </div>
 
+            <!-- Nutrition Information -->
+            <NutritionForm v-model="form.nutrition_information" />
+
             <!-- Publishing -->
             <div class="flex items-center gap-4">
                 <Checkbox id="publish" v-model="form.published_at" :true-value="new Date().toISOString()" :false-value="null" />
@@ -146,6 +149,7 @@
 </template>
 
 <script setup lang="ts">
+import NutritionForm from '@/components/Recipe/NutritionForm.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -189,6 +193,20 @@ interface FormData {
         unit: string | null;
     }>;
     images: File[];
+    nutrition_information: {
+        calories?: string;
+        carbohydrate_content?: string;
+        cholesterol_content?: string;
+        fat_content?: string;
+        fiber_content?: string;
+        protein_content?: string;
+        saturated_fat_content?: string;
+        serving_size?: string;
+        sodium_content?: string;
+        sugar_content?: string;
+        trans_fat_content?: string;
+        unsaturated_fat_content?: string;
+    };
     published_at: string | null;
     [key: string]: FormDataConvertible;
 }
@@ -208,6 +226,7 @@ const form = useForm<FormData>({
             unit: i.pivot.unit,
         })) ?? [],
     images: [] as File[],
+    nutrition_information: props.recipe?.nutrition_information ?? {},
     published_at: props.recipe?.status === 'published' ? new Date().toISOString() : null,
 });
 

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -68,6 +69,11 @@ class Recipe extends Model
     public function collections(): BelongsToMany
     {
         return $this->belongsToMany(Collection::class);
+    }
+
+    public function nutritionInformation(): HasOne
+    {
+        return $this->hasOne(NutritionInformation::class);
     }
 
     public function getStatusAttribute(): RecipeStatus

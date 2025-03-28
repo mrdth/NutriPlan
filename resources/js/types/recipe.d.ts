@@ -28,4 +28,18 @@ export interface Recipe {
             unit: string;
         };
     }>;
+    nutrition_information?: {
+        calories?: string;
+        carbohydrate_content?: string;
+        cholesterol_content?: string;
+        fat_content?: string;
+        fiber_content?: string;
+        protein_content?: string;
+        saturated_fat_content?: string;
+        serving_size?: string;
+        sodium_content?: string;
+        sugar_content?: string;
+        trans_fat_content?: string;
+        unsaturated_fat_content?: string;
+    } | null;
 }

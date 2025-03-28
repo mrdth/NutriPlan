@@ -88,7 +88,8 @@
             "@test:unit",
             "@test:lint",
             "@test:refactor"
-        ]
+        ],
+        "tests": "test"
     },
     "extra": {
         "laravel": {

@@ -47,6 +47,12 @@
                             </div>
                         </div>
 
+                        <!-- Nutrition Information -->
+                        <div v-if="recipe.nutrition_information" class="mt-8">
+                            <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Nutrition</h2>
+                            <NutritionInformation :nutrition="recipe.nutrition_information" />
+                        </div>
+
                         <!-- Categories -->
                         <div v-if="recipe.categories.length > 0" class="mt-6">
                             <div class="flex flex-wrap gap-2">
@@ -109,6 +115,7 @@
 </template>
 
 <script setup lang="ts">
+import NutritionInformation from '@/components/Recipe/NutritionInformation.vue';
 import ScalingControl from '@/components/Recipe/ScalingControl.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
