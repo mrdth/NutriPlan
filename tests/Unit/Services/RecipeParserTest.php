@@ -5,12 +5,14 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\NutritionInformation;
 use App\Models\Recipe;
+use App\Services\NutritionParser;
 use App\Services\RecipeParser;
 use Brick\StructuredData\Item;
 use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
-    $this->parser = new RecipeParser();
+    $nutritionParser = new NutritionParser();
+    $this->parser = new RecipeParser(nutrition_parser: $nutritionParser);
 });
 
 it('parses a single category from keywords', function () {
@@ -158,6 +160,26 @@ it('parses nutrition information', function () {
     $user = createUser();
     Auth::login($user);
 
+    // Create a mock NutritionParser that returns expected nutrition data
+    $nutritionParser = mock(NutritionParser::class);
+    $nutritionData = [
+        'calories' => '240 cal',
+        'carbohydrate_content' => '37g',
+        'protein_content' => '4g',
+        'fat_content' => '9g',
+        'fiber_content' => '2g',
+        'sugar_content' => '5g',
+        'cholesterol_content' => '0mg',
+        'sodium_content' => '200mg',
+        'saturated_fat_content' => '2g',
+        'trans_fat_content' => '0g',
+        'unsaturated_fat_content' => '7g',
+        'serving_size' => '1 serving',
+    ];
+    $nutritionParser->shouldReceive('parse')->andReturn($nutritionData);
+
+    $parser = new RecipeParser(nutrition_parser: $nutritionParser);
+
     $item = mock(Item::class);
     $item->shouldReceive('getTypes')->andReturn(['Recipe']);
     $item->shouldReceive('getProperties')
@@ -181,7 +203,7 @@ it('parses nutrition information', function () {
             ],
         ]);
 
-    $recipe = $this->parser->parse($item);
+    $recipe = $parser->parse($item);
 
     expect($recipe->nutritionInformation)
         ->toBeInstanceOf(NutritionInformation::class)
@@ -210,6 +232,16 @@ it('updates existing nutrition information', function () {
         'protein_content' => '5g',
     ]);
 
+    // Create a mock NutritionParser that returns expected nutrition data
+    $nutritionParser = mock(NutritionParser::class);
+    $nutritionData = [
+        'calories' => '240 cal',
+        'protein_content' => '10g',
+    ];
+    $nutritionParser->shouldReceive('parse')->andReturn($nutritionData);
+
+    $parser = new RecipeParser(nutrition_parser: $nutritionParser);
+
     $item = mock(Item::class);
     $item->shouldReceive('getTypes')->andReturn(['Recipe']);
     $item->shouldReceive('getProperties')
@@ -224,8 +256,8 @@ it('updates existing nutrition information', function () {
             ],
         ]);
 
-    $this->parser->setRecipe($recipe);
-    $updatedRecipe = $this->parser->parse($item);
+    $parser->setRecipe($recipe);
+    $updatedRecipe = $parser->parse($item);
 
     expect($updatedRecipe->id)->toBe($recipe->id)
         ->and($updatedRecipe->nutritionInformation->id)->toBe($existingNutrition->id)
