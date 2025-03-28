@@ -71,15 +71,15 @@
   - [x] Add a visual indicator when a recipe has been scaled.
   - [x] Add a "Reset to Original" button to revert to the original recipe quantities.
 
-9. [ ] Add nutrition information for recipes.
-  - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
-  - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.
-  - [ ] Update the `RecipeParser` to extract nutrition information from the recipe source.
-  - [ ] Update the `RecipeForm` component to allow input / editing of nutrition information.
+9. [x] Add nutrition information for recipes.
+  - [x] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
+  - [x] Create models and migrations needed to store nutrition information and associate it with recipes.
+  - [x] Update the `RecipeParser` to extract nutrition information from the recipe source.
+  - [x] Update the `RecipeForm` component to allow input / editing of nutrition information.
     - Make all fields optional.
     - Use the schema.org format for the fields.
     - Place the nutrition information fields in a separate section of the form, in a collapsible panel.
-  - [ ] Use the `NutritionInformation` component to display the information on the recipe page.
+  - [x] Use the `NutritionInformation` component to display the information on the recipe page.
 
 10. [ ] Implement favorite recipes feature.
   - [ ] Create a many-to-many relationship between users and recipes for favorites.
