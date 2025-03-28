@@ -60,10 +60,7 @@
 
                         <!-- Scaling Control -->
                         <div class="mt-6">
-                            <ScalingControl 
-                                :original-servings="recipe.servings" 
-                                @update:scaling-factor="updateScalingFactor" 
-                            />
+                            <ScalingControl :original-servings="recipe.servings" @update:scaling-factor="updateScalingFactor" />
                         </div>
 
                         <!-- Ingredients -->
@@ -112,10 +109,10 @@
 </template>
 
 <script setup lang="ts">
+import ScalingControl from '@/components/Recipe/ScalingControl.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Carousel from '@/components/ui/carousel.vue';
-import ScalingControl from '@/components/Recipe/ScalingControl.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
 import { Head, Link, usePage } from '@inertiajs/vue3';
@@ -152,24 +149,24 @@ const updateScalingFactor = (factor: number) => {
 
 const formatScaledAmount = (amount: number): string => {
     if (!amount) return '0';
-    
+
     const scaled = amount * scalingFactor.value;
-    
+
     // For small values, show more decimal places
     if (scaled < 0.1) {
         return scaled.toFixed(2);
     }
-    
+
     // For values less than 1, show one decimal place
     if (scaled < 1) {
         return scaled.toFixed(1);
     }
-    
+
     // For values with decimal parts, show one decimal place
     if (scaled % 1 !== 0) {
         return scaled.toFixed(1);
     }
-    
+
     // For whole numbers, show no decimal places
     return scaled.toFixed(0);
 };

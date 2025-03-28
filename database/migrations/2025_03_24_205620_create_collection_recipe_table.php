@@ -12,7 +12,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('collection_recipe', function (Blueprint $table) {
+        Schema::create('collection_recipe', function (Blueprint $table): void {
             $table->foreignId('collection_id')->constrained()->cascadeOnDelete();
             $table->foreignId('recipe_id')->constrained()->cascadeOnDelete();
             $table->primary(['collection_id', 'recipe_id']);

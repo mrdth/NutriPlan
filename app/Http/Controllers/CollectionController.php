@@ -6,13 +6,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Recipe;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use App\Actions\CreateCollectionAction;
-use App\Actions\AddRecipeToCollectionAction;
 use App\Http\Requests\CreateCollectionRequest;
 use App\Http\Requests\UpdateCollectionRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,7 +40,7 @@ class CollectionController extends Controller
     {
         Gate::authorize('view', $collection);
 
-        $collection->load(['recipes.categories' => function (BelongsToMany $query) {
+        $collection->load(['recipes.categories' => function (BelongsToMany $query): void {
             $query->latest();
         }]);
 
@@ -54,7 +52,7 @@ class CollectionController extends Controller
     public function store(CreateCollectionRequest $request, CreateCollectionAction $action): RedirectResponse
     {
         $user = $request->user();
-        $collection = $action->handle($user, $request->validated());
+        $action->handle($user, $request->validated());
 
         return redirect()->route('collections.index')
             ->with('success', 'Collection created successfully.');
@@ -76,31 +74,5 @@ class CollectionController extends Controller
 
         return redirect()->route('collections.index')
             ->with('success', 'Collection deleted successfully.');
-    }
-
-    public function addRecipe(Request $request, AddRecipeToCollectionAction $action): RedirectResponse
-    {
-        $request->validate([
-            'collection_id' => ['required', 'exists:collections,id'],
-            'recipe_id' => ['required', 'exists:recipes,id'],
-        ]);
-
-        $collection = Collection::query()->findOrFail($request->input('collection_id'));
-        Gate::authorize('update', $collection);
-
-        $recipe = Recipe::query()->findOrFail($request->input('recipe_id'));
-
-        $action->handle($collection, $recipe);
-
-        return back()->with('success', 'Recipe added to collection successfully.');
-    }
-
-    public function removeRecipe(Collection $collection, Recipe $recipe): RedirectResponse
-    {
-        Gate::authorize('update', $collection);
-
-        $collection->recipes()->detach($recipe->id);
-
-        return back()->with('success', 'Recipe removed from collection successfully.');
     }
 }

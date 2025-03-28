@@ -136,53 +136,7 @@ class CollectionControllerTest extends TestCase
         ]);
     }
 
-    public function test_add_recipe_adds_a_recipe_to_collection(): void
-    {
-        $user = User::factory()->create();
-        $collection = Collection::factory()->create([
-            'user_id' => $user->id,
-        ]);
-        $recipe = Recipe::factory()->create([
-            'user_id' => $user->id,
-        ]);
 
-        $this->actingAs($user)
-            ->post(route('collections.add-recipe'), [
-                'collection_id' => $collection->id,
-                'recipe_id' => $recipe->id,
-            ])
-            ->assertSessionHas('success');
-
-        $this->assertDatabaseHas('collection_recipe', [
-            'collection_id' => $collection->id,
-            'recipe_id' => $recipe->id,
-        ]);
-    }
-
-    public function test_remove_recipe_removes_a_recipe_from_collection(): void
-    {
-        $user = User::factory()->create();
-        $collection = Collection::factory()->create([
-            'user_id' => $user->id,
-        ]);
-        $recipe = Recipe::factory()->create([
-            'user_id' => $user->id,
-        ]);
-
-        $collection->recipes()->attach($recipe->id);
-
-        $this->actingAs($user)
-            ->delete(route('collections.remove-recipe', [
-                'collection' => $collection,
-                'recipe' => $recipe,
-            ]))
-            ->assertSessionHas('success');
-
-        $this->assertDatabaseMissing('collection_recipe', [
-            'collection_id' => $collection->id,
-            'recipe_id' => $recipe->id,
-        ]);
-    }
 
     public function test_user_cannot_view_others_collections(): void
     {

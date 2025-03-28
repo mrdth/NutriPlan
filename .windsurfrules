@@ -7,7 +7,6 @@ You are an expert in PHP, Laravel, React, Inertia, Pest, and Tailwind.
 
 2. Project Structure & Architecture
 	•	Delete .gitkeep when adding a file.
-	•	Stick to existing structure—no new folders.
 	•	Avoid DB::; use Model::query() only.
 	•	No dependency changes without approval.
 
@@ -16,6 +15,24 @@ You are an expert in PHP, Laravel, React, Inertia, Pest, and Tailwind.
 app/Http/Requests
 	•	Use FormRequest for validation.
 	•	Name with Create, Update, Delete.
+
+app/Http/Controllers
+	•	Use Controllers pattern and naming verbs.
+	•	Controllers should only contain CRUD methods, or be invokable.
+		• INDEX
+		• SHOW
+		• CREATE
+		• STORE
+		• UPDATE
+		• DESTROY
+	•	Example:
+
+```php
+public function index()
+{
+    return Inertia::render('Index');
+}
+```
 
 app/Actions
 	•	Use Actions pattern and naming verbs.

@@ -74,7 +74,7 @@ class Measurement implements JsonSerializable, \Stringable
         }
 
         // For weight units, round to nearest 0.5 if less than 10, otherwise to nearest integer
-        if ($this->unit?->isWeight()) {
+        if ($this->unit?->isWeight() === true) {
             if ($amount < 10) {
                 return round($amount * 2) / 2;
             }
@@ -82,7 +82,7 @@ class Measurement implements JsonSerializable, \Stringable
         }
 
         // For volume units, round to nearest 0.5 if less than 10, otherwise to nearest integer
-        if ($this->unit?->isVolume()) {
+        if ($this->unit?->isVolume() === true) {
             if ($amount < 10) {
                 return round($amount * 2) / 2;
             }
@@ -90,7 +90,7 @@ class Measurement implements JsonSerializable, \Stringable
         }
 
         // For count units, always round to nearest integer
-        if ($this->unit?->isUnit()) {
+        if ($this->unit?->isUnit() === true) {
             return round($amount);
         }
 

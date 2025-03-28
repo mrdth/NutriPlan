@@ -8,7 +8,9 @@
             "cooktime",
             "recipeingredient",
             "recipeinstructions",
-            "recipecategory"
+            "recipecategory",
+            "ld",
+            "microdata"
         ],
         "paths": []
     }
