@@ -24,6 +24,7 @@ defineProps<Props>();
                 'text-gray-500 dark:text-gray-400': !link.active,
                 'cursor-default': !link.url,
             }"
-        >{{ link.label }}</Link>
+            >{{ link.label }}</Link
+        >
     </div>
 </template>

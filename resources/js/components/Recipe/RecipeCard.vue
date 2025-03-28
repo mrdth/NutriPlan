@@ -77,15 +77,15 @@ const openAddToCollectionModal = async () => {
     try {
         const response = await fetch(route('collections.index'), {
             headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         collections.value = data.collections || [];
         isAddToCollectionModalOpen.value = true;
@@ -165,12 +165,16 @@ const addToCollection = () => {
                 </div>
             </div>
         </div>
-        
+
         <!-- Add to Collection Button (Bottom Anchored) -->
         <div class="absolute bottom-0 right-0 p-2">
             <DropdownMenu>
                 <DropdownMenuTrigger as="div">
-                    <Button variant="ghost" size="icon" class="h-7 w-7 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm hover:bg-white dark:hover:bg-gray-700">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        class="h-7 w-7 bg-white/80 shadow-sm backdrop-blur-sm hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-700"
+                    >
                         <EllipsisVerticalIcon class="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>

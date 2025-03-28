@@ -59,17 +59,17 @@
       - [x] Display a modal with a form to add the recipe to a collection.
         - The form should have a select for the collection.
         - The form should have a submit button.
-8. [ ] Implement recipe scaling feature.
-  - [ ] Add a scaling control on the Recipe Show page that allows users to adjust the number of servings.
-    - [ ] Create a new Vue component with +/- buttons and input field to adjust servings.
-    - [ ] Implement reactive state management to track the scaling factor.
-  - [ ] Enhance the Measurement value object with a scale() method to handle scaling calculations.
-    - [ ] Ensure proper handling of different unit types (weight, volume, count).
-    - [ ] Implement smart rounding to avoid awkward measurements.
-  - [ ] Update the ingredient list display to use the scaling factor.
-  - [ ] Add a visual indicator when a recipe has been scaled.
-  - [ ] Add a "Reset to Original" button to revert to the original recipe quantities.
-  - [ ] Add comprehensive tests for the scaling functionality.
+8. [x] Implement recipe scaling feature.
+  - [x] Enhance the Measurement value object with a scale() method to handle scaling calculations.
+    - [x] Ensure proper handling of different unit types (weight, volume, count).
+    - [x] Implement smart rounding to avoid awkward measurements.
+    - [x] Add comprehensive tests for the scaling functionality.
+  - [x] Add a scaling control on the Recipe Show page that allows users to adjust the number of servings.
+    - [x] Create a new Vue component with +/- buttons and input field to adjust servings.
+    - [x] Implement reactive state management to track the scaling factor.
+  - [x] Update the ingredient list display to use the scaling factor.
+  - [x] Add a visual indicator when a recipe has been scaled.
+  - [x] Add a "Reset to Original" button to revert to the original recipe quantities.
 
 9. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation

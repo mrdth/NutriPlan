@@ -58,6 +58,14 @@
                             </div>
                         </div>
 
+                        <!-- Scaling Control -->
+                        <div class="mt-6">
+                            <ScalingControl 
+                                :original-servings="recipe.servings" 
+                                @update:scaling-factor="updateScalingFactor" 
+                            />
+                        </div>
+
                         <!-- Ingredients -->
                         <div class="mt-8">
                             <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Ingredients</h2>
@@ -69,7 +77,7 @@
                                 >
                                     <div class="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 dark:bg-gray-400" />
                                     <span class="font-medium">
-                                        {{ ingredient.pivot.amount }}
+                                        {{ formatScaledAmount(ingredient.pivot.amount) }}
                                         <template v-if="ingredient.pivot.unit">{{ ingredient.pivot.unit }}</template>
                                     </span>
                                     <span class="ml-1">{{ ingredient.name }}</span>
@@ -107,10 +115,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Carousel from '@/components/ui/carousel.vue';
+import ScalingControl from '@/components/Recipe/ScalingControl.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { PencilIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface PageProps {
     [key: string]: unknown;
@@ -131,5 +141,36 @@ defineProps<{
 
 const parseInstructions = (instructions: string): string[] => {
     return instructions.split('\n').filter((line) => line.trim());
+};
+
+// Scaling functionality
+const scalingFactor = ref(1.0);
+
+const updateScalingFactor = (factor: number) => {
+    scalingFactor.value = factor;
+};
+
+const formatScaledAmount = (amount: number): string => {
+    if (!amount) return '0';
+    
+    const scaled = amount * scalingFactor.value;
+    
+    // For small values, show more decimal places
+    if (scaled < 0.1) {
+        return scaled.toFixed(2);
+    }
+    
+    // For values less than 1, show one decimal place
+    if (scaled < 1) {
+        return scaled.toFixed(1);
+    }
+    
+    // For values with decimal parts, show one decimal place
+    if (scaled % 1 !== 0) {
+        return scaled.toFixed(1);
+    }
+    
+    // For whole numbers, show no decimal places
+    return scaled.toFixed(0);
 };
 </script>
