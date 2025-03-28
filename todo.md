@@ -80,3 +80,14 @@
     - Use the schema.org format for the fields.
     - Place the nutrition information fields in a separate section of the form, in a collapsible panel.
   - [ ] Use the `NutritionInformation` component to display the information on the recipe page.
+
+10. [ ] Implement favorite recipes feature.
+  - [ ] Create a many-to-many relationship between users and recipes for favorites.
+    - [ ] Add a migration to create the favorites pivot table.
+    - [ ] Update the User model with a favorites relationship method.
+    - [ ] Update the Recipe model with a favoritedBy relationship method.
+  - [ ] Create a FavoriteController with toggle functionality.
+  - [ ] Add a favorite/unfavorite button to dropdown menu of recipe cards, above the "Add to Collection" button.
+  - [ ] Add a favorite/unfavorite button to recipe detail page.
+  - [ ] Create a dedicated "Favorites" page to display all favorited recipes.
+  - [ ] Add tests for the favorite functionality.
