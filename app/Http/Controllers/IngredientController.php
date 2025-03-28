@@ -11,9 +11,6 @@ use Illuminate\Validation\Rule;
 
 class IngredientController extends Controller
 {
-    /**
-     * Store a newly created ingredient in storage.
-     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
