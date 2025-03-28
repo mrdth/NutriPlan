@@ -11,10 +11,11 @@ class CreateCollectionAction
 {
     public function handle(User $user, array $data): Collection
     {
-        $collection = new Collection();
+        $collection = new Collection([
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+        ]);
         $collection->user()->associate($user);
-        $collection->name = $data['name'];
-        $collection->description = $data['description'] ?? null;
         $collection->save();
 
         return $collection;
