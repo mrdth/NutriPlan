@@ -1,6 +1,5 @@
 <template>
     <div class="rounded-lg border">
-
         <div v-if="nutrition" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
             <div v-if="nutrition.calories" class="flex flex-col">
                 <span class="text-sm text-muted-foreground">Calories</span>

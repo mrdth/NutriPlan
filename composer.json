@@ -89,7 +89,7 @@
             "@test:lint",
             "@test:refactor"
         ],
-        "tests": "test"
+        "tests": "@test"
     },
     "extra": {
         "laravel": {
