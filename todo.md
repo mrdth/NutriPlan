@@ -59,7 +59,19 @@
       - [x] Display a modal with a form to add the recipe to a collection.
         - The form should have a select for the collection.
         - The form should have a submit button.
-8. [ ] Add nutrition information for recipes.
+8. [ ] Implement recipe scaling feature.
+  - [ ] Add a scaling control on the Recipe Show page that allows users to adjust the number of servings.
+    - [ ] Create a new Vue component with +/- buttons and input field to adjust servings.
+    - [ ] Implement reactive state management to track the scaling factor.
+  - [ ] Enhance the Measurement value object with a scale() method to handle scaling calculations.
+    - [ ] Ensure proper handling of different unit types (weight, volume, count).
+    - [ ] Implement smart rounding to avoid awkward measurements.
+  - [ ] Update the ingredient list display to use the scaling factor.
+  - [ ] Add a visual indicator when a recipe has been scaled.
+  - [ ] Add a "Reset to Original" button to revert to the original recipe quantities.
+  - [ ] Add comprehensive tests for the scaling functionality.
+
+9. [ ] Add nutrition information for recipes.
   - [ ] We'll use nutrition information based on the schema.org format: https://schema.org/NutritionInformation
   - [ ] Create models and migrations needed to store nutrition information and associate it with recipes.
   - [ ] Update the `RecipeParser` to extract nutrition information from the recipe source.
@@ -67,4 +79,4 @@
     - Make all fields optional.
     - Use the schema.org format for the fields.
     - Place the nutrition information fields in a separate section of the form, in a collapsible panel.
-  - Use the `NutritionInformation` component to display the information on the recipe page.
+  - [ ] Use the `NutritionInformation` component to display the information on the recipe page.
