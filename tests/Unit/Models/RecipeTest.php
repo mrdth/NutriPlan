@@ -1,0 +1,177 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Enums\RecipeStatus;
+use App\Models\Category;
+use App\Models\Collection;
+use App\Models\Ingredient;
+use App\Models\NutritionInformation;
+use App\Models\Recipe;
+use App\Models\User;
+use App\ValueObjects\Measurement;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Sluggable\SlugOptions;
+
+test('recipe has correct relationships', function () {
+    $recipe = new Recipe();
+    
+    expect($recipe->user())->toBeInstanceOf(BelongsTo::class)
+        ->and($recipe->categories())->toBeInstanceOf(BelongsToMany::class)
+        ->and($recipe->ingredients())->toBeInstanceOf(BelongsToMany::class)
+        ->and($recipe->collections())->toBeInstanceOf(BelongsToMany::class)
+        ->and($recipe->nutritionInformation())->toBeInstanceOf(HasOne::class);
+});
+
+test('recipe belongs to a user', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()->create(['user_id' => $user->id]);
+    
+    expect($recipe->user)->toBeInstanceOf(User::class)
+        ->and($recipe->user->id)->toBe($user->id);
+});
+
+test('recipe can have multiple categories', function () {
+    $recipe = Recipe::factory()->create();
+    $categories = Category::factory()->count(3)->create();
+    
+    $recipe->categories()->attach($categories);
+    
+    expect($recipe->categories)->toHaveCount(3)
+        ->and($recipe->categories->first())->toBeInstanceOf(Category::class);
+});
+
+test('recipe can have multiple ingredients with pivot data', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create();
+    
+    $recipe->ingredients()->attach($ingredient, [
+        'amount' => 2.5,
+        'unit' => 'tbsp',
+    ]);
+    
+    expect($recipe->ingredients)->toHaveCount(1)
+        ->and($recipe->ingredients->first())->toBeInstanceOf(Ingredient::class)
+        ->and($recipe->ingredients->first()->pivot->amount)->toBe(2.5)
+        ->and($recipe->ingredients->first()->pivot->unit->value)->toBe('tbsp');
+});
+
+test('recipe can belong to multiple collections', function () {
+    $recipe = Recipe::factory()->create();
+    $collections = Collection::factory()->count(2)->create();
+    
+    $recipe->collections()->attach($collections);
+    
+    expect($recipe->collections)->toHaveCount(2)
+        ->and($recipe->collections->first())->toBeInstanceOf(Collection::class);
+});
+
+test('recipe can have nutrition information', function () {
+    $recipe = Recipe::factory()->create();
+    $nutritionInfo = NutritionInformation::factory()->create([
+        'recipe_id' => $recipe->id,
+    ]);
+    
+    expect($recipe->nutritionInformation)->toBeInstanceOf(NutritionInformation::class)
+        ->and($recipe->nutritionInformation->id)->toBe($nutritionInfo->id);
+});
+
+test('recipe status is draft when published_at is null', function () {
+    $recipe = Recipe::factory()->draft()->create();
+    
+    expect($recipe->status)->toBe(RecipeStatus::DRAFT)
+        ->and($recipe->status->value)->toBe('draft');
+});
+
+test('recipe status is published when published_at is set', function () {
+    $recipe = Recipe::factory()->published()->create();
+    
+    expect($recipe->status)->toBe(RecipeStatus::PUBLISHED)
+        ->and($recipe->status->value)->toBe('published');
+});
+
+test('recipe generates slug from title', function () {
+    $recipe = Recipe::factory()->create([
+        'title' => 'Delicious Chocolate Cake',
+    ]);
+    
+    expect($recipe->slug)->toBe('delicious-chocolate-cake');
+});
+
+test('recipe uses slug for route key name', function () {
+    $recipe = new Recipe();
+    
+    expect($recipe->getRouteKeyName())->toBe('slug');
+});
+
+test('recipe slug options are configured correctly', function () {
+    $recipe = new Recipe();
+    $slugOptions = $recipe->getSlugOptions();
+    
+    expect($slugOptions)->toBeInstanceOf(SlugOptions::class);
+    
+    // Create a recipe with a title and verify the slug is generated correctly
+    $recipe = Recipe::factory()->create([
+        'title' => 'Test Recipe Title'
+    ]);
+    
+    expect($recipe->slug)->toBe('test-recipe-title');
+});
+
+test('recipe has correct casts', function () {
+    $recipe = new Recipe();
+    $casts = $recipe->getCasts();
+    
+    expect($casts)->toBeArray()
+        ->and($casts)->toHaveKeys([
+            'cooking_time',
+            'prep_time',
+            'servings',
+            'published_at',
+            'images',
+        ])
+        ->and($casts['cooking_time'])->toBe('integer')
+        ->and($casts['prep_time'])->toBe('integer')
+        ->and($casts['servings'])->toBe('integer')
+        ->and($casts['published_at'])->toBe('datetime')
+        ->and($casts['images'])->toBe('array');
+});
+
+test('recipe has correct appends', function () {
+    $recipe = new Recipe();
+    
+    expect($recipe->getAppends())->toContain('status');
+});
+
+test('recipe has correct hidden attributes', function () {
+    $recipe = new Recipe();
+    
+    expect($recipe->getHidden())->toContain('user_id')
+        ->and($recipe->getHidden())->toContain('published_at')
+        ->and($recipe->getHidden())->toContain('updated_at');
+});
+
+test('getMeasurementForIngredient returns null when ingredient not found', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create();
+    
+    expect($recipe->getMeasurementForIngredient($ingredient))->toBeNull();
+});
+
+test('getMeasurementForIngredient returns Measurement object with correct values', function () {
+    $recipe = Recipe::factory()->create();
+    $ingredient = Ingredient::factory()->create();
+    
+    $recipe->ingredients()->attach($ingredient, [
+        'amount' => 2.5,
+        'unit' => 'tbsp',
+    ]);
+    
+    $measurement = $recipe->getMeasurementForIngredient($ingredient);
+    
+    expect($measurement)->toBeInstanceOf(Measurement::class)
+        ->and($measurement->amount)->toBe(2.5)
+        ->and($measurement->unit->value)->toBe('tbsp');
+});
