@@ -107,4 +107,36 @@ describe('ScalingControl', () => {
         const emittedEvents = wrapper.emitted('update:scalingFactor');
         expect(emittedEvents[emittedEvents.length - 1][0]).toBeCloseTo(2);
     });
+
+    it('handles NaN values by resetting to the minimum value', async () => {
+        // Set an invalid string that would result in NaN when converted to number
+        const input = wrapper.find('input[type="number"]');
+        await input.setValue('abc');
+        await input.trigger('change');
+
+        // Verify that servings are reset to 1 (the minimum value)
+        expect(wrapper.find('input[type="number"]').element.value).toBe('1');
+
+        // Try another invalid case with invalid number format
+        await input.setValue('123abc');
+        await input.trigger('change');
+
+        // Verify that servings are reset to 1 (the minimum value)
+        expect(wrapper.find('input[type="number"]').element.value).toBe('1');
+    });
+
+    it('correctly handles direct input of valid numbers', async () => {
+        // Directly set a valid number through model update
+        await wrapper.find('input[type="number"]').setValue('6');
+        await wrapper.find('input[type="number"]').trigger('change');
+
+        expect(wrapper.find('input[type="number"]').element.value).toBe('6');
+
+        // Check that the correct scaling factor was emitted (6/4 = 1.5)
+        const emittedEvents = wrapper.emitted('update:scalingFactor');
+        expect(emittedEvents[emittedEvents.length - 1][0]).toBeCloseTo(1.5);
+
+        // The recipe scaled indicator should be shown
+        expect(wrapper.text()).toContain('Recipe scaled');
+    });
 });
