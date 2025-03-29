@@ -47,8 +47,8 @@ public function favoritedBy()
 Create a new controller with the following methods:
 
 #### toggle
-- **Route**: `POST /api/recipes/{recipe}/favorite`
-- **Method**: `toggle(Recipe $recipe)`
+- **Route**: `POST /recipes/{recipe}/favorite`
+- **Method**: `__invoke(Recipe $recipe)`
 - **Description**: Toggles the favorite status of a recipe for the current user
 - **Response**: 
   - Success: `200 OK` with updated favorite status
@@ -63,7 +63,7 @@ Add a favorite button to the dropdown menu:
 - State: 
   - Filled heart when favorited
   - Outline heart when not favorited
-- Action: Toggle favorite status via API call
+- Action: Toggle favorite status via Inertia form submit
 
 ### Recipe Show Page Updates
 Add a favorite button:
@@ -72,7 +72,7 @@ Add a favorite button:
 - State: 
   - Filled heart when favorited
   - Outline heart when not favorited
-- Action: Toggle favorite status via API call
+- Action: Toggle favorite status via Inertia form submit
 
 ### New Favorites Page
 Create a new page at `/favorites`:

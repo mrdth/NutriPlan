@@ -12,7 +12,7 @@ This rule defines best practices and standards for frontend development in Larav
 ## Requirements
 
 1. Inertia Integration:
-   - Use Inertia for server-side rendering
+   - Use Inertia without server-side rendering
    - Implement proper page components
    - Use Inertia's shared data features
    - Handle form submissions with Inertia
