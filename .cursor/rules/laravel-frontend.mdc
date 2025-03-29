@@ -43,6 +43,15 @@ This rule defines best practices and standards for frontend development in Larav
    - Test accessibility
    - Test responsive design
    - Use proper test organization
+   - Place component tests in a `__tests__` directory adjacent to the component being tested
+   - Name test files using either `.test.ts/.test.js` or `.spec.ts/.spec.js` convention
+   - Mock external dependencies and UI components as needed
+   - Use `describe` blocks to group related tests
+   - Write individual test cases using `it` blocks
+   - Use `beforeEach` for common setup
+   - Test both initial rendering and interactive behaviors
+   - Verify correct event emissions when applicable
+   - Test edge cases and input validation
 
 ## Example
 
@@ -120,4 +129,8 @@ The IDE will enforce these rules by:
 2. Checking for proper Vue component organization
 3. Ensuring proper TypeScript usage
 4. Verifying test coverage and organization
+   - Confirming tests exist for components
+   - Ensuring tests follow the proper directory structure
+   - Checking that tests use the appropriate testing libraries
+   - Validating that both rendering and interactions are tested
 5. Validating Vite configuration 
