@@ -14,10 +14,10 @@ const mainNavItems: NavItem[] = [
         href: '/recipes',
         icon: LayoutGrid,
     },
-    {
-        title: 'Categories',
-        href: '/categories',
-        icon: Tag,
+        {
+        title: 'Favorites',
+        href: '/favorites',
+        icon: HeartIcon,
     },
     {
         title: 'Collections',
@@ -25,9 +25,9 @@ const mainNavItems: NavItem[] = [
         icon: BookmarkIcon,
     },
     {
-        title: 'Favorites',
-        href: '/favorites',
-        icon: HeartIcon,
+        title: 'Categories',
+        href: '/categories',
+        icon: Tag,
     },
 ];
 
