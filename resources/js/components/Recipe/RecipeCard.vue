@@ -5,8 +5,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { InputError } from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ClockIcon, EllipsisVerticalIcon, FolderPlusIcon, UsersIcon } from 'lucide-vue-next';
+import { ClockIcon, EllipsisVerticalIcon, FolderPlusIcon, HeartIcon, UsersIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import axios from 'axios';
 
 interface Props {
     recipe: {
@@ -28,6 +29,7 @@ interface Props {
             slug: string;
             recipe_count: number;
         }[];
+        is_favorited?: boolean;
     };
 }
 
@@ -41,6 +43,7 @@ interface Collection {
 const props = defineProps<Props>();
 const isAddToCollectionModalOpen = ref(false);
 const collections = ref<Collection[]>([]);
+const isFavorited = ref(props.recipe.is_favorited || false);
 
 const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
@@ -101,6 +104,19 @@ const addToCollection = () => {
             form.collection_id = '';
         },
     });
+};
+
+const toggleFavorite = () => {
+    // Use axios with the CSRF token that Laravel automatically includes
+    // when using the default Laravel mix/vite setup
+    axios.post(route('recipes.favorite', props.recipe.slug))
+        .then((response: { data: { favorited: boolean } }) => {
+            // The controller returns a JSON response with a 'favorited' boolean
+            isFavorited.value = response.data.favorited;
+        })
+        .catch((error: any) => {
+            console.error('Failed to toggle favorite:', error);
+        });
 };
 </script>
 
@@ -179,6 +195,10 @@ const addToCollection = () => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                    <DropdownMenuItem @click="toggleFavorite">
+                        <HeartIcon class="mr-2 h-4 w-4" :class="{ 'fill-current': isFavorited }" />
+                        {{ isFavorited ? 'Unfavorite' : 'Favorite' }}
+                    </DropdownMenuItem>
                     <DropdownMenuItem @click="openAddToCollectionModal">
                         <FolderPlusIcon class="mr-2 h-4 w-4" />
                         Add to Collection

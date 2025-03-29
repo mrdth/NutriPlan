@@ -10,8 +10,14 @@
                         Created by {{ recipe.user.name }} on {{ new Date(recipe.created_at).toLocaleDateString() }}
                     </p>
                 </div>
-                <div v-if="page.props.auth.user.id === recipe.user.id" class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                    <Link :href="route('recipes.edit', recipe.slug)">
+                <div class="mt-4 space-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <!-- Favorite button for all authenticated users -->
+                    <Button @click="toggleFavorite" :variant="isFavorited ? 'default' : 'outline'">
+                        <HeartIcon class="mr-2 h-4 w-4" :class="{ 'fill-current': isFavorited }" />
+                        {{ isFavorited ? 'Unfavorite' : 'Favorite' }}
+                    </Button>
+                    <!-- Edit button only for recipe creator -->
+                    <Link v-if="page.props.auth.user.id === recipe.user.id" :href="route('recipes.edit', recipe.slug)">
                         <Button>
                             <PencilIcon class="mr-2 h-4 w-4" />
                             Edit Recipe
@@ -123,8 +129,9 @@ import Carousel from '@/components/ui/carousel.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { PencilIcon } from 'lucide-vue-next';
+import { HeartIcon, PencilIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
+import axios from 'axios';
 
 interface PageProps {
     [key: string]: unknown;
@@ -139,9 +146,11 @@ interface PageProps {
 
 const page = usePage<PageProps>();
 
-defineProps<{
-    recipe: Recipe;
+const props = defineProps<{
+    recipe: Recipe & { is_favorited?: boolean };
 }>();
+
+const isFavorited = ref(props.recipe.is_favorited || false);
 
 const parseInstructions = (instructions: string): string[] => {
     return instructions.split('\n').filter((line) => line.trim());
@@ -176,5 +185,18 @@ const formatScaledAmount = (amount: number): string => {
 
     // For whole numbers, show no decimal places
     return scaled.toFixed(0);
+};
+
+const toggleFavorite = () => {
+    // Use axios with the CSRF token that Laravel automatically includes
+    // when using the default Laravel mix/vite setup
+    axios.post(route('recipes.favorite', props.recipe.slug))
+        .then((response: { data: { favorited: boolean } }) => {
+            // The controller returns a JSON response with a 'favorited' boolean
+            isFavorited.value = response.data.favorited;
+        })
+        .catch((error: any) => {
+            console.error('Failed to toggle favorite:', error);
+        });
 };
 </script>

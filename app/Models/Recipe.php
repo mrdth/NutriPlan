@@ -76,6 +76,12 @@ class Recipe extends Model
         return $this->hasOne(NutritionInformation::class);
     }
 
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'recipe_user_favorites')
+            ->withTimestamps();
+    }
+
     public function getStatusAttribute(): RecipeStatus
     {
         return RecipeStatus::fromPublishedAt($this->published_at?->toDateTimeString());

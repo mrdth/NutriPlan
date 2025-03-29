@@ -3,6 +3,8 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CollectionRecipeController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeImportController;
@@ -29,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('collections', CollectionController::class);
     Route::post('collections/add-recipe', [CollectionRecipeController::class, 'store'])->name('collections.add-recipe');
     Route::delete('collections/{collection}/recipes/{recipe}', [CollectionRecipeController::class, 'destroy'])->name('collections.remove-recipe');
+
+    Route::post('recipes/{recipe}/favorite', FavoriteController::class)->name('recipes.favorite');
+    Route::get('favorites', [FavoritesController::class, 'index'])->name('favorites.index');
 });
 
 require __DIR__.'/settings.php';

@@ -66,6 +66,7 @@ test('user can view recipe list', function () {
             ->has('slug')
             ->has('status')
             ->has('created_at')
+            ->has('is_favorited')
         )
     );
 });

@@ -21,6 +21,7 @@ class RecipeController extends Controller
 
     public function index(Request $request): Response
     {
+        $user = $request->user();
         $query = Recipe::query()
             ->with(['user', 'categories' => function (Builder|BelongsToMany $query): void {
                 $query->withCount('recipes');
@@ -36,6 +37,12 @@ class RecipeController extends Controller
         }
 
         $recipes = $query->paginate(12);
+
+        // Add is_favorited flag to each recipe
+        $recipes->getCollection()->transform(function (Recipe $recipe) use ($user): Recipe {
+            $recipe->is_favorited = $user->favorites()->where('recipe_id', $recipe->id)->exists();
+            return $recipe;
+        });
 
         return Inertia::render('Recipes/Index', [
             'recipes' => $recipes,
@@ -97,6 +104,7 @@ class RecipeController extends Controller
 
     public function show(Recipe $recipe): Response
     {
+        $user = request()->user();
         $recipe->load([
             'user',
             'categories' => function (Builder|BelongsToMany $query): void {
@@ -105,6 +113,9 @@ class RecipeController extends Controller
             'nutritionInformation',
             'ingredients'
         ]);
+
+        // Add is_favorited flag to the recipe
+        $recipe->is_favorited = $user->favorites()->where('recipe_id', $recipe->id)->exists();
 
         return Inertia::render('Recipes/Show', [
             'recipe' => $recipe,

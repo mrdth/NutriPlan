@@ -13,7 +13,6 @@ class RecipeParser
 {
     private ?array $nutrition = null;
     private ?Recipe $recipe = null;
-    private readonly NutritionParser $nutrition_parser;
 
     public function __construct(
         private string $title = '',
@@ -33,9 +32,8 @@ class RecipeParser
         /** @var array<int, string> */
         private array $categories = [],
         private readonly IngredientParser $ingredient_parser = new IngredientParser(),
-        ?NutritionParser $nutrition_parser = null
+        private readonly NutritionParser $nutrition_parser = new NutritionParser()
     ) {
-        $this->nutrition_parser = $nutrition_parser ?? new NutritionParser();
     }
 
     /**
@@ -79,7 +77,7 @@ class RecipeParser
             // Special handling for nutrition data which might be under different property names
             if (Str::contains(Str::lower($name), 'nutrition') && ($this->nutrition === null || $this->nutrition === [])) {
                 $nutritionData = $this->nutrition_parser->parse($values);
-                if ($nutritionData !== null && !empty($nutritionData)) {
+                if ($nutritionData !== null && $nutritionData !== []) {
                     $this->nutrition = $nutritionData;
                 }
             }
