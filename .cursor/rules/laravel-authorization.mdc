@@ -1,0 +1,170 @@
+# Laravel Authorization Standards
+
+This rule defines best practices and standards for using Laravel's authorization system.
+
+## Rule Details
+
+- **Name**: Laravel Authorization Standards
+- **Type**: Authorization Guidelines
+- **Scope**: Authorization-related files
+- **Priority**: High
+
+## Requirements
+
+1. Policy Organization:
+   - Place policies in `App/Policies` directory
+   - Use descriptive policy names
+   - Follow Laravel's policy naming conventions
+   - Group related policies logically
+   - Use proper namespacing
+
+2. Policy Structure:
+   - Make policies immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper interfaces
+
+3. Policy Implementation:
+   - Keep policies focused and single-responsibility
+   - Use dependency injection
+   - Handle exceptions gracefully
+   - Use proper logging
+   - Implement proper error handling
+   - Use proper authorization checks
+
+4. Gate Management:
+   - Use proper gate registration
+   - Implement proper gate caching
+   - Use proper gate middleware
+   - Implement proper gate testing
+   - Use proper gate documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
+
+class PostPolicy
+{
+    use HandlesAuthorization;
+
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function view(User $user, Post $post): bool
+    {
+        return true;
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->hasVerifiedEmail();
+    }
+
+    public function update(User $user, Post $post): Response
+    {
+        return $user->id === $post->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this post.');
+    }
+
+    public function delete(User $user, Post $post): Response
+    {
+        return $user->id === $post->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this post.');
+    }
+
+    public function restore(User $user, Post $post): Response
+    {
+        return $user->id === $post->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this post.');
+    }
+
+    public function forceDelete(User $user, Post $post): Response
+    {
+        return $user->id === $post->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this post.');
+    }
+}
+
+// App/Providers/AuthServiceProvider.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers;
+
+use App\Models\Post;
+use App\Models\User;
+use App\Policies\PostPolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    protected $policies = [
+        Post::class => PostPolicy::class,
+    ];
+
+    public function boot(): void
+    {
+        $this->registerPolicies();
+
+        // Define a gate for admin users
+        Gate::define('admin', function (User $user): bool {
+            return $user->isAdmin();
+        });
+
+        // Define a gate for premium users
+        Gate::define('premium', function (User $user): bool {
+            return $user->isPremium();
+        });
+    }
+}
+
+// App/Http/Middleware/CheckPremium.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class CheckPremium
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (!$request->user() || !$request->user()->can('premium')) {
+            return redirect()->route('premium.required');
+        }
+
+        return $next($request);
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating policy class structure
+2. Checking for proper gate implementation
+3. Ensuring proper authorization checks
+4. Verifying proper middleware usage 

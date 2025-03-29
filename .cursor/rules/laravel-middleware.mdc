@@ -1,0 +1,200 @@
+# Laravel Middleware Standards
+
+This rule defines best practices and standards for using Laravel's middleware system.
+
+## Rule Details
+
+- **Name**: Laravel Middleware Standards
+- **Type**: Middleware Guidelines
+- **Scope**: Middleware-related files
+- **Priority**: High
+
+## Requirements
+
+1. Middleware Organization:
+   - Place middleware in `App/Http/Middleware` directory
+   - Use descriptive middleware names
+   - Follow Laravel's middleware naming conventions
+   - Group related middleware logically
+   - Use proper namespacing
+
+2. Middleware Structure:
+   - Make middleware immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper interfaces
+
+3. Middleware Implementation:
+   - Keep middleware focused and single-responsibility
+   - Use dependency injection
+   - Handle exceptions gracefully
+   - Use proper logging
+   - Implement proper error handling
+   - Use proper response handling
+
+4. Middleware Management:
+   - Use proper middleware registration
+   - Implement proper middleware groups
+   - Use proper middleware priorities
+   - Implement proper middleware testing
+   - Use proper middleware documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureUserIsActive
+{
+    public function __construct(
+        private readonly string $redirectTo = '/inactive'
+    ) {}
+
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (!$request->user() || !$request->user()->is_active) {
+            Log::warning('Inactive user attempted to access protected route', [
+                'user_id' => $request->user()?->id,
+                'path' => $request->path(),
+            ]);
+
+            return redirect($this->redirectTo);
+        }
+
+        return $next($request);
+    }
+}
+
+// App/Http/Middleware/SetLocale.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class SetLocale
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $locale = $request->getPreferredLanguage(
+            config('app.available_locales')
+        );
+
+        app()->setLocale($locale);
+
+        return $next($request);
+    }
+}
+
+// App/Http/Middleware/TrimStrings.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class TrimStrings
+{
+    protected array $except = [
+        'password',
+        'password_confirmation',
+    ];
+
+    public function handle(Request $request, Closure $next): Response
+    {
+        $input = $request->all();
+
+        $trimmed = collect($input)->map(function ($value, $key) {
+            if (is_string($value) && !in_array($key, $this->except)) {
+                return trim($value);
+            }
+
+            return $value;
+        })->all();
+
+        $request->merge($trimmed);
+
+        return $next($request);
+    }
+}
+
+// App/Http/Kernel.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http;
+
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
+class Kernel extends HttpKernel
+{
+    protected $middleware = [
+        \App\Http\Middleware\TrustHosts::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\SetLocale::class,
+    ];
+
+    protected $middlewareGroups = [
+        'web' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+    ];
+
+    protected $middlewareAliases = [
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        'signed' => \App\Http\Middleware\ValidateSignature::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'active' => \App\Http\Middleware\EnsureUserIsActive::class,
+    ];
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating middleware class structure
+2. Checking for proper middleware implementation
+3. Ensuring proper error handling
+4. Verifying proper registration in Kernel 

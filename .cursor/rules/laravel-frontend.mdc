@@ -1,0 +1,142 @@
+# Laravel Frontend Development Standards
+
+This rule defines best practices and standards for frontend development in Laravel applications using Vite, Inertia, and Vue.
+
+## Rule Details
+
+- **Name**: Laravel Frontend Development Standards
+- **Type**: Frontend Guidelines
+- **Scope**: Frontend-related files
+- **Priority**: High
+
+## Requirements
+
+1. Inertia Integration:
+   - Use Inertia for server-side rendering
+   - Implement proper page components
+   - Use Inertia's shared data features
+   - Handle form submissions with Inertia
+   - Use proper error handling with Inertia
+   - Implement proper loading states
+
+2. Vue Components:
+   - Use Vue 3 Composition API
+   - Implement proper component structure
+   - Use TypeScript for type safety
+   - Keep components focused and reusable
+   - Use proper prop validation
+   - Implement proper state management
+
+3. Asset Management:
+   - Use Vite for asset compilation
+   - Implement proper HMR (Hot Module Replacement)
+   - Use proper asset organization
+   - Optimize asset loading
+   - Use proper environment variables
+   - Implement proper code splitting
+
+4. Frontend Testing:
+   - Use Vitest for unit testing
+   - Use Vue Test Utils for component testing
+   - Use Testing Library for integration testing
+   - Test component behavior and user interactions
+   - Test accessibility
+   - Test responsive design
+   - Use proper test organization
+
+## Example
+
+```php
+<?php
+
+// resources/js/app.ts
+import { createApp, h } from 'vue'
+import { createInertiaApp } from '@inertiajs/vue3'
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
+import '../css/app.css'
+
+createInertiaApp({
+  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+  setup({ el, App, props, plugin }) {
+    createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .use(ZiggyVue)
+      .mount(el)
+  },
+})
+
+// resources/js/Pages/Users/Index.vue
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import type { User } from '@/types'
+
+interface Props {
+  users: User[]
+}
+
+defineProps<Props>()
+</script>
+
+<template>
+  <Head title="Users" />
+
+  <div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6 text-gray-900">
+          <h1 class="text-2xl font-semibold mb-4">Users</h1>
+          <ul>
+            <li v-for="user in users" :key="user.id" class="mb-2">
+              {{ user.name }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+// tests/unit/components/UserList.spec.ts
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { render, screen } from '@testing-library/vue'
+import UserList from '@/components/UserList.vue'
+
+describe('UserList', () => {
+  const users = [
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' },
+  ]
+
+  it('renders user list correctly', () => {
+    const wrapper = mount(UserList, {
+      props: { users },
+    })
+
+    expect(wrapper.findAll('li')).toHaveLength(2)
+    expect(wrapper.text()).toContain('John Doe')
+    expect(wrapper.text()).toContain('Jane Smith')
+  })
+
+  it('is accessible', async () => {
+    render(UserList, { props: { users } })
+    
+    const list = screen.getByRole('list')
+    expect(list).toBeInTheDocument()
+    
+    const items = screen.getAllByRole('listitem')
+    expect(items).toHaveLength(2)
+  })
+})
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating Inertia page structure
+2. Checking for proper Vue component organization
+3. Ensuring proper TypeScript usage
+4. Verifying test coverage and organization
+5. Validating Vite configuration 

@@ -1,0 +1,42 @@
+# MDC Rules Location Rule
+
+This rule specifies that all new MDC (Model-Driven Code) rules should be created in the `.cursor/rules` directory.
+
+## Rule Details
+
+- **Name**: MDC Rules Location
+- **Type**: Directory Structure
+- **Scope**: Project-wide
+- **Priority**: High
+
+## Requirements
+
+1. All new MDC rules must be created in the `.cursor/rules` directory
+2. Each rule should be in a separate file
+3. Rule files should use the `.mdc` extension
+4. Rule files should follow the naming convention: `[rule_name].mdc`
+
+## Implementation
+
+When creating new MDC rules:
+1. Create the rule file in `.cursor/rules/`
+2. Use descriptive filenames that reflect the rule's purpose
+3. Include proper documentation within each rule file
+4. Follow the standard MDC rule format
+
+## Example
+
+```mdc
+# Example Rule File Structure
+.cursor/rules/
+  ├── mdc_rules_location.mdc
+  ├── naming_conventions.mdc
+  └── code_style.mdc
+```
+
+## Validation
+
+The IDE will enforce this rule by:
+1. Only allowing MDC rule creation in the specified directory
+2. Validating file extensions
+3. Ensuring proper file naming conventions 

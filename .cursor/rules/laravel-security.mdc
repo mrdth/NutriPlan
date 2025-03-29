@@ -1,0 +1,245 @@
+# Laravel Security Standards
+
+This rule defines best practices and standards for security in Laravel applications.
+
+## Rule Details
+
+- **Name**: Laravel Security Standards
+- **Type**: Security Guidelines
+- **Scope**: Security-related files
+- **Priority**: High
+
+## Requirements
+
+1. Authentication Security:
+   - Use proper authentication methods
+   - Implement proper password hashing
+   - Use proper session management
+   - Implement proper CSRF protection
+   - Use proper rate limiting
+   - Implement proper 2FA
+
+2. Authorization Security:
+   - Use proper authorization checks
+   - Implement proper role management
+   - Use proper permission management
+   - Implement proper policy checks
+   - Use proper gate checks
+   - Implement proper middleware checks
+
+3. Data Security:
+   - Use proper data encryption
+   - Implement proper input validation
+   - Use proper output escaping
+   - Implement proper file upload security
+   - Use proper database security
+   - Implement proper API security
+
+4. Security Management:
+   - Use proper security headers
+   - Implement proper logging
+   - Use proper error handling
+   - Implement proper monitoring
+   - Use proper security testing
+   - Include proper documentation
+
+## Example
+
+```php
+<?php
+
+// app/Http/Middleware/SecurityHeaders.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class SecurityHeaders
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $response = $next($request);
+
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->set('Content-Security-Policy', "default-src 'self'");
+
+        return $response;
+    }
+}
+
+// app/Http/Middleware/RateLimiter.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Cache\RateLimiter;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
+
+class RateLimiter
+{
+    public function __construct(
+        protected RateLimiter $limiter
+    ) {}
+
+    public function handle(Request $request, Closure $next): Response
+    {
+        $key = $this->resolveRequestSignature($request);
+
+        if ($this->limiter->tooManyAttempts($key, 60)) {
+            return response()->json([
+                'message' => 'Too many attempts, please try again later.',
+            ], 429);
+        }
+
+        $this->limiter->hit($key);
+
+        $response = $next($request);
+
+        $response->headers->add([
+            'X-RateLimit-Limit' => 60,
+            'X-RateLimit-Remaining' => $this->limiter->remaining($key, 60),
+            'X-RateLimit-Reset' => $this->limiter->availableIn($key),
+        ]);
+
+        return $response;
+    }
+
+    protected function resolveRequestSignature(Request $request): string
+    {
+        return $request->ip();
+    }
+}
+
+// app/Http/Controllers/Auth/LoginController.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class LoginController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+        $this->middleware('throttle:5,1')->only('login');
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $credentials = $request->validated();
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            return response()->json([
+                'message' => 'Logged in successfully',
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Invalid credentials',
+        ], 401);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
+    }
+}
+
+// app/Http/Requests/Auth/LoginRequest.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Auth;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class LoginRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'remember' => ['boolean'],
+        ];
+    }
+}
+
+// config/security.php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'headers' => [
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'X-XSS-Protection' => '1; mode=block',
+        'X-Content-Type-Options' => 'nosniff',
+        'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        'Content-Security-Policy' => "default-src 'self'",
+    ],
+
+    'rate_limiting' => [
+        'enabled' => true,
+        'max_attempts' => 60,
+        'decay_minutes' => 1,
+    ],
+
+    'password' => [
+        'min_length' => 8,
+        'require_numbers' => true,
+        'require_special_chars' => true,
+        'require_uppercase' => true,
+        'require_lowercase' => true,
+    ],
+
+    'session' => [
+        'lifetime' => 120,
+        'secure' => env('SESSION_SECURE_COOKIE', true),
+        'http_only' => true,
+        'same_site' => 'lax',
+    ],
+];
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating security file structure
+2. Checking for proper security headers
+3. Ensuring proper authentication
+4. Verifying proper authorization 

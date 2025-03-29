@@ -1,0 +1,202 @@
+# Laravel Error Handling and Logging Standards
+
+This rule defines best practices and standards for error handling and logging in Laravel applications.
+
+## Rule Details
+
+- **Name**: Laravel Error Handling and Logging Standards
+- **Type**: Error Handling Guidelines
+- **Scope**: Error handling and logging related files
+- **Priority**: High
+
+## Requirements
+
+1. Exception Handling:
+   - Create custom exceptions in `App/Exceptions`
+   - Use descriptive exception names
+   - Follow Laravel's exception naming conventions
+   - Group related exceptions logically
+   - Use proper namespacing
+   - Implement proper exception hierarchy
+
+2. Exception Structure:
+   - Make exceptions immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper interfaces
+   - Include proper error messages
+
+3. Logging Implementation:
+   - Use proper log channels
+   - Implement proper log levels
+   - Use proper log context
+   - Implement proper log rotation
+   - Use proper log formatting
+   - Include proper metadata
+
+4. Error Management:
+   - Use proper error reporting
+   - Implement proper error tracking
+   - Use proper error monitoring
+   - Implement proper error notifications
+   - Use proper error documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Exceptions;
+
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+
+class UserNotFoundException extends Exception
+{
+    public function __construct(
+        public readonly int $userId,
+        public readonly string $message = 'User not found',
+        public readonly int $code = 404
+    ) {
+        parent::__construct($message, $code);
+    }
+
+    public function render(): JsonResponse
+    {
+        Log::error('User not found', [
+            'user_id' => $this->userId,
+            'trace' => $this->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'message' => $this->message,
+            'error_code' => $this->code,
+        ], $this->code);
+    }
+}
+
+// App/Exceptions/Handler.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Exceptions;
+
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
+
+class Handler extends ExceptionHandler
+{
+    protected $dontReport = [
+        ValidationException::class,
+    ];
+
+    protected $dontFlash = [
+        'current_password',
+        'password',
+        'password_confirmation',
+    ];
+
+    public function register(): void
+    {
+        $this->reportable(function (Throwable $e) {
+            if ($this->shouldReport($e)) {
+                Log::error('Unhandled exception', [
+                    'exception' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
+        });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof HttpException) {
+            return $this->renderHttpException($request, $e);
+        }
+
+        if ($e instanceof ValidationException) {
+            return $this->renderValidationException($request, $e);
+        }
+
+        return parent::render($request, $e);
+    }
+
+    protected function renderHttpException(Request $request, HttpException $e)
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'error_code' => $e->getStatusCode(),
+            ], $e->getStatusCode());
+        }
+
+        return parent::render($request, $e);
+    }
+
+    protected function renderValidationException(Request $request, ValidationException $e)
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        return parent::render($request, $e);
+    }
+}
+
+// config/logging.php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => env('LOG_CHANNEL', 'stack'),
+
+    'deprecations' => [
+        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+        'trace' => false,
+    ],
+
+    'channels' => [
+        'stack' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'slack'],
+            'ignore_exceptions' => false,
+        ],
+
+        'daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+        ],
+
+        'slack' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => 'Laravel Log',
+            'emoji' => ':boom:',
+            'level' => env('LOG_LEVEL', 'critical'),
+        ],
+    ],
+];
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating exception class structure
+2. Checking for proper error handling
+3. Ensuring proper logging implementation
+4. Verifying proper error reporting 

@@ -1,0 +1,86 @@
+# PHP Coding Standards
+
+This rule defines the coding standards and best practices for PHP files in the project.
+
+## Rule Details
+
+- **Name**: PHP Coding Standards
+- **Type**: Code Style
+- **Scope**: All PHP files
+- **Priority**: High
+
+## Requirements
+
+1. Follow PSR-12 Extended Coding Style:
+   - Use 4 spaces for indentation
+   - Files must end with a single blank line
+   - No trailing whitespace at the end of lines
+   - One blank line after namespace declarations
+   - One blank line after use statements
+   - Opening brace for classes goes on the next line
+   - Opening brace for methods goes on the next line
+   - Opening brace for control structures goes on the same line
+   - Closing brace goes on the next line after the body
+
+2. Naming Conventions:
+   - Classes: PascalCase (e.g., `UserController`)
+   - Methods: camelCase (e.g., `getUserProfile`)
+   - Properties: camelCase (e.g., `firstName`)
+   - Constants: UPPER_SNAKE_CASE (e.g., `MAX_LOGIN_ATTEMPTS`)
+   - Variables: camelCase (e.g., `userCount`)
+
+3. Type Declarations:
+   - Always declare return types for methods
+   - Use strict type declarations at the top of files
+   - Use union types when appropriate (PHP 8.0+)
+   - Use nullable types when values can be null
+
+4. Documentation:
+   - All classes must have PHPDoc blocks
+   - All public methods must have PHPDoc blocks
+   - Use `@throws` annotations when methods can throw exceptions
+   - Document complex logic with inline comments
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Models\User;
+use App\Exceptions\UserNotFoundException;
+
+class UserService
+{
+    private const MAX_LOGIN_ATTEMPTS = 3;
+
+    /**
+     * Retrieve a user by their ID.
+     *
+     * @param int $userId The ID of the user to retrieve
+     * @return User
+     * @throws UserNotFoundException When user is not found
+     */
+    public function getUserById(int $userId): User
+    {
+        $user = User::find($userId);
+
+        if ($user === null) {
+            throw new UserNotFoundException("User with ID {$userId} not found");
+        }
+
+        return $user;
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Running PHP_CodeSniffer with PSR-12 rules
+2. Validating type declarations
+3. Checking PHPDoc completeness
+4. Ensuring consistent naming conventions 

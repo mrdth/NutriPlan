@@ -1,0 +1,98 @@
+# Laravel Best Practices
+
+This rule defines the best practices and conventions specific to Laravel development.
+
+## Rule Details
+
+- **Name**: Laravel Best Practices
+- **Type**: Framework Guidelines
+- **Scope**: Laravel-specific files
+- **Priority**: High
+
+## Requirements
+
+1. Directory Structure:
+   - Follow Laravel's standard directory structure
+   - Place custom code in appropriate namespaces under `App\`
+   - Use feature-based organization for large applications
+   - Keep controllers thin, move business logic to services
+   - Use Laravel's built-in model features
+
+2. Model Conventions:
+   - Use Laravel's naming conventions for models and tables
+   - Define relationships using type hints
+   - Use property type declarations
+   - Implement interfaces for complex models
+   - Use traits for shared model functionality
+   - Leverage Laravel's model events and observers
+
+3. Controller Guidelines:
+   - Use resource controllers when appropriate
+   - Keep controllers focused on HTTP concerns
+   - Controllers should only contain CRUD methods:
+     - INDEX
+	 - SHOW
+	 - CREATE
+	 - STORE
+	 - UPDATE
+	 - DESTROY
+   - Use form requests for validation
+   - Return consistent API responses
+   - Use dependency injection
+   - Use Laravel's built-in model features
+
+4. Service Layer:
+   - Create service classes for complex business logic
+   - Use interfaces for services
+   - Keep services focused and single-responsibility
+   - Use Laravel's model features directly
+   - Leverage Laravel's query builder and collections
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Models\User;
+use App\DataTransferObjects\UserData;
+use Illuminate\Support\Facades\DB;
+
+class UserService
+{
+    public function createUser(UserData $userData): User
+    {
+        return DB::transaction(function () use ($userData) {
+            $user = User::create($userData->toArray());
+            
+            // Use Laravel's model events for additional logic
+            event(new UserCreated($user));
+            
+            return $user;
+        });
+    }
+
+    public function updateUser(User $user, UserData $userData): User
+    {
+        return DB::transaction(function () use ($user, $userData) {
+            $user->update($userData->toArray());
+            
+            // Use Laravel's model events for additional logic
+            event(new UserUpdated($user));
+            
+            return $user;
+        });
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating Laravel-specific naming conventions
+2. Checking for proper use of Laravel features
+3. Ensuring consistent service layer implementation
+4. Verifying proper use of dependency injection 

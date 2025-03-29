@@ -1,0 +1,264 @@
+# Laravel Performance Standards
+
+This rule defines best practices and standards for performance optimization in Laravel applications.
+
+## Rule Details
+
+- **Name**: Laravel Performance Standards
+- **Type**: Performance Guidelines
+- **Scope**: Performance-related files
+- **Priority**: High
+
+## Requirements
+
+1. Database Optimization:
+   - Use proper indexing
+   - Implement proper query optimization
+   - Use proper eager loading
+   - Implement proper caching
+   - Use proper database transactions
+   - Implement proper query logging
+
+2. Cache Optimization:
+   - Use proper cache drivers
+   - Implement proper cache tags
+   - Use proper cache keys
+   - Implement proper cache invalidation
+   - Use proper cache duration
+   - Implement proper cache warming
+
+3. Queue Optimization:
+   - Use proper queue drivers
+   - Implement proper job batching
+   - Use proper job chaining
+   - Implement proper job retries
+   - Use proper queue monitoring
+   - Implement proper queue scaling
+
+4. Performance Management:
+   - Use proper monitoring
+   - Implement proper logging
+   - Use proper profiling
+   - Implement proper optimization
+   - Use proper testing
+   - Include proper documentation
+
+## Example
+
+```php
+<?php
+
+// app/Models/Post.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Post extends Model
+{
+    protected $fillable = [
+        'title',
+        'content',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
+    protected $with = [
+        'user',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->whereNotNull('published_at');
+    }
+}
+
+// app/Http/Controllers/PostController.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+
+class PostController extends Controller
+{
+    public function index()
+    {
+        $posts = Cache::tags(['posts'])->remember('posts.all', 3600, function () {
+            return Post::with(['user', 'comments'])
+                ->published()
+                ->latest()
+                ->paginate(10);
+        });
+
+        return response()->json($posts);
+    }
+
+    public function show(Post $post)
+    {
+        $post = Cache::tags(['posts'])->remember("posts.{$post->id}", 3600, function () use ($post) {
+            return $post->load(['user', 'comments']);
+        });
+
+        return response()->json($post);
+    }
+
+    public function store(Request $request)
+    {
+        $post = Post::create($request->validated());
+
+        Cache::tags(['posts'])->flush();
+
+        return response()->json($post, 201);
+    }
+}
+
+// app/Jobs/ProcessPost.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs;
+
+use App\Models\Post;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class ProcessPost implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        protected Post $post
+    ) {}
+
+    public function handle(): void
+    {
+        // Process post
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        // Handle failure
+    }
+}
+
+// app/Console/Commands/OptimizeApplication.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+
+class OptimizeApplication extends Command
+{
+    protected $signature = 'app:optimize';
+    protected $description = 'Optimize the application for production';
+
+    public function handle(): void
+    {
+        $this->info('Optimizing application...');
+
+        // Clear all caches
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+
+        // Optimize autoloader
+        Artisan::call('optimize:autoload');
+
+        // Cache configuration
+        Artisan::call('config:cache');
+
+        // Cache routes
+        Artisan::call('route:cache');
+
+        // Cache views
+        Artisan::call('view:cache');
+
+        $this->info('Application optimized successfully!');
+    }
+}
+
+// config/cache.php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => env('CACHE_DRIVER', 'redis'),
+
+    'stores' => [
+        'redis' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+        ],
+    ],
+
+    'prefix' => env('CACHE_PREFIX', 'laravel_cache'),
+];
+
+// config/queue.php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => env('QUEUE_CONNECTION', 'redis'),
+
+    'connections' => [
+        'redis' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => env('REDIS_QUEUE', 'default'),
+            'retry_after' => 90,
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+    ],
+
+    'failed' => [
+        'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
+        'database' => env('DB_CONNECTION', 'mysql'),
+        'table' => 'failed_jobs',
+    ],
+];
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating performance file structure
+2. Checking for proper caching
+3. Ensuring proper database optimization
+4. Verifying proper queue implementation 

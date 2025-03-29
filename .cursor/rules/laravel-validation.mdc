@@ -1,0 +1,209 @@
+# Laravel Validation Standards
+
+This rule defines best practices and standards for using Laravel's validation system.
+
+## Rule Details
+
+- **Name**: Laravel Validation Standards
+- **Type**: Validation Guidelines
+- **Scope**: Validation-related files
+- **Priority**: High
+
+## Requirements
+
+1. Form Request Organization:
+   - Place form requests in `App/Http/Requests` directory
+   - Use descriptive request names
+   - Follow Laravel's request naming conventions
+   - Group related requests logically
+   - Use proper namespacing
+
+2. Form Request Structure:
+   - Make requests immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper interfaces
+
+3. Validation Rules:
+   - Use proper validation rules
+   - Implement custom validation rules
+   - Use proper validation messages
+   - Implement proper validation attributes
+   - Use proper validation groups
+   - Implement proper validation dependencies
+
+4. Validation Management:
+   - Use proper validation registration
+   - Implement proper validation caching
+   - Use proper validation middleware
+   - Implement proper validation testing
+   - Use proper validation documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+
+class StoreUserRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($this->user),
+            ],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::defaults(),
+            ],
+            'role' => [
+                'required',
+                'string',
+                Rule::in(['user', 'admin']),
+            ],
+            'settings' => [
+                'sometimes',
+                'array',
+                'min:1',
+            ],
+            'settings.notifications' => [
+                'sometimes',
+                'boolean',
+            ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please enter your name.',
+            'email.unique' => 'This email is already registered.',
+            'password.confirmed' => 'The passwords do not match.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'name',
+            'email' => 'email address',
+            'password' => 'password',
+            'role' => 'user role',
+        ];
+    }
+}
+
+// App/Rules/ValidSlug.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Rules;
+
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+
+class ValidSlug implements ValidationRule
+{
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        if (!preg_match('/^[a-z0-9-]+$/', $value)) {
+            $fail('The :attribute must be a valid slug.');
+        }
+    }
+}
+
+// App/Http/Controllers/UserController.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+
+class UserController extends Controller
+{
+    public function store(StoreUserRequest $request): JsonResponse
+    {
+        $user = User::create($request->validated());
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user
+        ], 201);
+    }
+}
+
+// tests/Feature/Http/Requests/StoreUserRequestTest.php
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Http\Requests;
+
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
+
+class StoreUserRequestTest extends TestCase
+{
+    private array $rules;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->rules = (new StoreUserRequest())->rules();
+    }
+
+    public function test_validates_required_fields(): void
+    {
+        $validator = Validator::make([], $this->rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('name', $validator->errors()->toArray());
+        $this->assertArrayHasKey('email', $validator->errors()->toArray());
+        $this->assertArrayHasKey('password', $validator->errors()->toArray());
+    }
+
+    public function test_validates_email_format(): void
+    {
+        $validator = Validator::make([
+            'email' => 'invalid-email',
+        ], $this->rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('email', $validator->errors()->toArray());
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating form request structure
+2. Checking for proper validation rules
+3. Ensuring proper error handling
+4. Verifying proper testing coverage 

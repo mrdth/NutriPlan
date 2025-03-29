@@ -1,0 +1,131 @@
+# Laravel Jobs and Queues Standards
+
+This rule defines best practices and standards for using Laravel's job and queue system.
+
+## Rule Details
+
+- **Name**: Laravel Jobs and Queues Standards
+- **Type**: Job System Guidelines
+- **Scope**: Job-related files
+- **Priority**: High
+
+## Requirements
+
+1. Job Organization:
+   - Place jobs in `App/Jobs` directory
+   - Use descriptive job names
+   - Follow Laravel's job naming conventions
+   - Group related jobs logically
+   - Use proper namespacing
+
+2. Job Structure:
+   - Make jobs immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper interfaces
+
+3. Job Implementation:
+   - Keep jobs focused and single-responsibility
+   - Use dependency injection
+   - Handle exceptions gracefully
+   - Use proper logging
+   - Implement proper error handling
+   - Use proper queue configuration
+
+4. Queue Management:
+   - Use proper queue connections
+   - Implement proper retry logic
+   - Use proper queue priorities
+   - Implement proper timeout handling
+   - Use proper queue middleware
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+
+class ProcessUserAvatar implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        public readonly User $user,
+        public readonly string $avatarUrl,
+        public readonly string $disk = 'public'
+    ) {}
+
+    public function handle(): void
+    {
+        $contents = file_get_contents($this->avatarUrl);
+        
+        Storage::disk($this->disk)->put(
+            "avatars/{$this->user->id}.jpg",
+            $contents
+        );
+
+        $this->user->update([
+            'avatar_path' => "avatars/{$this->user->id}.jpg"
+        ]);
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        report($exception);
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addHours(24);
+    }
+
+    public function backoff(): array
+    {
+        return [60, 300, 600]; // 1min, 5min, 10min
+    }
+}
+
+// App/Jobs/Middleware/EnsureUserIsActive.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs\Middleware;
+
+use Closure;
+use Illuminate\Contracts\Queue\Job;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+
+class EnsureUserIsActive extends ThrottlesExceptions
+{
+    public function handle(Job $job, Closure $next): void
+    {
+        if (!$job->payload['data']['user']->is_active) {
+            $job->delete();
+            return;
+        }
+
+        $next($job);
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating job class structure
+2. Checking for proper queue implementation
+3. Ensuring proper error handling
+4. Verifying proper middleware usage 

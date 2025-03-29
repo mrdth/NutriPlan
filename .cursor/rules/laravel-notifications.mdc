@@ -1,0 +1,154 @@
+# Laravel Notifications Standards
+
+This rule defines best practices and standards for using Laravel's notification system.
+
+## Rule Details
+
+- **Name**: Laravel Notifications Standards
+- **Type**: Notification Guidelines
+- **Scope**: Notification-related files
+- **Priority**: High
+
+## Requirements
+
+1. Notification Organization:
+   - Place notifications in `App/Notifications` directory
+   - Use descriptive notification names
+   - Follow Laravel's notification naming conventions
+   - Group related notifications logically
+   - Use proper namespacing
+
+2. Notification Structure:
+   - Make notifications immutable
+   - Use constructor property promotion
+   - Include only necessary data
+   - Use proper type hints
+   - Implement proper channels
+
+3. Channel Implementation:
+   - Use appropriate channels for each notification
+   - Implement proper channel configuration
+   - Handle channel failures gracefully
+   - Use proper queue configuration
+   - Implement proper rate limiting
+
+4. Notification Content:
+   - Use proper localization
+   - Include relevant data
+   - Use proper formatting
+   - Include proper actions
+   - Use proper styling
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Notifications;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\SlackMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
+
+class UserRegistered extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    public function __construct(
+        public readonly User $user,
+        public readonly string $ipAddress,
+        public readonly string $userAgent
+    ) {}
+
+    public function via(object $notifiable): array
+    {
+        return ['mail', 'slack', 'database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject('Welcome to ' . Config::get('app.name'))
+            ->greeting('Hello ' . $notifiable->name)
+            ->line('Thank you for registering with us.')
+            ->line('Your account was created at ' . Carbon::now()->format('Y-m-d H:i:s'))
+            ->line('IP Address: ' . $this->ipAddress)
+            ->action('Visit Our Website', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    public function toSlack(object $notifiable): SlackMessage
+    {
+        return (new SlackMessage)
+            ->success()
+            ->content('New user registration')
+            ->attachment(function ($attachment) {
+                $attachment
+                    ->title($this->user->name)
+                    ->fields([
+                        'Email' => $this->user->email,
+                        'IP Address' => $this->ipAddress,
+                        'User Agent' => $this->userAgent,
+                    ])
+                    ->timestamp(Carbon::now());
+            });
+    }
+
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'user_id' => $this->user->id,
+            'ip_address' => $this->ipAddress,
+            'user_agent' => $this->userAgent,
+            'registered_at' => Carbon::now()->toIso8601String(),
+        ];
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        report($exception);
+    }
+}
+
+// App/Notifications/Channels/CustomChannel.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Notifications\Channels;
+
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
+
+class CustomChannel
+{
+    public function send($notifiable, Notification $notification): void
+    {
+        if (!method_exists($notification, 'toCustom')) {
+            throw new \RuntimeException('Notification is missing toCustom method');
+        }
+
+        $message = $notification->toCustom($notifiable);
+
+        Http::post('https://api.custom-service.com/notifications', [
+            'user_id' => $notifiable->id,
+            'message' => $message,
+        ]);
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating notification class structure
+2. Checking for proper channel implementation
+3. Ensuring proper content formatting
+4. Verifying proper error handling 

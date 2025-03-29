@@ -1,0 +1,331 @@
+# Laravel Database Standards
+
+This rule defines best practices and standards for database management in Laravel applications.
+
+## Rule Details
+
+- **Name**: Laravel Database Standards
+- **Type**: Database Guidelines
+- **Scope**: Database-related files
+- **Priority**: High
+
+## Requirements
+
+1. Database Organization:
+   - Use proper migration structure
+   - Implement proper seeding
+   - Use proper model organization
+   - Implement proper relationships
+   - Use proper indexes
+   - Include proper documentation
+
+2. Database Structure:
+   - Use proper column types
+   - Implement proper constraints
+   - Use proper foreign keys
+   - Implement proper defaults
+   - Use proper nullable fields
+   - Include proper timestamps
+
+3. Database Implementation:
+   - Use proper query builders
+   - Implement proper transactions
+   - Use proper eager loading
+   - Implement proper caching
+   - Use proper validation
+   - Include proper error handling
+
+4. Database Management:
+   - Use proper backup strategy
+   - Implement proper monitoring
+   - Use proper optimization
+   - Implement proper testing
+   - Use proper versioning
+   - Include proper documentation
+
+## Example
+
+```php
+<?php
+
+// database/migrations/2024_03_20_000001_create_posts_table.php
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('content');
+            $table->string('slug')->unique();
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['published_at', 'created_at']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('posts');
+    }
+};
+
+// database/migrations/2024_03_20_000002_create_comments_table.php
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('content');
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['post_id', 'created_at']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('comments');
+    }
+};
+
+// database/seeders/DatabaseSeeder.php
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            UserSeeder::class,
+            PostSeeder::class,
+            CommentSeeder::class,
+        ]);
+    }
+}
+
+// database/seeders/PostSeeder.php
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+
+class PostSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $users = User::all();
+
+        Post::factory()
+            ->count(50)
+            ->create()
+            ->each(function ($post) use ($users) {
+                $post->update([
+                    'user_id' => $users->random()->id,
+                    'slug' => Str::slug($post->title),
+                ]);
+            });
+    }
+}
+
+// app/Models/Post.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Post extends Model
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'title',
+        'content',
+        'slug',
+        'published_at',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->whereNotNull('published_at');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->whereNull('published_at');
+    }
+}
+
+// app/Models/Comment.php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Comment extends Model
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'content',
+        'post_id',
+        'user_id',
+    ];
+
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
+
+// database/factories/PostFactory.php
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PostFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'title' => fake()->sentence(),
+            'content' => fake()->paragraphs(3, true),
+            'slug' => fake()->slug(),
+            'published_at' => fake()->optional()->dateTime(),
+            'user_id' => User::factory(),
+        ];
+    }
+}
+
+// config/database.php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => env('DB_CONNECTION', 'mysql'),
+
+    'connections' => [
+        'mysql' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+    ],
+
+    'migrations' => 'migrations',
+
+    'redis' => [
+        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'options' => [
+            'cluster' => env('REDIS_CLUSTER', 'redis'),
+            'prefix' => env('REDIS_PREFIX', 'laravel_database_'),
+        ],
+        'default' => [
+            'url' => env('REDIS_URL'),
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'username' => env('REDIS_USERNAME'),
+            'password' => env('REDIS_PASSWORD'),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '0'),
+        ],
+    ],
+];
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating database file structure
+2. Checking for proper migration organization
+3. Ensuring proper model relationships
+4. Verifying proper database configuration 
