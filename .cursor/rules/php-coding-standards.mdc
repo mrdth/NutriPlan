@@ -80,7 +80,7 @@ class UserService
 ## Validation
 
 The IDE will enforce these rules by:
-1. Running PHP_CodeSniffer with PSR-12 rules
+1. Running `vendor/bin/pint`
 2. Validating type declarations
 3. Checking PHPDoc completeness
 4. Ensuring consistent naming conventions 

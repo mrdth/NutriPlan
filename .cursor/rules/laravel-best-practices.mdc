@@ -20,6 +20,7 @@ This rule defines the best practices and conventions specific to Laravel develop
 
 2. Model Conventions:
    - Use Laravel's naming conventions for models and tables
+   - Do not use $fillable for models
    - Define relationships using type hints
    - Use property type declarations
    - Implement interfaces for complex models

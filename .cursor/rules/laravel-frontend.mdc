@@ -46,26 +46,7 @@ This rule defines best practices and standards for frontend development in Larav
 
 ## Example
 
-```php
-<?php
-
-// resources/js/app.ts
-import { createApp, h } from 'vue'
-import { createInertiaApp } from '@inertiajs/vue3'
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
-import '../css/app.css'
-
-createInertiaApp({
-  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
-  setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(ZiggyVue)
-      .mount(el)
-  },
-})
-
+```ts
 // resources/js/Pages/Users/Index.vue
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
