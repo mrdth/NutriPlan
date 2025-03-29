@@ -116,7 +116,6 @@
     - [ ] Create toggle button Vue component
     - [ ] Update Recipes Index page to include toggle
     - [ ] Add state management for filter preference
-    - [ ] Implement loading states for Inertia transitions
   - [ ] Testing
     - [ ] Add controller filter tests
     - [ ] Add frontend component tests

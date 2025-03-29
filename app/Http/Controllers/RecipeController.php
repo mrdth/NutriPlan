@@ -36,6 +36,11 @@ class RecipeController extends Controller
             });
         }
 
+        // Filter by user's own recipes if show_mine is true
+        if ($request->boolean('show_mine')) {
+            $query->where('user_id', $user->id);
+        }
+
         $recipes = $query->paginate(12);
 
         // Add is_favorited flag to each recipe
@@ -46,7 +51,7 @@ class RecipeController extends Controller
 
         return Inertia::render('Recipes/Index', [
             'recipes' => $recipes,
-            'filter' => $request->only('category'),
+            'filter' => $request->only(['category', 'show_mine']),
         ]);
     }
 

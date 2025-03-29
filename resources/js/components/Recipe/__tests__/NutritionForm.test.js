@@ -89,7 +89,7 @@ describe('NutritionForm.vue', () => {
         expect(emittedEvents[0][0]).toEqual({ calories: '240 cal' });
     });
 
-    it('displays existing nutrition information', () => {
+    it('displays existing nutrition information', async () => {
         const nutritionData = {
             calories: '240 cal',
             protein_content: '10g',
@@ -103,7 +103,10 @@ describe('NutritionForm.vue', () => {
         });
 
         // Expand the form
-        wrapper.find('button').trigger('click');
+        await wrapper.find('button').trigger('click');
+        
+        // Wait for the DOM to update
+        await nextTick();
 
         // Check if the inputs have the correct values
         expect(wrapper.find('input[id="calories"]').element.value).toBe('240 cal');

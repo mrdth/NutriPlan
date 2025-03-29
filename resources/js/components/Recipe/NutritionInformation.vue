@@ -1,5 +1,8 @@
 <template>
     <div class="rounded-lg border">
+        <div class="p-3 border-b bg-muted/50">
+            <h3 class="text-sm font-medium">Nutrition Information</h3>
+        </div>
         <div v-if="nutrition" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
             <div v-if="nutrition.calories" class="flex flex-col">
                 <span class="text-sm text-muted-foreground">Calories</span>

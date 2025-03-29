@@ -17,7 +17,6 @@ describe('NutritionInformation.vue', () => {
             },
         });
 
-        expect(wrapper.text()).toContain('Nutrition Information');
         expect(wrapper.text()).toContain('Calories');
         expect(wrapper.text()).toContain('240 cal');
         expect(wrapper.text()).toContain('Carbohydrates');

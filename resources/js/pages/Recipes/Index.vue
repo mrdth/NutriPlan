@@ -2,6 +2,7 @@
 import Pagination from '@/components/Pagination.vue';
 import ImportRecipeModal from '@/components/Recipe/ImportRecipeModal.vue';
 import RecipeCard from '@/components/Recipe/RecipeCard.vue';
+import RecipeToggle from '@/components/Recipe/RecipeToggle.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
@@ -19,13 +20,17 @@ interface Props {
             cooking_time: number;
             servings: number;
             images: string[];
+            url: string | null;
             user: {
                 name: string;
             };
             categories: Array<{
                 id: number;
                 name: string;
+                slug: string;
+                recipe_count: number;
             }>;
+            is_favorited?: boolean;
         }>;
         links: Array<{
             url?: string;
@@ -33,9 +38,13 @@ interface Props {
             active: boolean;
         }>;
     };
+    filter?: {
+        category?: string;
+        show_mine?: boolean;
+    };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const showImportModal = ref(false);
 </script>
@@ -50,7 +59,10 @@ const showImportModal = ref(false);
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Recipes</h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Browse through our collection of delicious recipes</p>
                 </div>
-                <div class="mt-4 space-x-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                <div class="mt-4 flex items-center space-x-4 sm:ml-4 sm:mt-0">
+                    <RecipeToggle :initial-show-my-recipes="Boolean(filter?.show_mine)" />
+                </div>
+                <div class="mt-4 space-x-4 sm:ml-auto sm:mt-0 sm:flex-none">
                     <Button variant="outline" @click="showImportModal = true">
                         <DownloadIcon class="mr-2 h-4 w-4" />
                         Import Recipe

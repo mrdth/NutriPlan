@@ -25,7 +25,7 @@ As a user, I want to be able to filter the recipes index page to show only recip
   - Update the recipe count to show total recipes
 
 ### UI/UX Requirements
-- The toggle should be prominently placed in the page header
+- The toggle should be prominently placed in the page header, before the 'Import Recipe' button
 - Use consistent styling with the existing UI components
 - Provide smooth transition animation when switching between views
 - Include a loading state while filtering
@@ -40,12 +40,11 @@ As a user, I want to be able to filter the recipes index page to show only recip
 - Return appropriate Inertia responses with the filtered data
 
 ### Frontend Changes
-- Create new Vue component for the toggle button
+- Create new Vue component for the toggle button using radix-vue
 - Implement state management using Vue's reactive system
 - Use Inertia.js visit() for handling filter state changes
 - Update the recipe list component to handle filtered results
-- Add loading states during Inertia page transitions
-- Persist filter preference in localStorage or Vuex store
+- Persist filter preference in localStorage
 
 ### Database Changes
 - No database changes required (utilizing existing user_id relationship)

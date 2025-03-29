@@ -14,7 +14,7 @@ const mainNavItems: NavItem[] = [
         href: '/recipes',
         icon: LayoutGrid,
     },
-        {
+    {
         title: 'Favorites',
         href: '/favorites',
         icon: HeartIcon,
