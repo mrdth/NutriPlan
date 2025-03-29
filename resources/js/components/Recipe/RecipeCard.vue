@@ -5,9 +5,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { InputError } from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
 import { Link, useForm } from '@inertiajs/vue3';
+import axios from 'axios';
 import { ClockIcon, EllipsisVerticalIcon, FolderPlusIcon, HeartIcon, UsersIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import axios from 'axios';
 
 interface Props {
     recipe: {
@@ -109,7 +109,8 @@ const addToCollection = () => {
 const toggleFavorite = () => {
     // Use axios with the CSRF token that Laravel automatically includes
     // when using the default Laravel mix/vite setup
-    axios.post(route('recipes.favorite', props.recipe.slug))
+    axios
+        .post(route('recipes.favorite', props.recipe.slug))
         .then((response: { data: { favorited: boolean } }) => {
             // The controller returns a JSON response with a 'favorited' boolean
             isFavorited.value = response.data.favorited;

@@ -129,9 +129,9 @@ import Carousel from '@/components/ui/carousel.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import { HeartIcon, PencilIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
-import axios from 'axios';
 
 interface PageProps {
     [key: string]: unknown;
@@ -190,7 +190,8 @@ const formatScaledAmount = (amount: number): string => {
 const toggleFavorite = () => {
     // Use axios with the CSRF token that Laravel automatically includes
     // when using the default Laravel mix/vite setup
-    axios.post(route('recipes.favorite', props.recipe.slug))
+    axios
+        .post(route('recipes.favorite', props.recipe.slug))
         .then((response: { data: { favorited: boolean } }) => {
             // The controller returns a JSON response with a 'favorited' boolean
             isFavorited.value = response.data.favorited;

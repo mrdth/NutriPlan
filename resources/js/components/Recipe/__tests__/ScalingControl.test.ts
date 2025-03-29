@@ -96,9 +96,6 @@ describe('ScalingControl', () => {
 
         // Should reset to original
         expect(wrapper.emitted('update:scalingFactor')).toBeTruthy();
-        // Check that the scaling factor was emitted
-        const emittedEvents = wrapper.emitted('update:scalingFactor');
-        // We don't check the exact value as the implementation may vary
     });
 
     it('emits the correct scaling factor when servings change', async () => {
