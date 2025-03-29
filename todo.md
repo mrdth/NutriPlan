@@ -81,13 +81,43 @@
     - Place the nutrition information fields in a separate section of the form, in a collapsible panel.
   - [x] Use the `NutritionInformation` component to display the information on the recipe page.
 
-10. [ ] Implement favorite recipes feature.
-  - [ ] Create a many-to-many relationship between users and recipes for favorites.
-    - [ ] Add a migration to create the favorites pivot table.
-    - [ ] Update the User model with a favorites relationship method.
-    - [ ] Update the Recipe model with a favoritedBy relationship method.
-  - [ ] Create a FavoriteController with toggle functionality.
-  - [ ] Add a favorite/unfavorite button to dropdown menu of recipe cards, above the "Add to Collection" button.
-  - [ ] Add a favorite/unfavorite button to recipe detail page.
-  - [ ] Create a dedicated "Favorites" page to display all favorited recipes.
-  - [ ] Add tests for the favorite functionality.
+10. [x] Implement favorite recipes feature.
+  - [x] Create a many-to-many relationship between users and recipes for favorites.
+    - [x] Add a migration to create the favorites pivot table.
+    - [x] Update the User model with a favorites relationship method.
+    - [x] Update the Recipe model with a favoritedBy relationship method.
+  - [x] Create a FavoriteController with toggle functionality.
+  - [x] Add a favorite/unfavorite button to dropdown menu of recipe cards, above the "Add to Collection" button.
+  - [x] Add a favorite/unfavorite button to recipe detail page.
+  - [x] Create a dedicated "Favorites" page to display all favorited recipes.
+  - [x] Add tests for the favorite functionality.
+
+11. [ ] Implement recipe deletion feature.
+  - [ ] Backend Components
+    - [ ] Add a `destroy` method to the `RecipeController` if it doesn't already exist
+    - [ ] Create a `DeleteRecipeAction` class in `app/Actions`
+    - [ ] Update or create `RecipePolicy` to include a `delete` method
+  - [ ] Frontend Components
+    - [ ] Add a delete button to the recipe edit form
+    - [ ] Create a confirmation modal component or use an existing one
+    - [ ] Add a delete method to recipe service/API client
+  - [ ] Testing
+    - [ ] Add controller tests in `tests/Feature/Http/Controllers/RecipeControllerTest.php`
+    - [ ] Create action tests in `tests/Unit/Actions/DeleteRecipeActionTest.php`
+    - [ ] Test policy in `tests/Unit/Policies/RecipePolicyTest.php`
+    - [ ] Add frontend component tests
+
+12. [ ] Implement My Recipes feature.
+  - [ ] Backend Components
+    - [ ] Update `RecipeController@index` to accept `show_mine` parameter
+    - [ ] Add filter scope to Recipe model for user's recipes
+    - [ ] Add tests for new filtering functionality
+  - [ ] Frontend Components
+    - [ ] Create toggle button Vue component
+    - [ ] Update Recipes Index page to include toggle
+    - [ ] Add state management for filter preference
+    - [ ] Implement loading states for Inertia transitions
+  - [ ] Testing
+    - [ ] Add controller filter tests
+    - [ ] Add frontend component tests
+    - [ ] Test filter persistence across page reloads

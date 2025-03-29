@@ -1,0 +1,44 @@
+Recipe Deletion Feature Plan
+1. Backend Components
+    - Controller Method
+        - Add a destroy method to the RecipeController if it doesn't already exist
+        - The method should:
+            - Verify user authorization (only recipe creator can delete)
+            - Delete the recipe
+            - Return appropriate response
+    - Action Class
+        - Create a DeleteRecipeAction class in app/Actions
+        - This action will handle the actual deletion logic
+        - Should handle related records (like nutrition information)
+    - Policy Update
+        - Update or create RecipePolicy to include a delete method
+        - Ensure only the recipe creator can delete their recipes
+2. Frontend Components
+    - Edit Page Modification
+        - Add a delete button to the recipe edit form
+        - Position it separately from other actions (to avoid accidental clicks)
+        - Style it with a warning/danger color
+    - Confirmation Modal
+        - Create a confirmation modal component or use an existing one
+        - Include clear warning text about permanent deletion
+        - Provide cancel and confirm buttons
+    - API Integration
+        - Add a delete method to recipe service/API client
+        - Handle success and error responses
+        - Redirect to recipes index page after successful deletion
+3. Testing
+    - Controller Tests
+        - Add tests in tests/Feature/Http/Controllers/RecipeControllerTest.php
+        - Test authorization (can delete own recipes, cannot delete others')
+        - Test successful deletion
+        - Test error handling
+    - Action Tests
+        - Create tests in tests/Unit/Actions/DeleteRecipeActionTest.php
+        - Test successful deletion including related records
+        - Test error handling
+    - Policy Tests
+        - Test policy in tests/Unit/Policies/RecipePolicyTest.php
+        - Verify authorization logic works correctly
+    - Frontend Tests
+        - Add component tests for the delete button and confirmation modal
+        - Test API integration
