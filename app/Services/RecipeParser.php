@@ -85,9 +85,10 @@ class RecipeParser
 
         // Use the existing recipe if set, otherwise find or create a new one
         $recipe = $this->recipe ?? Recipe::firstOrNew([
-            'title' => $this->title,
+            'user_id' => Auth::id(),
             'url' => $this->url,
         ])->fill([
+            'title' => $this->title,
             'author' => $this->author,
             'description' => $this->description,
             'instructions' => implode("\n\n", $this->steps),
@@ -95,7 +96,6 @@ class RecipeParser
             'cooking_time' => $this->cooking_time,
             'servings' => $this->servings !== 0 ? $this->servings : (int) $this->yield,
             'images' => array_values(array_filter($this->images)),
-            'user_id' => Auth::id(),
         ]);
 
         // Save the recipe first if it's new
