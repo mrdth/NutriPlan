@@ -15,6 +15,9 @@ This phase will add the ability to automatically generate shopping lists from me
 - View, edit and delete shopping lists
 - Mark items as purchased/acquired
 - Add custom items not derived from recipes
+    - Integrate barcode scanning on mobile?
+        - Barcode Detection API is available in chrome based mobiel browsers (see https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API#browser_compatibility)
+        - There is a free barcode lookup api at: https://freewebapi.com/data-apis/barcode-lookup-api/
 - Sort ingredients by categories or custom order
 
 ### Integration with Meal Planning
