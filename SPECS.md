@@ -1,6 +1,6 @@
 # Project Specifications
 
-This document provides an overview of all feature specifications for the AI Recipe Thing project.
+This document provides an overview of all feature specifications for the NutriPlan project.
 
 ## Feature Specifications
 
@@ -9,6 +9,7 @@ This document provides an overview of all feature specifications for the AI Reci
 | Favorite Recipes | Allow users to mark recipes as favorites and view their favorite recipes | ✅ | [View Spec](specs/favorite-recipes.md) |
 | Recipe Deletion | Allow users to delete their own recipes | ⏳ | [View Spec](specs/recipe-deletion.md) |
 | My Recipes | Toggle to filter between all recipes and user's own recipes | ✅ | [View Spec](specs/my-recipes.md) |
+| Recipe Visibility | Control recipe privacy and visibility with special handling for imported recipes | ⏳ | [View Spec](specs/recipe-visibility.md) |
 | Meal Planning | Create and manage meal plans with recipes | ⏳ | [View Spec](specs/meal-planning.md) |
 
 ### Meal Planning Phases
