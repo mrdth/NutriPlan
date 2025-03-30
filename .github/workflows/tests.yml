@@ -50,61 +50,7 @@ jobs:
         run: npm run build
 
       - name: Backend Tests
-        run: ./vendor/bin/pest --parallel --coverage --coverage-clover=backend-coverage.xml
+        run: ./vendor/bin/pest --parallel
 
-      - name: Create Coverage Directory
-        run: mkdir -p coverage
-
-      - name: Frontend Tests with Coverage
-        run: npx vitest run --coverage
-
-      - name: Calculate Backend Coverage
-        id: backend-coverage
-        run: |
-          COVERAGE=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=covered=")[^"]*' backend-coverage.xml || echo "0")
-          TOTAL=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=elements=")[^"]*' backend-coverage.xml || echo "1")
-          PERCENTAGE=$((COVERAGE * 100 / TOTAL))
-          echo "percentage=${PERCENTAGE}" >> $GITHUB_OUTPUT
-
-      - name: Generate Frontend Coverage Badge
-        uses: wjervis7/vitest-badge-action@v1.0.0
-        id: frontend-coverage
-        with:
-          result-type: lines
-          badge-text: 'Frontend Coverage'
-          badge-path: frontend-coverage.svg
-          upload-badge: false
-          
-      - name: Create Badges Directory
-        run: mkdir -p .github/badges
-          
-      - name: Update README with Coverage Badges
-        if: github.ref == 'refs/heads/main'
-        run: |
-          BACKEND_COVERAGE="${{ steps.backend-coverage.outputs.percentage }}"
-          
-          BACKEND_COLOR="red"
-          if [ "$BACKEND_COVERAGE" -ge 80 ]; then
-            BACKEND_COLOR="green"
-          elif [ "$BACKEND_COVERAGE" -ge 60 ]; then
-            BACKEND_COLOR="yellow"
-          elif [ "$BACKEND_COVERAGE" -ge 40 ]; then
-            BACKEND_COLOR="orange"
-          fi
-          
-          sed -i "3s|.*|![Backend Coverage](https://img.shields.io/badge/Backend%20Coverage-${BACKEND_COVERAGE}%25-${BACKEND_COLOR})|" README.md
-          cp frontend-coverage.svg .github/badges/frontend-coverage.svg
-          
-          # Add the frontend badge to the README
-          FRONTEND_URL=$(grep -o 'src="[^"]*"' frontend-coverage.svg | sed 's/src="\(.*\)"/\1/')
-          sed -i "4s|.*|![Frontend Coverage](${FRONTEND_URL})|" README.md
-          
-          # Save coverage-summary.json for future reference
-          cp coverage/coverage-summary.json .github/badges/coverage-summary.json
-
-      - name: Commit Updated Badges and Summary
-        if: github.ref == 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'chore: update coverage badges'
-          file_pattern: 'README.md .github/badges/*'
+      - name: Frontend Tests
+        run: npx vitest run
