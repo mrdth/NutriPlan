@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  ci:
+  tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
-      - name: Install Dependencies
+      - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Copy Environment File
@@ -49,5 +49,50 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Tests
-        run: ./vendor/bin/pest
+      - name: Backend Tests
+        run: ./vendor/bin/pest --parallel --coverage --coverage-clover=backend-coverage.xml
+
+      - name: Frontend Tests
+        run: npm run test:coverage
+
+      - name: Generate Frontend Coverage Report XML
+        run: npx vitest run --coverage --coverage-reporter=clover
+
+      - name: Calculate Backend Coverage
+        id: backend-coverage
+        run: |
+          COVERAGE=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=covered=")[^"]*' backend-coverage.xml || echo "0")
+          TOTAL=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=elements=")[^"]*' backend-coverage.xml || echo "1")
+          PERCENTAGE=$((COVERAGE * 100 / TOTAL))
+          echo "percentage=${PERCENTAGE}" >> $GITHUB_OUTPUT
+
+      - name: Calculate Frontend Coverage
+        id: frontend-coverage
+        run: |
+          COVERAGE=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=covered=")[^"]*' coverage/clover.xml || echo "0")
+          TOTAL=$(grep -Po '<metrics [^>]*statements[^>]*\K(?<=elements=")[^"]*' coverage/clover.xml || echo "1")
+          PERCENTAGE=$((COVERAGE * 100 / TOTAL))
+          echo "percentage=${PERCENTAGE}" >> $GITHUB_OUTPUT
+
+      - name: Generate Backend Coverage Badge
+        uses: emibcn/badge-action@v1
+        with:
+          label: 'Backend Coverage'
+          status: ${{ steps.backend-coverage.outputs.percentage }}%
+          color: 'green'
+          path: .github/badges/backend-coverage.svg
+
+      - name: Generate Frontend Coverage Badge
+        uses: emibcn/badge-action@v1
+        with:
+          label: 'Frontend Coverage'
+          status: ${{ steps.frontend-coverage.outputs.percentage }}%
+          color: 'blue'
+          path: .github/badges/frontend-coverage.svg
+
+      - name: Commit Coverage Badges
+        if: github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: update coverage badges'
+          file_pattern: '.github/badges/*.svg'

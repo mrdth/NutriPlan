@@ -1,0 +1,53 @@
+name: Initialize Badges
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/init-badges.yml'
+
+jobs:
+  init-badges:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create badges directory
+        run: mkdir -p .github/badges
+
+      - name: Check if badges exist
+        id: check-badges
+        run: |
+          if [ ! -f ".github/badges/backend-coverage.svg" ] || [ ! -f ".github/badges/frontend-coverage.svg" ]; then
+            echo "need_init=true" >> $GITHUB_OUTPUT
+          else
+            echo "need_init=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Initialize Backend Coverage Badge
+        if: steps.check-badges.outputs.need_init == 'true'
+        uses: emibcn/badge-action@v1
+        with:
+          label: 'Backend Coverage'
+          status: 'N/A'
+          color: 'lightgrey'
+          path: .github/badges/backend-coverage.svg
+
+      - name: Initialize Frontend Coverage Badge
+        if: steps.check-badges.outputs.need_init == 'true'
+        uses: emibcn/badge-action@v1
+        with:
+          label: 'Frontend Coverage'
+          status: 'N/A'
+          color: 'lightgrey'
+          path: .github/badges/frontend-coverage.svg
+
+      - name: Commit Initial Badges
+        if: steps.check-badges.outputs.need_init == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: initialize coverage badges'
+          file_pattern: '.github/badges/*.svg' 

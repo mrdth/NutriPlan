@@ -1,5 +1,8 @@
 # NutriPlan
 
+![Backend Coverage](https://github.com/mrdth/ai-recipe-thing/blob/main/.github/badges/backend-coverage.svg)
+![Frontend Coverage](https://github.com/mrdth/ai-recipe-thing/blob/main/.github/badges/frontend-coverage.svg)
+
 NutriPlan is a modern recipe management and meal planning application built with Laravel, Vue.js, and Inertia.js. It allows users to collect, organize, and plan their recipes efficiently.
 
 ## IMPORTANT
