@@ -9,6 +9,7 @@ use Inertia\Response;
 use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use App\Actions\DeleteRecipeAction;
 use App\Http\Requests\Recipe\CreateRecipeRequest;
 use App\Http\Requests\Recipe\UpdateRecipeRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -192,11 +193,11 @@ class RecipeController extends Controller
             ->with('success', 'Recipe updated successfully.');
     }
 
-    public function destroy(Recipe $recipe): RedirectResponse
+    public function destroy(Recipe $recipe, DeleteRecipeAction $deleteRecipeAction): RedirectResponse
     {
         $this->authorize('delete', $recipe);
 
-        $recipe->delete();
+        $deleteRecipeAction->execute($recipe);
 
         return redirect()->route('recipes.index')
             ->with('success', 'Recipe deleted successfully.');

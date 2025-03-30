@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import DeleteRecipeModal from '@/components/Recipe/DeleteRecipeModal.vue';
 import RecipeForm from '@/components/Recipe/RecipeForm.vue';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
 import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineProps<{
     recipe: Recipe;
@@ -19,6 +22,8 @@ defineProps<{
         label: string;
     }>;
 }>();
+
+const showDeleteModal = ref(false);
 </script>
 
 <template>
@@ -30,6 +35,9 @@ defineProps<{
                 <div class="sm:flex-auto">
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Edit Recipe</h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Update your recipe details below.</p>
+                </div>
+                <div class="mt-4 sm:ml-4 sm:mt-0">
+                    <Button variant="destructive" @click="showDeleteModal = true">Delete Recipe</Button>
                 </div>
             </div>
 
@@ -45,5 +53,7 @@ defineProps<{
                 />
             </div>
         </div>
+
+        <DeleteRecipeModal v-model:open="showDeleteModal" :recipe-slug="recipe.slug" />
     </AppLayout>
 </template>

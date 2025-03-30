@@ -384,3 +384,25 @@ test('user cannot delete others recipe', function () {
 
     $response->assertForbidden();
 });
+
+test('user can delete own recipe with nutrition information', function () {
+    $recipe = Recipe::factory()
+        ->for($this->user)
+        ->create();
+
+    $nutrition = $recipe->nutritionInformation()->create([
+        'calories' => '200 kcal',
+        'protein_content' => '10g',
+        'carbohydrate_content' => '30g',
+        'fat_content' => '5g',
+    ]);
+
+    $response = actingAs($this->user)
+        ->delete(route('recipes.destroy', $recipe));
+
+    $response->assertRedirect(route('recipes.index'));
+    $response->assertSessionHas('success');
+
+    expect(Recipe::find($recipe->id))->toBeNull();
+    expect(\App\Models\NutritionInformation::find($nutrition->id))->toBeNull();
+});
