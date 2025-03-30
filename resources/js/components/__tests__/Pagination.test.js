@@ -1,6 +1,6 @@
-import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
-import Pagination from '../Pagination.vue'
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
+import Pagination from '../Pagination.vue';
 
 describe('Pagination.vue', () => {
     it('renders pagination links correctly with HTML entities', () => {
@@ -8,37 +8,37 @@ describe('Pagination.vue', () => {
             {
                 url: null,
                 label: '&laquo; Previous',
-                active: false
+                active: false,
             },
             {
                 url: 'http://example.com/page/1',
                 label: '1',
-                active: true
+                active: true,
             },
             {
                 url: 'http://example.com/page/2',
                 label: '2',
-                active: false
+                active: false,
             },
             {
                 url: 'http://example.com/page/2',
                 label: 'Next &raquo;',
-                active: false
-            }
+                active: false,
+            },
         ];
 
         const wrapper = mount(Pagination, {
             props: {
-                links
+                links,
             },
             global: {
                 stubs: {
                     Link: {
                         template: '<a :href="href" class="link-stub" :class="$attrs.class" v-html="$slots.default"></a>',
-                        props: ['href']
-                    }
-                }
-            }
+                        props: ['href'],
+                    },
+                },
+            },
         });
 
         // Check that all links are rendered
@@ -56,27 +56,27 @@ describe('Pagination.vue', () => {
             {
                 url: 'http://example.com/page/1',
                 label: '1',
-                active: true
+                active: true,
             },
             {
                 url: 'http://example.com/page/2',
                 label: '2',
-                active: false
-            }
+                active: false,
+            },
         ];
 
         const wrapper = mount(Pagination, {
             props: {
-                links
+                links,
             },
             global: {
                 stubs: {
                     Link: {
                         template: '<a :href="href" class="link-stub" :class="$attrs.class" v-html="$slots.default"></a>',
-                        props: ['href']
-                    }
-                }
-            }
+                        props: ['href'],
+                    },
+                },
+            },
         });
 
         const linkElements = wrapper.findAll('.link-stub');
@@ -95,27 +95,27 @@ describe('Pagination.vue', () => {
             {
                 url: null,
                 label: 'Previous',
-                active: false
+                active: false,
             },
             {
                 url: 'http://example.com/page/1',
                 label: '1',
-                active: true
-            }
+                active: true,
+            },
         ];
 
         const wrapper = mount(Pagination, {
             props: {
-                links
+                links,
             },
             global: {
                 stubs: {
                     Link: {
                         template: '<a :href="href" class="link-stub" :class="$attrs.class" v-html="$slots.default"></a>',
-                        props: ['href']
-                    }
-                }
-            }
+                        props: ['href'],
+                    },
+                },
+            },
         });
 
         const linkElements = wrapper.findAll('.link-stub');
@@ -124,4 +124,4 @@ describe('Pagination.vue', () => {
         expect(linkElements[0].classes()).toContain('cursor-default');
         expect(linkElements[0].attributes('href')).toBe('#');
     });
-}); 
+});

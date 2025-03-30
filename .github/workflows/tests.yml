@@ -74,25 +74,36 @@ jobs:
           PERCENTAGE=$((COVERAGE * 100 / TOTAL))
           echo "percentage=${PERCENTAGE}" >> $GITHUB_OUTPUT
 
-      - name: Generate Backend Coverage Badge
-        uses: emibcn/badge-action@v1
-        with:
-          label: 'Backend Coverage'
-          status: ${{ steps.backend-coverage.outputs.percentage }}%
-          color: 'green'
-          path: .github/badges/backend-coverage.svg
+      - name: Update README with Coverage Badges
+        if: github.ref == 'refs/heads/main'
+        run: |
+          BACKEND_COVERAGE="${{ steps.backend-coverage.outputs.percentage }}"
+          FRONTEND_COVERAGE="${{ steps.frontend-coverage.outputs.percentage }}"
+          
+          BACKEND_COLOR="red"
+          if [ "$BACKEND_COVERAGE" -ge 80 ]; then
+            BACKEND_COLOR="green"
+          elif [ "$BACKEND_COVERAGE" -ge 60 ]; then
+            BACKEND_COLOR="yellow"
+          elif [ "$BACKEND_COVERAGE" -ge 40 ]; then
+            BACKEND_COLOR="orange"
+          fi
+          
+          FRONTEND_COLOR="red"
+          if [ "$FRONTEND_COVERAGE" -ge 80 ]; then
+            FRONTEND_COLOR="blue"
+          elif [ "$FRONTEND_COVERAGE" -ge 60 ]; then
+            FRONTEND_COLOR="lightblue"
+          elif [ "$FRONTEND_COVERAGE" -ge 40 ]; then
+            FRONTEND_COLOR="cyan"
+          fi
+          
+          sed -i "3s|.*|![Backend Coverage](https://img.shields.io/badge/Backend%20Coverage-${BACKEND_COVERAGE}%25-${BACKEND_COLOR})|" README.md
+          sed -i "4s|.*|![Frontend Coverage](https://img.shields.io/badge/Frontend%20Coverage-${FRONTEND_COVERAGE}%25-${FRONTEND_COLOR})|" README.md
 
-      - name: Generate Frontend Coverage Badge
-        uses: emibcn/badge-action@v1
-        with:
-          label: 'Frontend Coverage'
-          status: ${{ steps.frontend-coverage.outputs.percentage }}%
-          color: 'blue'
-          path: .github/badges/frontend-coverage.svg
-
-      - name: Commit Coverage Badges
+      - name: Commit Updated README
         if: github.ref == 'refs/heads/main'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'chore: update coverage badges'
-          file_pattern: '.github/badges/*.svg'
+          file_pattern: 'README.md'

@@ -8,100 +8,107 @@ vi.mock('@/components/Recipe/NutritionForm.vue', () => ({
         name: 'NutritionForm',
         template: '<div class="nutrition-form"><slot /></div>',
         props: ['modelValue'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 vi.mock('@/components/ui/badge', () => ({
     Badge: {
         name: 'Badge',
         template: '<div class="badge" @click="$emit(\'click\')"><slot /></div>',
-        props: ['variant']
-    }
+        props: ['variant'],
+    },
 }));
 
 vi.mock('@/components/ui/button', () => ({
     Button: {
         name: 'Button',
         template: '<button class="button" :type="type" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
-        props: ['type', 'variant', 'size', 'disabled']
-    }
+        props: ['type', 'variant', 'size', 'disabled'],
+    },
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
     Checkbox: {
         name: 'Checkbox',
-        template: '<input type="checkbox" class="checkbox" :checked="modelValue === trueValue" @change="$emit(\'update:modelValue\', $event.target.checked ? trueValue : falseValue)" />',
+        template:
+            '<input type="checkbox" class="checkbox" :checked="modelValue === trueValue" @change="$emit(\'update:modelValue\', $event.target.checked ? trueValue : falseValue)" />',
         props: ['modelValue', 'trueValue', 'falseValue'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 vi.mock('@/components/ui/combobox', () => ({
     Combobox: {
         name: 'Combobox',
-        template: '<div class="combobox"><select :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.id" :value="option.id">{{ option.name }}</option></select></div>',
+        template:
+            '<div class="combobox"><select :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.id" :value="option.id">{{ option.name }}</option></select></div>',
         props: ['modelValue', 'options', 'placeholder'],
-        emits: ['update:modelValue']
+        emits: ['update:modelValue'],
     },
     ComboboxWithCreate: {
         name: 'ComboboxWithCreate',
-        template: '<div class="combobox-with-create"><select :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.id" :value="option.id">{{ option.name }}</option></select></div>',
+        template:
+            '<div class="combobox-with-create"><select :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.id" :value="option.id">{{ option.name }}</option></select></div>',
         props: ['modelValue', 'options', 'selected', 'allowCreate', 'createEndpoint'],
-        emits: ['update:modelValue', 'option-created']
-    }
+        emits: ['update:modelValue', 'option-created'],
+    },
 }));
 
 vi.mock('@/components/ui/file-input', () => ({
     FileInput: {
         name: 'FileInput',
-        template: '<input type="file" class="file-input" :multiple="multiple" :accept="accept" @change="$emit(\'update:modelValue\', $event.target.files)" />',
+        template:
+            '<input type="file" class="file-input" :multiple="multiple" :accept="accept" @change="$emit(\'update:modelValue\', $event.target.files)" />',
         props: ['modelValue', 'multiple', 'accept'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 vi.mock('@/components/ui/input', () => ({
     Input: {
         name: 'Input',
-        template: '<input class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :type="type" :min="min" :step="step" :placeholder="placeholder" :required="required" />',
+        template:
+            '<input class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :type="type" :min="min" :step="step" :placeholder="placeholder" :required="required" />',
         props: ['modelValue', 'type', 'min', 'step', 'placeholder', 'required'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 vi.mock('@/components/ui/input-error', () => ({
     InputError: {
         name: 'InputError',
         template: '<div class="input-error" v-if="message">{{ message }}</div>',
-        props: ['message']
-    }
+        props: ['message'],
+    },
 }));
 
 vi.mock('@/components/ui/label', () => ({
     Label: {
         name: 'Label',
         template: '<label class="label"><slot /></label>',
-        props: ['for']
-    }
+        props: ['for'],
+    },
 }));
 
 vi.mock('@/components/ui/select', () => ({
     Select: {
         name: 'Select',
-        template: '<select class="select" :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.value" :value="option.value">{{ option.label }}</option></select>',
+        template:
+            '<select class="select" :value="modelValue" @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="option in options" :key="option.value" :value="option.value">{{ option.label }}</option></select>',
         props: ['modelValue', 'options', 'allowEmpty'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
     Textarea: {
         name: 'Textarea',
-        template: '<textarea class="textarea" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :rows="rows" :required="required"></textarea>',
+        template:
+            '<textarea class="textarea" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :rows="rows" :required="required"></textarea>',
         props: ['modelValue', 'rows', 'required'],
-        emits: ['update:modelValue']
-    }
+        emits: ['update:modelValue'],
+    },
 }));
 
 // Form mock setup with shared state for test access
@@ -122,26 +129,26 @@ const formMock = {
     post: vi.fn(),
     put: vi.fn(),
     get: vi.fn(),
-    reset: vi.fn()
+    reset: vi.fn(),
 };
 
 vi.mock('@inertiajs/vue3', () => ({
-    useForm: () => formMock
+    useForm: () => formMock,
 }));
 
 vi.mock('lucide-vue-next', () => ({
     PlusIcon: {
         name: 'PlusIcon',
-        template: '<div class="plus-icon"></div>'
+        template: '<div class="plus-icon"></div>',
     },
     TrashIcon: {
         name: 'TrashIcon',
-        template: '<div class="trash-icon"></div>'
+        template: '<div class="trash-icon"></div>',
     },
     XIcon: {
         name: 'XIcon',
-        template: '<div class="x-icon"></div>'
-    }
+        template: '<div class="x-icon"></div>',
+    },
 }));
 
 // Mock the route function
@@ -156,19 +163,19 @@ describe('RecipeForm.vue', () => {
     const mockCategories = [
         { id: 1, name: 'Dinner' },
         { id: 2, name: 'Italian' },
-        { id: 3, name: 'Quick' }
+        { id: 3, name: 'Quick' },
     ];
 
     const mockIngredients = [
         { id: 1, name: 'Tomatoes' },
         { id: 2, name: 'Olive Oil' },
-        { id: 3, name: 'Garlic' }
+        { id: 3, name: 'Garlic' },
     ];
 
     const mockUnits = [
         { value: 'g', label: 'Grams' },
         { value: 'ml', label: 'Milliliters' },
-        { value: 'tsp', label: 'Teaspoon' }
+        { value: 'tsp', label: 'Teaspoon' },
     ];
 
     // Reset the form mock between tests
@@ -193,13 +200,13 @@ describe('RecipeForm.vue', () => {
             props: {
                 categories: mockCategories,
                 ingredients: mockIngredients,
-                measurementUnits: mockUnits
+                measurementUnits: mockUnits,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         // Check for required form elements
@@ -228,13 +235,13 @@ describe('RecipeForm.vue', () => {
                     name: 'Garlic',
                     pivot: {
                         amount: 2,
-                        unit: 'clove'
-                    }
-                }
+                        unit: 'clove',
+                    },
+                },
             ],
             nutrition_information: {
-                calories: '600 cal'
-            }
+                calories: '600 cal',
+            },
         };
 
         // Pre-populate the form mock to simulate existing recipe data
@@ -245,18 +252,18 @@ describe('RecipeForm.vue', () => {
         formMock.cooking_time = 20;
         formMock.servings = 2;
 
-        const wrapper = mount(RecipeForm, {
+        mount(RecipeForm, {
             props: {
                 recipe: mockRecipe,
                 categories: mockCategories,
                 ingredients: mockIngredients,
-                measurementUnits: mockUnits
+                measurementUnits: mockUnits,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         // In our mocked components, we should check if the form was properly initialized
@@ -273,16 +280,16 @@ describe('RecipeForm.vue', () => {
             props: {
                 categories: mockCategories,
                 ingredients: mockIngredients,
-                measurementUnits: mockUnits
+                measurementUnits: mockUnits,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
-        const addButton = wrapper.findAll('.button').find(btn => btn.text().includes('Add Ingredient'));
+        const addButton = wrapper.findAll('.button').find((btn) => btn.text().includes('Add Ingredient'));
         expect(addButton).toBeTruthy();
     });
 
@@ -292,16 +299,16 @@ describe('RecipeForm.vue', () => {
                 categories: mockCategories,
                 ingredients: mockIngredients,
                 measurementUnits: mockUnits,
-                submitLabel: 'Create Recipe'
+                submitLabel: 'Create Recipe',
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
-        const submitButton = wrapper.findAll('.button').find(btn => btn.text().includes('Create Recipe'));
+        const submitButton = wrapper.findAll('.button').find((btn) => btn.text().includes('Create Recipe'));
         expect(submitButton).toBeTruthy();
     });
 
@@ -313,13 +320,13 @@ describe('RecipeForm.vue', () => {
             props: {
                 categories: mockCategories,
                 ingredients: mockIngredients,
-                measurementUnits: mockUnits
+                measurementUnits: mockUnits,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         const submitButton = wrapper.findAll('.button[type="submit"]').at(0);
@@ -330,20 +337,20 @@ describe('RecipeForm.vue', () => {
         // Set errors directly on the formMock
         formMock.errors = {
             title: 'Title is required',
-            prep_time: 'Prep time must be a number'
+            prep_time: 'Prep time must be a number',
         };
 
         const wrapper = mount(RecipeForm, {
             props: {
                 categories: mockCategories,
                 ingredients: mockIngredients,
-                measurementUnits: mockUnits
+                measurementUnits: mockUnits,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         const errorElements = wrapper.findAll('.input-error');
@@ -351,4 +358,4 @@ describe('RecipeForm.vue', () => {
         expect(wrapper.html()).toContain('Title is required');
         expect(wrapper.html()).toContain('Prep time must be a number');
     });
-}); 
+});

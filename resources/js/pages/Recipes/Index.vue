@@ -44,7 +44,7 @@ interface Props {
     };
 }
 
-const props = defineProps<Props>();
+const { recipes, filter } = defineProps<Props>();
 
 const showImportModal = ref(false);
 </script>

@@ -68,7 +68,7 @@ describe('NutritionInformation.vue', () => {
             saturated_fat_content: '2g',
             trans_fat_content: '0g',
             unsaturated_fat_content: '7g',
-            serving_size: '1 serving'
+            serving_size: '1 serving',
         };
 
         const wrapper = mount(NutritionInformation, {
@@ -117,7 +117,7 @@ describe('NutritionInformation.vue', () => {
 
     it('handles undefined nutrition prop correctly', () => {
         const wrapper = mount(NutritionInformation, {
-            props: {}
+            props: {},
         });
 
         expect(wrapper.text()).toContain('No nutrition information available');
@@ -126,8 +126,8 @@ describe('NutritionInformation.vue', () => {
     it('handles empty nutrition object correctly', () => {
         const wrapper = mount(NutritionInformation, {
             props: {
-                nutrition: {}
-            }
+                nutrition: {},
+            },
         });
 
         expect(wrapper.text()).not.toContain('No nutrition information available');

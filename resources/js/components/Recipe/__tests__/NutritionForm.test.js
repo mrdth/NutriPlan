@@ -104,7 +104,7 @@ describe('NutritionForm.vue', () => {
 
         // Expand the form
         await wrapper.find('button').trigger('click');
-        
+
         // Wait for the DOM to update
         await nextTick();
 

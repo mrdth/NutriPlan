@@ -7,8 +7,8 @@ vi.mock('@/components/ui/button', () => ({
     Button: {
         name: 'Button',
         template: '<button class="button" :type="type" :disabled="disabled"><slot /></button>',
-        props: ['type', 'variant', 'size', 'disabled']
-    }
+        props: ['type', 'variant', 'size', 'disabled'],
+    },
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
@@ -16,73 +16,73 @@ vi.mock('@/components/ui/dialog', () => ({
         name: 'Dialog',
         template: '<div class="dialog" v-if="open"><slot /></div>',
         props: ['open'],
-        emits: ['update:open']
+        emits: ['update:open'],
     },
     DialogContent: {
         name: 'DialogContent',
         template: '<div class="dialog-content"><slot /></div>',
-        props: ['class']
+        props: ['class'],
     },
     DialogHeader: {
         name: 'DialogHeader',
-        template: '<div class="dialog-header"><slot /></div>'
+        template: '<div class="dialog-header"><slot /></div>',
     },
     DialogTitle: {
         name: 'DialogTitle',
-        template: '<h2 class="dialog-title"><slot /></h2>'
+        template: '<h2 class="dialog-title"><slot /></h2>',
     },
     DialogDescription: {
         name: 'DialogDescription',
-        template: '<p class="dialog-description"><slot /></p>'
+        template: '<p class="dialog-description"><slot /></p>',
     },
     DialogFooter: {
         name: 'DialogFooter',
-        template: '<div class="dialog-footer"><slot /></div>'
-    }
+        template: '<div class="dialog-footer"><slot /></div>',
+    },
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
     DropdownMenu: {
         name: 'DropdownMenu',
-        template: '<div class="dropdown-menu"><slot /></div>'
+        template: '<div class="dropdown-menu"><slot /></div>',
     },
     DropdownMenuTrigger: {
         name: 'DropdownMenuTrigger',
         template: '<div class="dropdown-menu-trigger"><slot /></div>',
-        props: ['as']
+        props: ['as'],
     },
     DropdownMenuContent: {
         name: 'DropdownMenuContent',
         template: '<div class="dropdown-menu-content"><slot /></div>',
-        props: ['align']
+        props: ['align'],
     },
     DropdownMenuItem: {
         name: 'DropdownMenuItem',
-        template: '<div class="dropdown-menu-item" @click="$emit(\'click\')"><slot /></div>'
-    }
+        template: '<div class="dropdown-menu-item" @click="$emit(\'click\')"><slot /></div>',
+    },
 }));
 
 vi.mock('@/components/ui/input-error', () => ({
     InputError: {
         name: 'InputError',
         template: '<div class="input-error" v-if="message">{{ message }}</div>',
-        props: ['message']
-    }
+        props: ['message'],
+    },
 }));
 
 vi.mock('@/components/ui/label', () => ({
     Label: {
         name: 'Label',
         template: '<label class="label"><slot /></label>',
-        props: ['for']
-    }
+        props: ['for'],
+    },
 }));
 
 vi.mock('@inertiajs/vue3', () => ({
     Link: {
         name: 'Link',
         template: '<a :href="href" class="link"><slot /></a>',
-        props: ['href']
+        props: ['href'],
     },
     useForm: () => ({
         collection_id: '',
@@ -93,37 +93,37 @@ vi.mock('@inertiajs/vue3', () => ({
             if (options && options.onSuccess) {
                 options.onSuccess();
             }
-        })
-    })
+        }),
+    }),
 }));
 
 vi.mock('axios', () => ({
     default: {
-        post: vi.fn().mockImplementation(() => Promise.resolve({ data: { favorited: true } }))
-    }
+        post: vi.fn().mockImplementation(() => Promise.resolve({ data: { favorited: true } })),
+    },
 }));
 
 vi.mock('lucide-vue-next', () => ({
     ClockIcon: {
         name: 'ClockIcon',
-        template: '<div class="clock-icon"></div>'
+        template: '<div class="clock-icon"></div>',
     },
     EllipsisVerticalIcon: {
         name: 'EllipsisVerticalIcon',
-        template: '<div class="ellipsis-vertical-icon"></div>'
+        template: '<div class="ellipsis-vertical-icon"></div>',
     },
     FolderPlusIcon: {
         name: 'FolderPlusIcon',
-        template: '<div class="folder-plus-icon"></div>'
+        template: '<div class="folder-plus-icon"></div>',
     },
     HeartIcon: {
         name: 'HeartIcon',
-        template: '<div class="heart-icon"></div>'
+        template: '<div class="heart-icon"></div>',
     },
     UsersIcon: {
         name: 'UsersIcon',
-        template: '<div class="users-icon"></div>'
-    }
+        template: '<div class="users-icon"></div>',
+    },
 }));
 
 // Mock the route function
@@ -154,26 +154,26 @@ describe('RecipeCard.vue', () => {
         images: ['https://example.com/image.jpg'],
         url: 'https://example.com/recipe',
         user: {
-            name: 'John Doe'
+            name: 'John Doe',
         },
         categories: [
             { id: 1, name: 'Dinner', slug: 'dinner', recipe_count: 10 },
             { id: 2, name: 'Italian', slug: 'italian', recipe_count: 5 },
-            { id: 3, name: 'Quick', slug: 'quick', recipe_count: 3 }
+            { id: 3, name: 'Quick', slug: 'quick', recipe_count: 3 },
         ],
-        is_favorited: false
+        is_favorited: false,
     };
 
     it('renders recipe card with correct title and description', () => {
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: mockRecipe
+                recipe: mockRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         expect(wrapper.text()).toContain('Test Recipe');
@@ -183,13 +183,13 @@ describe('RecipeCard.vue', () => {
     it('formats cooking time correctly', () => {
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: mockRecipe
+                recipe: mockRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         // 15 + 30 minutes = 45 minutes = "45m"
@@ -200,18 +200,18 @@ describe('RecipeCard.vue', () => {
         const longCookingRecipe = {
             ...mockRecipe,
             prep_time: 20,
-            cooking_time: 100 // 1h 40m
+            cooking_time: 100, // 1h 40m
         };
 
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: longCookingRecipe
+                recipe: longCookingRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         // 20 + 100 minutes = 120 minutes = "2h"
@@ -221,13 +221,13 @@ describe('RecipeCard.vue', () => {
     it('displays the correct number of servings', () => {
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: mockRecipe
+                recipe: mockRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         expect(wrapper.text()).toContain('4');
@@ -236,13 +236,13 @@ describe('RecipeCard.vue', () => {
     it('displays top 3 categories ordered by recipe count', () => {
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: mockRecipe
+                recipe: mockRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         const text = wrapper.text();
@@ -262,13 +262,13 @@ describe('RecipeCard.vue', () => {
     it('displays website domain from URL', () => {
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: mockRecipe
+                recipe: mockRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         expect(wrapper.text()).toContain('example.com');
@@ -277,18 +277,18 @@ describe('RecipeCard.vue', () => {
     it('uses placeholder image when no images are provided', () => {
         const noImageRecipe = {
             ...mockRecipe,
-            images: []
+            images: [],
         };
 
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: noImageRecipe
+                recipe: noImageRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         const img = wrapper.find('img');
@@ -299,20 +299,20 @@ describe('RecipeCard.vue', () => {
     it('shows correct favorite status', () => {
         const favoritedRecipe = {
             ...mockRecipe,
-            is_favorited: true
+            is_favorited: true,
         };
 
         const wrapper = mount(RecipeCard, {
             props: {
-                recipe: favoritedRecipe
+                recipe: favoritedRecipe,
             },
             global: {
                 mocks: {
-                    route
-                }
-            }
+                    route,
+                },
+            },
         });
 
         expect(wrapper.text()).toContain('Unfavorite');
     });
-}); 
+});
