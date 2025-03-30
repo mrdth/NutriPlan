@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="20" role="img" aria-label="Backend Coverage: N/A"><title>Backend Coverage: N/A</title><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="r"><rect width="120" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#r)"><rect width="93" height="20" fill="#555"/><rect x="93" width="27" height="20" fill="#9f9f9f"/><rect width="120" height="20" fill="url(#s)"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110"><text aria-hidden="true" x="475" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="830">Backend Coverage</text><text x="475" y="140" transform="scale(.1)" fill="#fff" textLength="830">Backend Coverage</text><text aria-hidden="true" x="1055" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="170">N/A</text><text x="1055" y="140" transform="scale(.1)" fill="#fff" textLength="170">N/A</text></g></svg>
+<svg width="143.7" height="20" viewBox="0 0 1437 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Backend Coverage: N/A">
+  <title>Backend Coverage: N/A</title>
+  <linearGradient id="a" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="m"><rect width="1437" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#m)">
+    <rect width="1130" height="200" fill="#555"/>
+    <rect width="307" height="200" fill="#lightgrey" x="1130"/>
+    <rect width="1437" height="200" fill="url(#a)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="60" y="148" textLength="1030" fill="#000" opacity="0.25">Backend Coverage</text>
+    <text x="50" y="138" textLength="1030">Backend Coverage</text>
+    <text x="1185" y="148" textLength="207" fill="#000" opacity="0.25">N/A</text>
+    <text x="1175" y="138" textLength="207">N/A</text>
+  </g>
+  
+</svg>
