@@ -34,16 +34,25 @@ test('user can filter recipes to view only their own', function () {
         ->for($user)
         ->create();
 
-    // Create recipes owned by another user
-    $otherUserRecipes = Recipe::factory()
+    // Create public recipes owned by another user
+    $otherUserPublicRecipes = Recipe::factory()
         ->count(2)
         ->for($otherUser)
+        ->state(['is_public' => true])
         ->create();
 
-    // Test without filter (should see all recipes)
+    // Create private recipes owned by another user (these should not be visible)
+    $otherUserPrivateRecipes = Recipe::factory()
+        ->count(2)
+        ->for($otherUser)
+        ->state(['is_public' => false])
+        ->create();
+
+    // Test without filter (should see all user's recipes + public recipes from others)
     $response = actingAs($user)
         ->get(route('recipes.index'));
 
+    // Should see 5 recipes (3 own + 2 public from other)
     $response->assertInertia(
         fn (AssertableInertia $page) => $page
         ->component('Recipes/Index')

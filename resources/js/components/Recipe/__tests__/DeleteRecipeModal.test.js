@@ -101,7 +101,7 @@ describe('DeleteRecipeModal.vue', () => {
         });
 
         // Find the cancel button (first button with "Cancel" text)
-        const cancelButton = wrapper.findAll('button').find(btn => btn.text().includes('Cancel'));
+        const cancelButton = wrapper.findAll('button').find((btn) => btn.text().includes('Cancel'));
         await cancelButton.trigger('click');
 
         expect(wrapper.emitted()).toHaveProperty('update:open');

@@ -19,21 +19,49 @@ test('user can view any recipes', function () {
     expect($this->policy->viewAny($user))->toBeTrue();
 });
 
-test('user can view their own recipe', function () {
+test('user can view their own private recipe', function () {
     $user = User::factory()->create();
-    $recipe = Recipe::factory()->for($user)->create();
+    $recipe = Recipe::factory()->for($user)->create(['is_public' => false]);
 
     expect($this->policy->view($user, $recipe))->toBeTrue();
 });
 
-test('user cannot view other users recipes', function () {
+test('user cannot view other users private recipes', function () {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $recipe = Recipe::factory()
         ->for($otherUser)
-        ->create();
+        ->create(['is_public' => false]);
 
     expect($this->policy->view($user, $recipe))->toBeFalse();
+});
+
+test('user can view public recipes from other users', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $recipe = Recipe::factory()
+        ->for($otherUser)
+        ->create(['is_public' => true]);
+
+    expect($this->policy->view($user, $recipe))->toBeTrue();
+});
+
+test('guest can view public recipes', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()
+        ->for($user)
+        ->create(['is_public' => true]);
+
+    expect($this->policy->view(null, $recipe))->toBeTrue();
+});
+
+test('guest cannot view private recipes', function () {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()
+        ->for($user)
+        ->create(['is_public' => false]);
+
+    expect($this->policy->view(null, $recipe))->toBeFalse();
 });
 
 test('user can create recipe', function () {

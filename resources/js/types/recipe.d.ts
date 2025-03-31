@@ -10,6 +10,7 @@ export interface Recipe {
     servings: number;
     url: string | null;
     author: string | null;
+    is_public: boolean;
     images: string[] | null;
     slug: string;
     created_at: string;

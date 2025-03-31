@@ -11,7 +11,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('recipes', function (Blueprint $table) {
-            $table->dropColumn('published_at');
+            $table->boolean('is_public')->default(false)->after('servings');
         });
     }
 
@@ -21,7 +21,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('recipes', function (Blueprint $table) {
-            $table->timestamp('published_at')->nullable();
+            $table->dropColumn('is_public');
         });
     }
 };

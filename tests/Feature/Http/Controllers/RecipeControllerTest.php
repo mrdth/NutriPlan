@@ -406,3 +406,106 @@ test('user can delete own recipe with nutrition information', function () {
     expect(Recipe::find($recipe->id))->toBeNull();
     expect(\App\Models\NutritionInformation::find($nutrition->id))->toBeNull();
 });
+
+test('recipe list only shows public recipes and user own recipes', function () {
+    $otherUser = User::factory()->create();
+
+    // User's own recipes (both public and private)
+    $ownPublicRecipe = Recipe::factory()->for($this->user)->create(['is_public' => true]);
+    $ownPrivateRecipe = Recipe::factory()->for($this->user)->create(['is_public' => false]);
+
+    // Other user's recipes (one public, one private)
+    $otherPublicRecipe = Recipe::factory()->for($otherUser)->create(['is_public' => true]);
+    $otherPrivateRecipe = Recipe::factory()->for($otherUser)->create(['is_public' => false]);
+
+    $response = actingAs($this->user)
+        ->get(route('recipes.index'));
+
+    $response->assertInertia(
+        fn (AssertableInertia $page) => $page
+        ->component('Recipes/Index')
+        ->has('recipes.data', 3) // Should contain own public, own private, and other public recipes
+        ->where('recipes.data.0.id', $ownPublicRecipe->id)
+        ->where('recipes.data.1.id', $ownPrivateRecipe->id)
+        ->where('recipes.data.2.id', $otherPublicRecipe->id)
+    );
+});
+
+test('user can view other users public recipes', function () {
+    $otherUser = User::factory()->create();
+    $publicRecipe = Recipe::factory()
+        ->for($otherUser)
+        ->create(['is_public' => true]);
+
+    $response = actingAs($this->user)
+        ->get(route('recipes.show', $publicRecipe));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn (AssertableInertia $page) => $page
+        ->component('Recipes/Show')
+        ->where('recipe.id', $publicRecipe->id)
+        ->where('recipe.is_public', true)
+        ->where('isOwner', false)
+        ->where('hideDetails', false)
+    );
+});
+
+test('user cannot view other users private recipes', function () {
+    $otherUser = User::factory()->create();
+    $privateRecipe = Recipe::factory()
+        ->for($otherUser)
+        ->create(['is_public' => false]);
+
+    $response = actingAs($this->user)
+        ->get(route('recipes.show', $privateRecipe));
+
+    $response->assertStatus(403);
+});
+
+test('imported public recipes hide ingredients and instructions from non-owners', function () {
+    $otherUser = User::factory()->create();
+    $importedRecipe = Recipe::factory()
+        ->for($otherUser)
+        ->create([
+            'is_public' => true,
+            'url' => 'https://example.com/recipe',
+            'author' => 'Example Recipes'
+        ]);
+
+    $response = actingAs($this->user)
+        ->get(route('recipes.show', $importedRecipe));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn (AssertableInertia $page) => $page
+        ->component('Recipes/Show')
+        ->where('recipe.id', $importedRecipe->id)
+        ->where('recipe.is_public', true)
+        ->where('isOwner', false)
+        ->where('hideDetails', true)
+    );
+});
+
+test('owner can view full details of their imported recipe', function () {
+    $importedRecipe = Recipe::factory()
+        ->for($this->user)
+        ->create([
+            'is_public' => true,
+            'url' => 'https://example.com/recipe',
+            'author' => 'Example Recipes'
+        ]);
+
+    $response = actingAs($this->user)
+        ->get(route('recipes.show', $importedRecipe));
+
+    $response->assertStatus(200);
+    $response->assertInertia(
+        fn (AssertableInertia $page) => $page
+        ->component('Recipes/Show')
+        ->where('recipe.id', $importedRecipe->id)
+        ->where('recipe.is_public', true)
+        ->where('isOwner', true)
+        ->where('hideDetails', false)
+    );
+});

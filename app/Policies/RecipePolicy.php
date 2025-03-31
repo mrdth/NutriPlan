@@ -16,7 +16,18 @@ class RecipePolicy
 
     public function view(?User $user, Recipe $recipe): bool
     {
-        return $user instanceof \App\Models\User && $user->id === $recipe->user_id;
+        // Recipe owner can always view their own recipes
+        if ($user instanceof \App\Models\User && $user->id === $recipe->user_id) {
+            return true;
+        }
+
+        // Public recipes can be viewed by any user
+        if ($recipe->is_public) {
+            return true;
+        }
+
+        // Private recipes can only be viewed by their owner
+        return false;
     }
 
     public function create(User $user): bool

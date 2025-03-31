@@ -40,6 +40,12 @@ class RecipeController extends Controller
         // Filter by user's own recipes if show_mine is true
         if ($request->boolean('show_mine')) {
             $query->where('user_id', $user->id);
+        } else {
+            // Only show public recipes or user's own recipes
+            $query->where(function (Builder $query) use ($user): void {
+                $query->where('is_public', true)
+                    ->orWhere('user_id', $user->id);
+            });
         }
 
         $recipes = $query->paginate(12);
@@ -84,6 +90,7 @@ class RecipeController extends Controller
             'prep_time',
             'cooking_time',
             'servings',
+            'is_public',
         ]));
 
         if ($request->has('categories')) {
@@ -109,6 +116,8 @@ class RecipeController extends Controller
 
     public function show(Recipe $recipe): Response
     {
+        $this->authorize('view', $recipe);
+
         $user = request()->user();
         $recipe->load([
             'user',
@@ -122,8 +131,14 @@ class RecipeController extends Controller
         // Add is_favorited flag to the recipe
         $recipe->is_favorited = $user->favorites()->where('recipe_id', $recipe->id)->exists();
 
+        // Handle imported recipe special visibility
+        $isOwner = $user->id === $recipe->user_id;
+        $hideDetails = !$isOwner && $recipe->isImported() && $recipe->is_public;
+
         return Inertia::render('Recipes/Show', [
             'recipe' => $recipe,
+            'isOwner' => $isOwner,
+            'hideDetails' => $hideDetails,
         ]);
     }
 
@@ -168,6 +183,7 @@ class RecipeController extends Controller
             'prep_time',
             'cooking_time',
             'servings',
+            'is_public',
         ]));
 
         if ($request->has('categories')) {

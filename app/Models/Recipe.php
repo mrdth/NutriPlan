@@ -35,12 +35,18 @@ class Recipe extends Model
         'prep_time' => 'integer',
         'servings' => 'integer',
         'images' => 'array',
+        'is_public' => 'boolean',
     ];
 
     protected $hidden = [
         'user_id',
         'updated_at',
     ];
+
+    public function isImported(): bool
+    {
+        return $this->url !== null && $this->url !== '';
+    }
 
     public function user(): BelongsTo
     {

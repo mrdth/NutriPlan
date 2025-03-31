@@ -36,6 +36,21 @@
                 </div>
             </div>
 
+            <!-- Visibility Toggle -->
+            <div class="flex items-center space-x-2">
+                <Checkbox id="is_public" :checked="form.is_public" @update:checked="form.is_public = $event" />
+                <Label for="is_public" class="cursor-pointer">Make this recipe public</Label>
+                <div class="ml-2">
+                    <Badge v-if="form.is_public" variant="outline" class="border-green-300 bg-green-100 text-green-800">Public</Badge>
+                    <Badge v-else variant="outline" class="border-gray-300 bg-gray-100 text-gray-800">Private</Badge>
+                </div>
+                <InputError :message="form.errors.is_public" />
+            </div>
+            <div v-if="form.is_public && hasSourceUrl" class="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+                <span class="font-medium">Note:</span> This is an imported recipe. When made public, other users will only see basic details and will
+                be directed to the original source for full recipe instructions.
+            </div>
+
             <!-- Categories -->
             <div>
                 <Label>Categories</Label>
@@ -180,6 +195,7 @@ interface FormData {
     prep_time: number;
     cooking_time: number;
     servings: number;
+    is_public: boolean;
     categories: number[];
     ingredients: Array<{
         ingredient_id: number;
@@ -211,6 +227,7 @@ const form = useForm<FormData>({
     prep_time: props.recipe?.prep_time ?? 30,
     cooking_time: props.recipe?.cooking_time ?? 30,
     servings: props.recipe?.servings ?? 4,
+    is_public: props.recipe?.is_public ?? false,
     categories: props.recipe?.categories?.map((c) => c.id) ?? [],
     ingredients:
         props.recipe?.ingredients?.map((i) => ({
@@ -221,6 +238,8 @@ const form = useForm<FormData>({
     images: [] as File[],
     nutrition_information: props.recipe?.nutrition_information ?? {},
 });
+
+const hasSourceUrl = computed(() => props.recipe?.url);
 
 const toggleCategory = (id: number) => {
     const index = form.categories.indexOf(id);

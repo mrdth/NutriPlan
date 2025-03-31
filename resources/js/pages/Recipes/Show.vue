@@ -9,6 +9,10 @@
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
                         Created by {{ recipe.user.name }} on {{ new Date(recipe.created_at).toLocaleDateString() }}
                     </p>
+                    <div class="mt-2 flex items-center gap-2">
+                        <Badge v-if="recipe.is_public" variant="outline" class="border-green-300 bg-green-100 text-green-800">Public</Badge>
+                        <Badge v-else variant="outline" class="border-gray-300 bg-gray-100 text-gray-800">Private</Badge>
+                    </div>
                 </div>
                 <div class="mt-4 space-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
                     <!-- Favorite button for all authenticated users -->
@@ -17,13 +21,28 @@
                         {{ isFavorited ? 'Unfavorite' : 'Favorite' }}
                     </Button>
                     <!-- Edit button only for recipe creator -->
-                    <Link v-if="page.props.auth.user.id === recipe.user.id" :href="route('recipes.edit', recipe.slug)">
+                    <Link v-if="isOwner" :href="route('recipes.edit', recipe.slug)">
                         <Button>
                             <PencilIcon class="mr-2 h-4 w-4" />
                             Edit Recipe
                         </Button>
                     </Link>
                 </div>
+            </div>
+
+            <!-- Original source notice for imported public recipes viewed by non-owners -->
+            <div v-if="hideDetails" class="mt-4 rounded-md border-2 border-amber-500 bg-amber-50 p-4">
+                <h2 class="text-lg font-semibold text-amber-800">This recipe was imported from another website</h2>
+                <p class="mt-2 text-amber-700">The full ingredients and instructions are available at the original source:</p>
+                <a
+                    v-if="recipe.url"
+                    :href="recipe.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-4 inline-flex items-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+                >
+                    <ExternalLinkIcon class="mr-2 h-4 w-4" /> View Original Recipe
+                </a>
             </div>
 
             <div class="mt-8 overflow-hidden bg-white p-6 shadow-xl dark:bg-gray-800 sm:rounded-lg">
@@ -70,44 +89,64 @@
                             </div>
                         </div>
 
-                        <!-- Scaling Control -->
-                        <div class="mt-6">
-                            <ScalingControl :original-servings="recipe.servings" @update:scaling-factor="updateScalingFactor" />
+                        <!-- Source Attribution -->
+                        <div v-if="recipe.author || recipe.url" class="mt-6">
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Source</h2>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                <span v-if="recipe.author">{{ recipe.author }}</span>
+                                <a
+                                    v-if="recipe.url"
+                                    :href="recipe.url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline dark:text-blue-400"
+                                >
+                                    {{ recipe.url }}
+                                </a>
+                            </p>
                         </div>
 
-                        <!-- Ingredients -->
-                        <div class="mt-8">
-                            <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Ingredients</h2>
-                            <ul class="space-y-2">
-                                <li
-                                    v-for="ingredient in recipe.ingredients"
-                                    :key="ingredient.id"
-                                    class="flex items-center text-gray-700 dark:text-gray-300"
-                                >
-                                    <div class="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 dark:bg-gray-400" />
-                                    <span class="font-medium">
-                                        {{ formatScaledAmount(ingredient.pivot.amount) }}
-                                        <template v-if="ingredient.pivot.unit">{{ ingredient.pivot.unit }}</template>
-                                    </span>
-                                    <span class="ml-1">{{ ingredient.name }}</span>
-                                </li>
-                            </ul>
-                        </div>
+                        <!-- All content below is hidden for non-owners viewing imported public recipes -->
+                        <template v-if="!hideDetails">
+                            <!-- Scaling Control -->
+                            <div class="mt-6">
+                                <ScalingControl :original-servings="recipe.servings" @update:scaling-factor="updateScalingFactor" />
+                            </div>
 
-                        <!-- Instructions -->
-                        <div class="mt-8">
-                            <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Instructions</h2>
-                            <ul class="list-none space-y-6">
-                                <li
-                                    v-for="(step, index) in parseInstructions(recipe.instructions)"
-                                    :key="index"
-                                    class="text-gray-700 dark:text-gray-300"
-                                >
-                                    <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">Step {{ index + 1 }}</h3>
-                                    <p>{{ step }}</p>
-                                </li>
-                            </ul>
-                        </div>
+                            <!-- Ingredients -->
+                            <div class="mt-8">
+                                <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Ingredients</h2>
+                                <ul class="space-y-2">
+                                    <li
+                                        v-for="ingredient in recipe.ingredients"
+                                        :key="ingredient.id"
+                                        class="flex items-center text-gray-700 dark:text-gray-300"
+                                    >
+                                        <div class="mr-3 h-1.5 w-1.5 rounded-full bg-gray-600 dark:bg-gray-400" />
+                                        <span class="font-medium">
+                                            {{ formatScaledAmount(ingredient.pivot.amount) }}
+                                            <template v-if="ingredient.pivot.unit">{{ ingredient.pivot.unit }}</template>
+                                        </span>
+                                        <span class="ml-1">{{ ingredient.name }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Instructions -->
+                            <div class="mt-8">
+                                <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Instructions</h2>
+                                <ul class="list-none space-y-6">
+                                    <li
+                                        v-for="(step, index) in parseInstructions(recipe.instructions)"
+                                        :key="index"
+                                        class="text-gray-700 dark:text-gray-300"
+                                    >
+                                        <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">Step {{ index + 1 }}</h3>
+                                        <p>{{ step }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Image carousel column -->
@@ -128,26 +167,15 @@ import { Button } from '@/components/ui/button';
 import Carousel from '@/components/ui/carousel.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
-import { HeartIcon, PencilIcon } from 'lucide-vue-next';
+import { ExternalLinkIcon, HeartIcon, PencilIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
-
-interface PageProps {
-    [key: string]: unknown;
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
-}
-
-const page = usePage<PageProps>();
 
 const props = defineProps<{
     recipe: Recipe & { is_favorited?: boolean };
+    isOwner: boolean;
+    hideDetails: boolean;
 }>();
 
 const isFavorited = ref(props.recipe.is_favorited || false);

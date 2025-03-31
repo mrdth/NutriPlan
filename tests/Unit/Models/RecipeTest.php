@@ -116,11 +116,13 @@ test('recipe has correct casts', function () {
             'prep_time',
             'servings',
             'images',
+            'is_public',
         ])
         ->and($casts['cooking_time'])->toBe('integer')
         ->and($casts['prep_time'])->toBe('integer')
         ->and($casts['servings'])->toBe('integer')
-        ->and($casts['images'])->toBe('array');
+        ->and($casts['images'])->toBe('array')
+        ->and($casts['is_public'])->toBe('boolean');
 });
 
 test('recipe has correct hidden attributes', function () {
@@ -167,4 +169,34 @@ test('recipe can be favorited by users', function () {
 
     // Check the pivot table has the correct data
     expect($recipe->favoritedBy()->wherePivot('recipe_id', $recipe->id)->count())->toBe(3);
+});
+
+test('recipe is private by default', function () {
+    $recipe = Recipe::factory()->create();
+
+    expect($recipe->is_public)->toBeFalse();
+});
+
+test('recipe can be made public', function () {
+    $recipe = Recipe::factory()->create(['is_public' => true]);
+
+    expect($recipe->is_public)->toBeTrue();
+});
+
+test('isImported returns true when source_url is present', function () {
+    $recipe = Recipe::factory()->create(['url' => 'https://example.com/recipe']);
+
+    expect($recipe->isImported())->toBeTrue();
+});
+
+test('isImported returns false when source_url is null', function () {
+    $recipe = Recipe::factory()->create(['url' => null]);
+
+    expect($recipe->isImported())->toBeFalse();
+});
+
+test('isImported returns false when source_url is empty string', function () {
+    $recipe = Recipe::factory()->create(['url' => '']);
+
+    expect($recipe->isImported())->toBeFalse();
 });

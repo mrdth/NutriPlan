@@ -46,6 +46,7 @@ class RecipeFactory extends Factory
             'prep_time' => fake()->numberBetween(5, 60),
             'cooking_time' => fake()->numberBetween(10, 180),
             'servings' => fake()->numberBetween(1, 8),
+            'is_public' => false,
         ];
     }
 }

@@ -22,6 +22,7 @@ class CreateRecipeRequest extends FormRequest
             'prep_time' => ['required', 'integer', 'min:1'],
             'cooking_time' => ['required', 'integer', 'min:1'],
             'servings' => ['required', 'integer', 'min:1'],
+            'is_public' => ['boolean'],
             'categories' => ['nullable', 'array'],
             'categories.*' => ['exists:categories,id'],
             'ingredients' => ['required', 'array', 'min:1'],
