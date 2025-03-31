@@ -10,7 +10,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('recipes', function (Blueprint $table) {
+        Schema::table('recipes', function (Blueprint $table): void {
             $table->boolean('is_public')->default(false)->after('servings');
         });
     }
@@ -20,7 +20,7 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('recipes', function (Blueprint $table) {
+        Schema::table('recipes', function (Blueprint $table): void {
             $table->dropColumn('is_public');
         });
     }

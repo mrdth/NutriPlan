@@ -7,7 +7,16 @@
                 <div class="sm:flex-auto">
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">{{ recipe.title }}</h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
-                        Created by {{ recipe.user.name }} on {{ new Date(recipe.created_at).toLocaleDateString() }}
+                        Created by
+                        <Link
+                            v-if="recipe.user.slug"
+                            :href="route('recipes.by-user', { user: recipe.user.slug })"
+                            class="text-blue-600 hover:underline dark:text-blue-400"
+                        >
+                            {{ recipe.user.name }}
+                        </Link>
+                        <span v-else>{{ recipe.user.name }}</span>
+                        on {{ new Date(recipe.created_at).toLocaleDateString() }}
                     </p>
                     <div class="mt-2 flex items-center gap-2">
                         <Badge v-if="recipe.is_public" variant="outline" class="border-green-300 bg-green-100 text-green-800">Public</Badge>

@@ -32,7 +32,7 @@ class CategoryController extends Controller
             ->whereHas('categories', function (Builder $query) use ($category): void {
                 $query->where('categories.id', $category->id);
             })
-            ->with(['user', 'categories'])
+            ->with(['user:id,name,slug', 'categories'])
             ->latest()
             ->paginate(12);
 

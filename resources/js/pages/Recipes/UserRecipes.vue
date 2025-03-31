@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import Pagination from '@/components/Pagination.vue';
-import ImportRecipeModal from '@/components/Recipe/ImportRecipeModal.vue';
 import RecipeCard from '@/components/Recipe/RecipeCard.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { DownloadIcon, PlusIcon, UserIcon } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { PlusIcon } from 'lucide-vue-next';
 
 interface Props {
     recipes: {
@@ -22,7 +20,6 @@ interface Props {
             url: string | null;
             user: {
                 name: string;
-                slug?: string;
             };
             categories: Array<{
                 id: number;
@@ -40,65 +37,59 @@ interface Props {
     };
     filter?: {
         category?: string;
-        show_mine?: boolean;
     };
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            slug: string;
-        };
+    user: {
+        id: number;
+        name: string;
+        slug: string;
     };
+    isOwner: boolean;
 }
 
-const { recipes, auth } = defineProps<Props>();
+const { recipes, user, isOwner } = defineProps<Props>();
 
-const showImportModal = ref(false);
+const pageTitle = isOwner ? 'My Recipes' : `${user.name}'s Recipes`;
 </script>
 
 <template>
     <AppLayout>
-        <Head title="Recipes" />
+        <Head :title="pageTitle" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Recipes</h1>
-                    <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Browse through our collection of delicious recipes</p>
-                </div>
-                <div class="mt-4 flex items-center space-x-4 sm:ml-4 sm:mt-0">
-                    <Link :href="route('recipes.by-user', { user: auth.user.slug })" class="inline-flex">
-                        <Button variant="outline">
-                            <UserIcon class="mr-2 h-4 w-4" />
-                            My Recipes
-                        </Button>
-                    </Link>
+                    <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">{{ pageTitle }}</h1>
+                    <p v-if="isOwner" class="mt-2 text-sm text-gray-700 dark:text-gray-400">Manage your own recipe collection</p>
+                    <p v-else class="mt-2 text-sm text-gray-700 dark:text-gray-400">Browse recipes created by {{ user.name }}</p>
                 </div>
                 <div class="mt-4 space-x-4 sm:ml-auto sm:mt-0 sm:flex-none">
-                    <Button variant="outline" @click="showImportModal = true">
-                        <DownloadIcon class="mr-2 h-4 w-4" />
-                        Import Recipe
-                    </Button>
-                    <Link :href="route('recipes.create')">
+                    <Link :href="route('recipes.index')">
+                        <Button variant="outline">All Recipes</Button>
+                    </Link>
+                    <Link v-if="isOwner" :href="route('recipes.create')">
                         <Button>
                             <PlusIcon class="mr-2 h-4 w-4" />
                             New Recipe
                         </Button>
                     </Link>
                 </div>
-
-                <ImportRecipeModal v-model:open="showImportModal" />
             </div>
 
             <div v-if="recipes.data.length === 0" class="mt-16 text-center">
                 <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">No recipes</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new recipe</p>
-                <div class="mt-6">
+                <p v-if="isOwner" class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new recipe</p>
+                <p v-else class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ user.name }} hasn't shared any recipes yet</p>
+                <div v-if="isOwner" class="mt-6">
                     <Link :href="route('recipes.create')">
                         <Button>
                             <PlusIcon class="mr-2 h-4 w-4" />
                             New Recipe
                         </Button>
+                    </Link>
+                </div>
+                <div v-else class="mt-6">
+                    <Link :href="route('recipes.index')">
+                        <Button> Explore All Recipes </Button>
                     </Link>
                 </div>
             </div>

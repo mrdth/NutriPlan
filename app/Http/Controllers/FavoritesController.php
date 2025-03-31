@@ -20,7 +20,7 @@ class FavoritesController extends Controller
     {
         $user = $request->user();
         $favorites = $user->favorites()
-            ->with(['categories' => function (Builder|BelongsToMany $query): void {
+            ->with(['user:id,name,slug', 'categories' => function (Builder|BelongsToMany $query): void {
                 $query->withCount('recipes')
                     ->orderBy('recipes_count', 'desc');
             }])

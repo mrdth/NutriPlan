@@ -140,6 +140,7 @@ test('recipe list includes categories and user', function () {
             fn (AssertableInertia $page) => $page
             ->has('id')
             ->has('name')
+            ->has('slug')
         )
     );
 });
@@ -447,7 +448,7 @@ test('user can view other users public recipes', function () {
         ->where('recipe.id', $publicRecipe->id)
         ->where('recipe.is_public', true)
         ->where('isOwner', false)
-        ->where('hideDetails', false)
+        ->where('hideDetails', $publicRecipe->isImported())
     );
 });
 

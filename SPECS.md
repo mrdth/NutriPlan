@@ -14,7 +14,7 @@ This document provides an overview of all feature specifications for the NutriPl
 | Recipe Deletion | Allow users to delete their own recipes | ✅ | [View Spec](specs/recipe-deletion.md) |
 | My Recipes | Toggle to filter between all recipes and user's own recipes | ✅ | [View Spec](specs/my-recipes.md) |
 | Recipe Visibility | Control recipe privacy and visibility with special handling for imported recipes | ✅ | [View Spec](specs/recipe-visibility.md) |
-| User Recipe Filtering | Filter recipes by specific user, showing user profiles and replacing My Recipes toggle | ⏳ | [View Spec](specs/user-recipe-filtering.md) |
+| User Recipe Filtering | Filter recipes by specific user, showing user profiles and replacing My Recipes toggle | ✅ | [View Spec](specs/user-recipe-filtering.md) |
 | Meal Planning | Create and manage meal plans with recipes | ⏳ | [View Spec](specs/meal-planning.md) |
 
 ### Meal Planning Phases

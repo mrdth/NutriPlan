@@ -17,6 +17,7 @@ test('to array only includes visible attributes', function () {
         ->toBe([
             'id',
             'name',
+            'slug',
         ]);
 });
 

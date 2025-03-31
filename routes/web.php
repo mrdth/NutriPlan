@@ -8,6 +8,7 @@ use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeImportController;
+use App\Http\Controllers\UserRecipeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,6 +23,7 @@ Route::get('dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('recipes', RecipeController::class);
     Route::post('recipes/import', RecipeImportController::class)->name('recipes.import');
+    Route::get('recipes/by/{user}', [UserRecipeController::class, 'index'])->name('recipes.by-user');
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');

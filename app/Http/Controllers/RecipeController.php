@@ -24,7 +24,7 @@ class RecipeController extends Controller
     {
         $user = $request->user();
         $query = Recipe::query()
-            ->with(['user', 'categories' => function (Builder|BelongsToMany $query): void {
+            ->with(['user:id,name,slug', 'categories' => function (Builder|BelongsToMany $query): void {
                 $query->withCount('recipes');
             }])
             ->latest();
@@ -120,7 +120,7 @@ class RecipeController extends Controller
 
         $user = request()->user();
         $recipe->load([
-            'user',
+            'user:id,name,slug',
             'categories' => function (Builder|BelongsToMany $query): void {
                 $query->select(['categories.id', 'categories.name', 'categories.slug']);
             },
