@@ -10,6 +10,7 @@ use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeImportController;
 use App\Http\Controllers\UserRecipeController;
+use App\Http\Controllers\MealPlanRecipeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,7 +39,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('recipes/{recipe}/favorite', FavoriteController::class)->name('recipes.favorite');
     Route::get('favorites', [FavoritesController::class, 'index'])->name('favorites.index');
 
-    Route::resource('meal-plans', MealPlanController::class)->except(['edit', 'update']);
+    Route::resource('meal-plans', MealPlanController::class)->except(['edit', 'update'])->parameters([
+        'meal-plans' => 'mealPlan'
+    ]);
+    Route::post('meal-plans/add-recipe', [MealPlanRecipeController::class, 'store'])->name('meal-plans.add-recipe');
+
+
+    // Fix the parameter names to match the controller expectations
+    Route::delete('meal-plans/{id}/recipes/{recipeId}', [MealPlanRecipeController::class, 'destroy'])
+         ->name('meal-plans.remove-recipe');
 });
 
 require __DIR__.'/settings.php';

@@ -139,6 +139,7 @@ class RecipeController extends Controller
             'recipe' => $recipe,
             'isOwner' => $isOwner,
             'hideDetails' => $hideDetails,
+            'mealPlans' => $user->mealPlans()->select(['id', 'name', 'start_date'])->get(),
         ]);
     }
 

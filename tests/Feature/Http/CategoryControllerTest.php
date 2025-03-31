@@ -16,7 +16,10 @@ test('categories index page displays categories with recipe counts', function ()
 
     // Create categories with recipes
     $categories = Category::factory()->count(3)->create();
-    $recipes = Recipe::factory()->count(5)->create();
+    $recipes = Recipe::factory()->count(5)->create([
+        'user_id' => $user->id,
+        'is_public' => true
+    ]);
 
     // Associate recipes with categories
     foreach ($recipes as $recipe) {
@@ -44,8 +47,14 @@ test('category show page displays recipes filtered by category', function () {
 
     // Create a category and recipes
     $category = Category::factory()->create();
-    $categoryRecipes = Recipe::factory()->count(3)->create();
-    $otherRecipes = Recipe::factory()->count(2)->create();
+    $categoryRecipes = Recipe::factory()->count(3)->create([
+        'user_id' => $user->id,
+        'is_public' => true
+    ]);
+    $otherRecipes = Recipe::factory()->count(2)->create([
+        'user_id' => $user->id,
+        'is_public' => true
+    ]);
 
     // Associate some recipes with the category
     foreach ($categoryRecipes as $recipe) {

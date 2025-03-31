@@ -52,7 +52,7 @@ class MealPlanController extends Controller
 
         /** @var User|null $user */
         $user = $request->user();
-        
+
         if ($user !== null) {
             $user->mealPlans()->create($validated);
         }
@@ -68,25 +68,34 @@ class MealPlanController extends Controller
     {
         Gate::authorize('view', $mealPlan);
 
+        // Eager load recipes with their pivot data
+        $mealPlan->load(['recipes' => function (\Illuminate\Database\Eloquent\Relations\BelongsToMany $query): void {
+            $query->with('user:id,name,slug');
+        }]);
+
         return Inertia::render('MealPlans/Show', [
             'mealPlan' => $mealPlan,
+            'availableMealPlans' => Auth::user()->mealPlans()
+                ->whereNot('id', $mealPlan->id)
+                ->select('id', 'name', 'start_date')
+                ->get(),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): null
     {
-        //
+        return null;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): null
     {
-        //
+        return null;
     }
 
     /**

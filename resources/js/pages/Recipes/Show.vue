@@ -23,19 +23,32 @@
                         <Badge v-else variant="outline" class="border-gray-300 bg-gray-100 text-gray-800">Private </Badge>
                     </div>
                 </div>
-                <div class="mt-4 space-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
-                    <!-- Favorite button for all authenticated users -->
-                    <Button @click="toggleFavorite" :variant="isFavorited ? 'default' : 'outline'">
-                        <HeartIcon class="mr-2 h-4 w-4" :class="{ 'fill-current': isFavorited }" />
-                        {{ isFavorited ? 'Unfavorite' : 'Favorite' }}
+                <div class="mt-4 flex flex-wrap items-center gap-2 sm:mt-0">
+                    <Button v-if="isOwner" variant="outline" size="sm" :href="route('recipes.edit', recipe.slug)">
+                        <PencilIcon class="mr-2 h-4 w-4" />
+                        Edit
                     </Button>
-                    <!-- Edit button only for recipe creator -->
-                    <Link v-if="isOwner" :href="route('recipes.edit', recipe.slug)">
-                        <Button>
-                            <PencilIcon class="mr-2 h-4 w-4" />
-                            Edit Recipe
-                        </Button>
-                    </Link>
+
+                    <Button size="sm" @click="toggleFavorite" :variant="isFavorited ? 'default' : 'outline'">
+                        <HeartIcon :class="['mr-2 h-4 w-4', { 'fill-current': isFavorited }]" />
+                        {{ isFavorited ? 'Favorited' : 'Add to Favorites' }}
+                    </Button>
+
+                    <DropdownMenu v-if="mealPlans.length > 0 && !hideDetails">
+                        <DropdownMenuTrigger as-child>
+                            <Button variant="outline" size="sm">
+                                <PlusIcon class="mr-2 h-4 w-4" />
+                                Add to Meal Plan
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="w-56">
+                            <DropdownMenuLabel>Select a Meal Plan</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem v-for="plan in mealPlans" :key="plan.id" @click="addToMealPlan(plan.id)">
+                                {{ plan.name || formatDate(plan.start_date) }}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
@@ -173,17 +186,30 @@ import ScalingControl from '@/components/Recipe/ScalingControl.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Carousel from '@/components/ui/carousel.vue';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Recipe } from '@/types/recipe';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ExternalLinkIcon, HeartIcon, PencilIcon } from 'lucide-vue-next';
+import { ExternalLinkIcon, HeartIcon, PencilIcon, PlusIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const props = defineProps<{
     recipe: Recipe & { is_favorited?: boolean };
     isOwner: boolean;
     hideDetails: boolean;
+    mealPlans: Array<{
+        id: number;
+        name: string | null;
+        start_date: string;
+    }>;
 }>();
 
 const isFavorited = ref(props.recipe.is_favorited || false);
@@ -235,5 +261,24 @@ const toggleFavorite = () => {
         .catch((error: any) => {
             console.error('Failed to toggle favorite:', error);
         });
+};
+
+const addToMealPlan = (mealPlanId: number) => {
+    router.post(
+        route('meal-plans.add-recipe'),
+        {
+            meal_plan_id: mealPlanId,
+            recipe_id: props.recipe.id,
+            scale_factor: 1.0,
+        },
+        {
+            preserveScroll: true,
+        },
+    );
+};
+
+// Format date to readable string
+const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString();
 };
 </script>

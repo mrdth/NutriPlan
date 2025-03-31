@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,13 +16,13 @@ class CategoryController extends Controller
     public function index(): Response
     {
         $user = request()->user();
-        
+
         $categories = Category::query()
             ->withCount(['recipes' => function (Builder $query) use ($user): void {
                 // Only count recipes that are public or owned by the current user
                 $query->where(function (Builder $query) use ($user): void {
                     $query->where('is_public', true);
-                    
+
                     if ($user) {
                         $query->orWhere('user_id', $user->id);
                     }
@@ -42,14 +41,14 @@ class CategoryController extends Controller
     public function show(Category $category): Response
     {
         $user = request()->user();
-        
+
         $recipes = Recipe::query()
             ->whereHas('categories', function (Builder $query) use ($category): void {
                 $query->where('categories.id', $category->id);
             })
             ->where(function (Builder $query) use ($user): void {
                 $query->where('is_public', true);
-                
+
                 if ($user) {
                     $query->orWhere('user_id', $user->id);
                 }
