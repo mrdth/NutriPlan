@@ -123,7 +123,6 @@ const formMock = {
     ingredients: [],
     images: [],
     nutrition_information: {},
-    published_at: null,
     errors: {},
     processing: false,
     post: vi.fn(),
@@ -190,7 +189,6 @@ describe('RecipeForm.vue', () => {
         formMock.ingredients = [];
         formMock.images = [];
         formMock.nutrition_information = {};
-        formMock.published_at = null;
         formMock.errors = {};
         formMock.processing = false;
     });
@@ -216,7 +214,6 @@ describe('RecipeForm.vue', () => {
         expect(wrapper.find('.combobox').exists()).toBe(true);
         expect(wrapper.find('.file-input').exists()).toBe(true);
         expect(wrapper.find('.nutrition-form').exists()).toBe(true);
-        expect(wrapper.find('.checkbox').exists()).toBe(true);
     });
 
     it('loads existing recipe data when provided', async () => {
@@ -227,7 +224,6 @@ describe('RecipeForm.vue', () => {
             prep_time: 15,
             cooking_time: 20,
             servings: 2,
-            status: 'published',
             categories: [{ id: 2, name: 'Italian' }],
             ingredients: [
                 {

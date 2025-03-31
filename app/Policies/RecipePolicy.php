@@ -16,10 +16,6 @@ class RecipePolicy
 
     public function view(?User $user, Recipe $recipe): bool
     {
-        if ($recipe->published_at !== null) {
-            return true;
-        }
-
         return $user instanceof \App\Models\User && $user->id === $recipe->user_id;
     }
 

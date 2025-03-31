@@ -64,9 +64,9 @@ test('user can view recipe list', function () {
             ->has('url')
             ->has('author')
             ->has('slug')
-            ->has('status')
             ->has('created_at')
             ->has('is_favorited')
+            ->has('is_public')
         )
     );
 });

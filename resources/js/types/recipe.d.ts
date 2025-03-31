@@ -12,7 +12,6 @@ export interface Recipe {
     author: string | null;
     images: string[] | null;
     slug: string;
-    status: string;
     created_at: string;
     user: User;
     categories: Array<{

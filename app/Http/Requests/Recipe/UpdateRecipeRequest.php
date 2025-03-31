@@ -30,7 +30,6 @@ class UpdateRecipeRequest extends FormRequest
             'ingredients.*.unit' => ['nullable', 'string'],
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'max:5120'], // 5MB max per image
-            'published_at' => ['nullable', 'date'],
         ];
     }
 }

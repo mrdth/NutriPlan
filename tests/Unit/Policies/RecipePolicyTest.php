@@ -26,23 +26,11 @@ test('user can view their own recipe', function () {
     expect($this->policy->view($user, $recipe))->toBeTrue();
 });
 
-test('user can view other users published recipes', function () {
+test('user cannot view other users recipes', function () {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $recipe = Recipe::factory()
         ->for($otherUser)
-        ->published()
-        ->create();
-
-    expect($this->policy->view($user, $recipe))->toBeTrue();
-});
-
-test('user cannot view other users draft recipes', function () {
-    $user = User::factory()->create();
-    $otherUser = User::factory()->create();
-    $recipe = Recipe::factory()
-        ->for($otherUser)
-        ->draft()
         ->create();
 
     expect($this->policy->view($user, $recipe))->toBeFalse();

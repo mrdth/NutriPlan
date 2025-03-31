@@ -46,27 +46,6 @@ class RecipeFactory extends Factory
             'prep_time' => fake()->numberBetween(5, 60),
             'cooking_time' => fake()->numberBetween(10, 180),
             'servings' => fake()->numberBetween(1, 8),
-            'published_at' => fake()->optional()->dateTimeBetween('-1 year'),
         ];
-    }
-
-    /**
-     * Indicate that the recipe is published.
-     */
-    public function published(): static
-    {
-        return $this->state(fn (array $attributes): array => [
-            'published_at' => now(),
-        ]);
-    }
-
-    /**
-     * Indicate that the recipe is a draft.
-     */
-    public function draft(): static
-    {
-        return $this->state(fn (array $attributes): array => [
-            'published_at' => null,
-        ]);
     }
 }

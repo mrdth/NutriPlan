@@ -84,7 +84,6 @@ class RecipeController extends Controller
             'prep_time',
             'cooking_time',
             'servings',
-            'published_at',
         ]));
 
         if ($request->has('categories')) {
@@ -169,7 +168,6 @@ class RecipeController extends Controller
             'prep_time',
             'cooking_time',
             'servings',
-            'published_at',
         ]));
 
         if ($request->has('categories')) {

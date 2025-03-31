@@ -133,12 +133,6 @@
 
             <!-- Nutrition Information -->
             <NutritionForm v-model="form.nutrition_information" />
-
-            <!-- Publishing -->
-            <div class="flex items-center gap-4">
-                <Checkbox id="publish" v-model="form.published_at" :true-value="new Date().toISOString()" :false-value="null" />
-                <Label for="publish">Publish immediately</Label>
-            </div>
         </div>
 
         <div class="flex justify-end gap-4">
@@ -207,7 +201,6 @@ interface FormData {
         trans_fat_content?: string;
         unsaturated_fat_content?: string;
     };
-    published_at: string | null;
     [key: string]: FormDataConvertible;
 }
 
@@ -227,7 +220,6 @@ const form = useForm<FormData>({
         })) ?? [],
     images: [] as File[],
     nutrition_information: props.recipe?.nutrition_information ?? {},
-    published_at: props.recipe?.status === 'published' ? new Date().toISOString() : null,
 });
 
 const toggleCategory = (id: number) => {

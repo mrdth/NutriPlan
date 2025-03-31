@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\RecipeStatus;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Ingredient;
@@ -79,20 +78,6 @@ test('recipe can have nutrition information', function () {
         ->and($recipe->nutritionInformation->id)->toBe($nutritionInfo->id);
 });
 
-test('recipe status is draft when published_at is null', function () {
-    $recipe = Recipe::factory()->draft()->create();
-
-    expect($recipe->status)->toBe(RecipeStatus::DRAFT)
-        ->and($recipe->status->value)->toBe('draft');
-});
-
-test('recipe status is published when published_at is set', function () {
-    $recipe = Recipe::factory()->published()->create();
-
-    expect($recipe->status)->toBe(RecipeStatus::PUBLISHED)
-        ->and($recipe->status->value)->toBe('published');
-});
-
 test('recipe generates slug from title', function () {
     $recipe = Recipe::factory()->create([
         'title' => 'Delicious Chocolate Cake',
@@ -130,27 +115,18 @@ test('recipe has correct casts', function () {
             'cooking_time',
             'prep_time',
             'servings',
-            'published_at',
             'images',
         ])
         ->and($casts['cooking_time'])->toBe('integer')
         ->and($casts['prep_time'])->toBe('integer')
         ->and($casts['servings'])->toBe('integer')
-        ->and($casts['published_at'])->toBe('datetime')
         ->and($casts['images'])->toBe('array');
-});
-
-test('recipe has correct appends', function () {
-    $recipe = new Recipe();
-
-    expect($recipe->getAppends())->toContain('status');
 });
 
 test('recipe has correct hidden attributes', function () {
     $recipe = new Recipe();
 
     expect($recipe->getHidden())->toContain('user_id')
-        ->and($recipe->getHidden())->toContain('published_at')
         ->and($recipe->getHidden())->toContain('updated_at');
 });
 

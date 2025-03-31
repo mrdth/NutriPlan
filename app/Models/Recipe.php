@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\RecipeStatus;
 use App\ValueObjects\Measurement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,17 +34,11 @@ class Recipe extends Model
         'cooking_time' => 'integer',
         'prep_time' => 'integer',
         'servings' => 'integer',
-        'published_at' => 'datetime',
         'images' => 'array',
-    ];
-
-    protected $appends = [
-        'status',
     ];
 
     protected $hidden = [
         'user_id',
-        'published_at',
         'updated_at',
     ];
 
@@ -80,11 +73,6 @@ class Recipe extends Model
     {
         return $this->belongsToMany(User::class, 'recipe_user_favorites')
             ->withTimestamps();
-    }
-
-    public function getStatusAttribute(): RecipeStatus
-    {
-        return RecipeStatus::fromPublishedAt($this->published_at?->toDateTimeString());
     }
 
     public function getMeasurementForIngredient(Ingredient $ingredient): ?Measurement
