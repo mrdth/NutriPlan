@@ -37,7 +37,9 @@ const showDeleteModal = ref(false);
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Update your recipe details below.</p>
                 </div>
                 <div class="mt-4 sm:ml-4 sm:mt-0">
-                    <Button variant="destructive" @click="showDeleteModal = true">Delete Recipe</Button>
+                    <DeleteRecipeModal v-model:open="showDeleteModal" :recipe-slug="recipe.slug">
+                        <Button variant="destructive">Delete Recipe</Button>
+                    </DeleteRecipeModal>
                 </div>
             </div>
 
@@ -53,7 +55,5 @@ const showDeleteModal = ref(false);
                 />
             </div>
         </div>
-
-        <DeleteRecipeModal v-model:open="showDeleteModal" :recipe-slug="recipe.slug" />
     </AppLayout>
 </template>
