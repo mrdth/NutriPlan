@@ -6,6 +6,7 @@ use App\Http\Controllers\CollectionRecipeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeImportController;
 use App\Http\Controllers\UserRecipeController;
@@ -36,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('recipes/{recipe}/favorite', FavoriteController::class)->name('recipes.favorite');
     Route::get('favorites', [FavoritesController::class, 'index'])->name('favorites.index');
+
+    Route::resource('meal-plans', MealPlanController::class)->except(['edit', 'update']);
 });
 
 require __DIR__.'/settings.php';

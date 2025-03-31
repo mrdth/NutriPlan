@@ -98,4 +98,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Recipe::class, 'recipe_user_favorites')
             ->withTimestamps();
     }
+
+    public function mealPlans(): HasMany
+    {
+        return $this->hasMany(MealPlan::class);
+    }
 }
