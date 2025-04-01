@@ -37,7 +37,7 @@ This rule defines the best practices and conventions specific to Laravel develop
 	 - STORE
 	 - UPDATE
 	 - DESTROY
-   - Use form requests for validation
+   - Use form request classes for validation
    - Return consistent API responses
    - Use dependency injection
    - Use Laravel's built-in model features
