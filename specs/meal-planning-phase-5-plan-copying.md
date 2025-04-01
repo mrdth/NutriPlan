@@ -17,11 +17,6 @@ This phase adds the ability for users to copy existing meal plans, supporting re
 - Option to rename the copied plan during creation
 - Clear indication that a plan was created from a copy
 
-### Batch Actions
-- Ability to copy multiple recipes between plans
-- Option to selectively copy only certain days from an existing plan
-- User-friendly interface for these operations
-
 ## Database Structure
 - No new table fields required
 - Leverages existing database structure
