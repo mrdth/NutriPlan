@@ -16,6 +16,7 @@ export interface MealPlan {
         Recipe & {
             pivot: {
                 scale_factor: number;
+                servings_available: number;
             };
         }
     >;

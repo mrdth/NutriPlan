@@ -23,7 +23,7 @@ This document provides an overview of all feature specifications for the NutriPl
 |---------|-------------|---------|---------------|
 | Phase 1: Basic Meal Plans | Create and manage empty meal plans with basic metadata | ✅ | [View Spec](specs/meal-planning-phase-1-basic-meal-plans.md) |
 | Phase 2: Recipe Assignment | Add recipes to meal plans and manage servings | ✅ | [View Spec](specs/meal-planning-phase-2-recipe-assignment.md) |
-| Phase 3a: Meal Tracking | Calculate and track available meals for recipes in a plan | ⏳ | [View Spec](specs/meal-planning-phase-3a-meal-tracking.md) |
+| Phase 3a: Meal Tracking | Calculate and track available meals for recipes in a plan | ✅ | [View Spec](specs/meal-planning-phase-3a-meal-tracking.md) |
 | Phase 3b: Day Structure | Create day-based organization for meal plans | ⏳ | [View Spec](specs/meal-planning-phase-3b-day-structure.md) |
 | Phase 3c: Meal Assignments | Assign recipe servings to specific days within the plan | ⏳ | [View Spec](specs/meal-planning-phase-3c-meal-assignments.md) |
 | Phase 4: Drag and Drop + "To Cook" Flags | Implement drag-and-drop interface and cooking flags | ⏳ | [View Spec](specs/meal-planning-phase-4-drag-and-drop.md) |

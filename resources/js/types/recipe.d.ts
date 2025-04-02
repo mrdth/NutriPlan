@@ -43,3 +43,10 @@ export interface Recipe {
         unsaturated_fat_content?: string;
     } | null;
 }
+
+export interface RecipeWithPivot extends Recipe {
+    pivot: {
+        scale_factor: number;
+        servings_available: number;
+    };
+}

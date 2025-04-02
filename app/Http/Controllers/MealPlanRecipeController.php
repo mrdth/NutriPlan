@@ -36,6 +36,13 @@ class MealPlanRecipeController extends Controller
             $mealPlan->recipes()->attach($recipeId, [
                 'scale_factor' => $scaleFactor,
             ]);
+
+            // Calculate available servings
+            $mealPlanRecipe = $mealPlan->recipes()->where('recipe_id', $recipeId)->first();
+            if ($mealPlanRecipe) {
+                $mealPlanRecipe->pivot->calculateAvailableServings();
+                $mealPlanRecipe->pivot->save();
+            }
         }
 
         return back()->with('success', 'Recipe added to meal plan successfully.');

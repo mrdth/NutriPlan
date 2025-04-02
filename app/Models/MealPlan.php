@@ -40,7 +40,7 @@ class MealPlan extends Model
     {
         return $this->belongsToMany(Recipe::class)
             ->using(MealPlanRecipe::class)
-            ->withPivot(['scale_factor'])
+            ->withPivot(['scale_factor', 'servings_available'])
             ->withTimestamps();
     }
 

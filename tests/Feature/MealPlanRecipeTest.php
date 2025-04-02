@@ -171,4 +171,56 @@ class MealPlanRecipeTest extends TestCase
 
         $response->assertRedirect(route('login'));
     }
+
+    public function test_available_servings_are_calculated_when_adding_recipe(): void
+    {
+        $user = User::factory()->create();
+        $meal_plan = MealPlan::factory()->create([
+            'user_id' => $user->id,
+            'people_count' => 2,
+        ]);
+        $recipe = Recipe::factory()->create([
+            'user_id' => $user->id,
+            'servings' => 4,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('meal-plans.add-recipe'), [
+            'meal_plan_id' => $meal_plan->id,
+            'recipe_id' => $recipe->id,
+            'scale_factor' => 1.0,
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('meal_plan_recipe', [
+            'meal_plan_id' => $meal_plan->id,
+            'recipe_id' => $recipe->id,
+            'servings_available' => 2.0, // 4 servings / 2 people = 2 available servings
+        ]);
+    }
+
+    public function test_available_servings_are_zero_when_plan_has_no_people(): void
+    {
+        $user = User::factory()->create();
+        $meal_plan = MealPlan::factory()->create([
+            'user_id' => $user->id,
+            'people_count' => 0,
+        ]);
+        $recipe = Recipe::factory()->create([
+            'user_id' => $user->id,
+            'servings' => 4,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('meal-plans.add-recipe'), [
+            'meal_plan_id' => $meal_plan->id,
+            'recipe_id' => $recipe->id,
+            'scale_factor' => 1.0,
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('meal_plan_recipe', [
+            'meal_plan_id' => $meal_plan->id,
+            'recipe_id' => $recipe->id,
+            'servings_available' => 0.0,
+        ]);
+    }
 }

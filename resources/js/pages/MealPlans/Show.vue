@@ -11,7 +11,8 @@
                     </h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
                         {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
-                            mealPlan.duration) }} • {{ mealPlan.people_count }} people
+                            mealPlan.duration) }} •
+                        {{ mealPlan.people_count }} people
                     </p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -47,10 +48,14 @@
                                         </Link>
                                     </h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        Scale Factor: {{ recipe.pivot.scale_factor }}x ({{
+                                        Scale Factor: {{ formatScaleFactor(recipe.pivot.scale_factor) }}x ({{
                                             calculateServings(recipe.servings, recipe.pivot.scale_factor)
                                         }}
                                         servings)
+                                        <span class="ml-2 text-green-600 dark:text-green-400">
+                                            • {{ formatScaleFactor(recipe.pivot.servings_available) }} available
+                                            servings
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -150,8 +155,8 @@
                         <div class="mt-3 space-y-2">
                             <div>
                                 <Label for="scale-factor">Scale Factor</Label>
-                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.1" max="10"
-                                    step="0.1" />
+                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.5" max="10"
+                                    step="0.5" />
                                 <p class="mt-1 text-xs text-gray-500">
                                     This will make approximately {{ calculateServings(selectedRecipe.servings,
                                         scaleFactor) }} servings
@@ -177,8 +182,8 @@
                 <div class="space-y-4 py-4">
                     <div>
                         <Label for="edit-scale-factor">Scale Factor</Label>
-                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.1" max="10"
-                            step="0.1" />
+                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.5" max="10"
+                            step="0.5" />
                         <p class="mt-1 text-xs text-gray-500">
                             This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings,
                                 editScaleFactor) : 0 }} servings
@@ -202,7 +207,7 @@ import { Label } from '@/components/ui/label';
 import Spinner from '@/components/ui/spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { MealPlan } from '@/types/meal-plan';
-import type { Recipe } from '@/types/recipe';
+import type { Recipe, RecipeWithPivot } from '@/types/recipe';
 import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PencilIcon, PlusIcon, TrashIcon, XIcon } from 'lucide-vue-next';
@@ -214,6 +219,7 @@ interface Props {
             Recipe & {
                 pivot: {
                     scale_factor: number;
+                    servings_available: number;
                 };
             }
         >;
@@ -232,7 +238,7 @@ const showAddRecipeModal = ref(false);
 const showRemoveRecipeDialog = ref(false);
 const showEditRecipeModal = ref(false);
 const recipeToRemove = ref<Recipe | null>(null);
-const recipeToEdit = ref<Recipe | null>(null);
+const recipeToEdit = ref<RecipeWithPivot | null>(null);
 
 const searchQuery = ref('');
 const searchResults = ref<Recipe[]>([]);
@@ -251,7 +257,6 @@ const formatEndDate = (dateString: string, numDays: number) => {
     date.setDate(date.getDate() + numDays);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
-
 
 const deleteMealPlan = () => {
     router.delete(route('meal-plans.destroy', props.mealPlan.id), {
@@ -337,8 +342,8 @@ const removeRecipe = () => {
 
     router.delete(
         route('meal-plans.remove-recipe', {
-            mealPlan: props.mealPlan.id,
-            recipe: recipeToRemove.value.id,
+            id: props.mealPlan.id,
+            recipeId: recipeToRemove.value.id,
         }),
         {
             preserveScroll: true,
@@ -350,8 +355,8 @@ const removeRecipe = () => {
     );
 };
 
-const editRecipeInPlan = (recipe: Recipe) => {
-    recipeToEdit.value = recipe;
+const editRecipeInPlan = (recipe: Recipe & { pivot: { scale_factor: number } }) => {
+    recipeToEdit.value = recipe as RecipeWithPivot;
     editScaleFactor.value = recipe.pivot.scale_factor;
     showEditRecipeModal.value = true;
 };
@@ -362,8 +367,8 @@ const updateRecipeScaleFactor = () => {
     // First remove the recipe
     router.delete(
         route('meal-plans.remove-recipe', {
-            mealPlan: props.mealPlan.id,
-            recipe: recipeToEdit.value.id,
+            id: props.mealPlan.id,
+            recipeId: recipeToEdit.value.id,
         }),
         {
             preserveScroll: true,
@@ -387,5 +392,10 @@ const updateRecipeScaleFactor = () => {
             },
         },
     );
+};
+
+const formatScaleFactor = (factor: number | string): string => {
+    const num = Number(factor);
+    return Number.isInteger(num) ? num.toString() : num.toFixed(1);
 };
 </script>

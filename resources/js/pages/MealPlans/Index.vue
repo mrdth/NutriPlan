@@ -49,11 +49,11 @@
                             <div class="min-w-0 flex-1">
                                 <Link :href="route('meal-plans.show', mealPlan.id)" class="focus:outline-none">
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                    {{ mealPlan.name || `Meal Plan (${formatDate(mealPlan.start_date)})` }}
+                                    {{ mealPlan.name || `Meal Plan (${formatStartDate(mealPlan.start_date)})` }}
                                 </p>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
                                     {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
-                                        mealPlan.duration) }}
+                                    mealPlan.duration) }}
                                 </p>
                                 </Link>
                             </div>
