@@ -1,18 +1,20 @@
 <template>
     <AppLayout>
+
         <Head title="Meal Plans | NutriPlan" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <h1 class="text-2xl font-semibold leading-6 text-gray-900 dark:text-white">Meal Plans</h1>
-                    <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Create and manage your meal plans for easy meal preparation.</p>
+                    <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">Create and manage your meal plans for easy
+                        meal preparation.</p>
                 </div>
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Button as-child>
                         <Link :href="route('meal-plans.create')">
-                            <PlusIcon class="mr-2 h-4 w-4" />
-                            New Meal Plan
+                        <PlusIcon class="mr-2 h-4 w-4" />
+                        New Meal Plan
                         </Link>
                     </Button>
                 </div>
@@ -27,8 +29,8 @@
                 <div class="mt-6">
                     <Button as-child>
                         <Link :href="route('meal-plans.create')">
-                            <PlusIcon class="mr-2 h-4 w-4" />
-                            New Meal Plan
+                        <PlusIcon class="mr-2 h-4 w-4" />
+                        New Meal Plan
                         </Link>
                     </Button>
                 </div>
@@ -39,18 +41,20 @@
                     <li v-for="mealPlan in mealPlans" :key="mealPlan.id" class="py-4">
                         <div class="flex items-center space-x-4">
                             <div class="flex-shrink-0">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
+                                <div
+                                    class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
                                     <CalendarIcon class="h-6 w-6 text-green-600 dark:text-green-300" />
                                 </div>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <Link :href="route('meal-plans.show', mealPlan.id)" class="focus:outline-none">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                        {{ mealPlan.name || `Meal Plan (${formatDate(mealPlan.start_date)})` }}
-                                    </p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ formatDate(mealPlan.start_date) }} to {{ formatDate(mealPlan.end_date) }}
-                                    </p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ mealPlan.name || `Meal Plan (${formatDate(mealPlan.start_date)})` }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
+                                        mealPlan.duration) }}
+                                </p>
                                 </Link>
                             </div>
                             <div class="flex-shrink-0">
@@ -66,8 +70,8 @@
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem asChild>
                                             <Link :href="route('meal-plans.show', mealPlan.id)">
-                                                <EyeIcon class="mr-2 h-4 w-4" />
-                                                View
+                                            <EyeIcon class="mr-2 h-4 w-4" />
+                                            View
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem @click="confirmDeleteMealPlan(mealPlan)">
@@ -88,7 +92,8 @@
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Delete Meal Plan</DialogTitle>
-                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone. </DialogDescription>
+                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone.
+                    </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                     <Button type="button" variant="outline" @click="isDeleteModalOpen = false">Cancel</Button>
@@ -127,8 +132,14 @@ const mealPlanToDelete = ref<MealPlan | null>(null);
 
 const form = useForm({});
 
-const formatDate = (dateString: string) => {
+const formatStartDate = (dateString: string) => {
     const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const formatEndDate = (dateString: string, numDays: number) => {
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + numDays);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
