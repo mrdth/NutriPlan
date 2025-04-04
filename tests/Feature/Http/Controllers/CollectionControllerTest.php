@@ -136,8 +136,6 @@ class CollectionControllerTest extends TestCase
         ]);
     }
 
-
-
     public function test_user_cannot_view_others_collections(): void
     {
         $user = User::factory()->create();

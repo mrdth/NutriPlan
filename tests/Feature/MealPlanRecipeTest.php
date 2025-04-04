@@ -8,8 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class);
-
 test('user can add recipe to meal plan', function () {
     $user = User::factory()->create();
     $meal_plan = MealPlan::factory()->create(['user_id' => $user->id]);
