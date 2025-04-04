@@ -1,0 +1,172 @@
+---
+description: Laravel Controller Standards
+globs: ["app/Http/Controllers/**/*.php"]
+alwaysApply: true
+---
+# Laravel Controller Standards
+
+This rule defines best practices and standards for Laravel controllers.
+
+## Rule Details
+
+- **Name**: Laravel Controller Standards
+- **Type**: Controller Guidelines
+- **Scope**: Controller files
+- **Priority**: High
+
+## Requirements
+
+1. Controller Structure:
+   - Use proper namespacing under `App\Http\Controllers`
+   - Follow Laravel's controller naming conventions (PascalCase, suffixed with 'Controller')
+   - Keep controllers focused on single resource/domain
+   - Use constructor property promotion for dependencies
+   - Include proper type declarations for methods
+   - Use proper PHPDoc blocks for methods
+   - Implement proper interfaces (e.g., ResourceController)
+
+2. Controller Methods:
+   - Follow RESTful naming conventions:
+     - index(): Display a listing of the resource
+     - create(): Show the form for creating a new resource
+     - store(): Store a newly created resource
+     - show(): Display the specified resource
+     - edit(): Show the form for editing the resource
+     - update(): Update the specified resource
+     - destroy(): Remove the specified resource
+   - Return consistent response types
+   - Use proper status codes
+   - Implement proper error handling
+   - Keep methods focused and concise
+
+3. Request Handling:
+   - Use Form Request classes for validation
+   - Implement proper authorization checks
+   - Use dependency injection for services
+   - Handle file uploads properly
+   - Implement proper request sanitization
+   - Use proper request helpers
+   - Include proper request documentation
+
+4. Response Management:
+   - Use proper response types (View, JSON, Redirect)
+   - Implement proper response formatting
+   - Use proper response status codes
+   - Include proper headers when needed
+   - Implement proper error responses
+   - Use proper response transformers
+   - Include proper response documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreRecipeRequest;
+use App\Http\Requests\UpdateRecipeRequest;
+use App\Http\Resources\RecipeResource;
+use App\Models\Recipe;
+use App\Services\RecipeService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+
+class RecipeController extends Controller
+{
+    public function __construct(
+        private readonly RecipeService $recipeService
+    ) {}
+
+    /**
+     * Display a listing of recipes.
+     *
+     * @return ResourceCollection
+     */
+    public function index(): ResourceCollection
+    {
+        $recipes = $this->recipeService->getPaginatedRecipes();
+
+        return RecipeResource::collection($recipes);
+    }
+
+    /**
+     * Store a newly created recipe.
+     *
+     * @param StoreRecipeRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreRecipeRequest $request): JsonResponse
+    {
+        $recipe = $this->recipeService->createRecipe($request->validated());
+
+        return (new RecipeResource($recipe))
+            ->response()
+            ->setStatusCode(SymfonyResponse::HTTP_CREATED);
+    }
+
+    /**
+     * Display the specified recipe.
+     *
+     * @param Recipe $recipe
+     * @return RecipeResource
+     */
+    public function show(Recipe $recipe): RecipeResource
+    {
+        return new RecipeResource($recipe->load(['ingredients', 'instructions']));
+    }
+
+    /**
+     * Update the specified recipe.
+     *
+     * @param UpdateRecipeRequest $request
+     * @param Recipe $recipe
+     * @return RecipeResource
+     */
+    public function update(UpdateRecipeRequest $request, Recipe $recipe): RecipeResource
+    {
+        $recipe = $this->recipeService->updateRecipe($recipe, $request->validated());
+
+        return new RecipeResource($recipe);
+    }
+
+    /**
+     * Remove the specified recipe.
+     *
+     * @param Recipe $recipe
+     * @return JsonResponse
+     */
+    public function destroy(Recipe $recipe): JsonResponse
+    {
+        $this->recipeService->deleteRecipe($recipe);
+
+        return response()->json(null, SymfonyResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Toggle the featured status of the recipe.
+     *
+     * @param Recipe $recipe
+     * @return JsonResponse
+     */
+    public function toggleFeatured(Recipe $recipe): JsonResponse
+    {
+        $recipe = $this->recipeService->toggleFeatured($recipe);
+
+        return (new RecipeResource($recipe))->response();
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating controller class structure and organization
+2. Checking for proper method naming and return types
+3. Ensuring proper use of Form Requests and Resources
+4. Verifying proper response status codes and formats
+5. Validating proper documentation and PHPDoc blocks 

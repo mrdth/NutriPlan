@@ -1,0 +1,246 @@
+---
+description: Laravel Service Standards
+globs: ["app/Services/**/*.php"]
+alwaysApply: true
+---
+# Laravel Service Standards
+
+This rule defines best practices and standards for Laravel services.
+
+## Rule Details
+
+- **Name**: Laravel Service Standards
+- **Type**: Service Guidelines
+- **Scope**: Service files
+- **Priority**: High
+
+## Requirements
+
+1. Service Structure:
+   - Use proper namespacing under `App\Services`
+   - Follow service naming conventions (PascalCase, suffixed with 'Service')
+   - Keep services focused on single domain/responsibility
+   - Use constructor property promotion for dependencies
+   - Include proper type declarations for methods
+   - Use proper PHPDoc blocks for methods
+   - Implement corresponding interfaces
+
+2. Service Methods:
+   - Use clear, descriptive method names
+   - Return consistent types
+   - Use Data Transfer Objects (DTOs) for complex data
+   - Implement proper error handling
+   - Use proper transaction management
+   - Keep methods focused and single-responsibility
+   - Document method behavior and side effects
+
+3. Business Logic:
+   - Encapsulate complex business rules
+   - Implement proper validation logic
+   - Use proper event dispatching
+   - Handle asynchronous operations properly
+   - Implement proper caching strategies
+   - Use proper logging
+   - Include proper error recovery
+
+4. Dependency Management:
+   - Use proper dependency injection
+   - Implement proper repository pattern when needed
+   - Use proper service interfaces
+   - Handle external service dependencies
+   - Implement proper fallback strategies
+   - Use proper configuration management
+   - Include proper service documentation
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\DataTransferObjects\RecipeData;
+use App\Events\RecipeCreated;
+use App\Events\RecipeDeleted;
+use App\Events\RecipeUpdated;
+use App\Exceptions\RecipeNotFoundException;
+use App\Models\Recipe;
+use App\Repositories\RecipeRepository;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class RecipeService implements RecipeServiceInterface
+{
+    public function __construct(
+        private readonly RecipeRepository $repository,
+        private readonly Dispatcher $eventDispatcher
+    ) {}
+
+    /**
+     * Get a paginated list of recipes.
+     *
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedRecipes(int $perPage = 15): LengthAwarePaginator
+    {
+        return Cache::remember(
+            'recipes.paginated.' . $perPage,
+            now()->addHours(1),
+            fn () => $this->repository->paginate($perPage)
+        );
+    }
+
+    /**
+     * Create a new recipe.
+     *
+     * @param array $data
+     * @return Recipe
+     */
+    public function createRecipe(array $data): Recipe
+    {
+        return DB::transaction(function () use ($data) {
+            try {
+                $recipe = $this->repository->create($data);
+
+                $this->eventDispatcher->dispatch(new RecipeCreated($recipe));
+
+                Log::info('Recipe created', ['id' => $recipe->id]);
+
+                return $recipe;
+            } catch (\Exception $e) {
+                Log::error('Failed to create recipe', [
+                    'error' => $e->getMessage(),
+                    'data' => $data
+                ]);
+
+                throw $e;
+            }
+        });
+    }
+
+    /**
+     * Update an existing recipe.
+     *
+     * @param Recipe $recipe
+     * @param array $data
+     * @return Recipe
+     */
+    public function updateRecipe(Recipe $recipe, array $data): Recipe
+    {
+        return DB::transaction(function () use ($recipe, $data) {
+            try {
+                $recipe = $this->repository->update($recipe, $data);
+
+                $this->eventDispatcher->dispatch(new RecipeUpdated($recipe));
+
+                Cache::tags(['recipes'])->flush();
+
+                Log::info('Recipe updated', ['id' => $recipe->id]);
+
+                return $recipe;
+            } catch (\Exception $e) {
+                Log::error('Failed to update recipe', [
+                    'id' => $recipe->id,
+                    'error' => $e->getMessage(),
+                    'data' => $data
+                ]);
+
+                throw $e;
+            }
+        });
+    }
+
+    /**
+     * Delete a recipe.
+     *
+     * @param Recipe $recipe
+     * @return bool
+     */
+    public function deleteRecipe(Recipe $recipe): bool
+    {
+        return DB::transaction(function () use ($recipe) {
+            try {
+                $deleted = $this->repository->delete($recipe);
+
+                if ($deleted) {
+                    $this->eventDispatcher->dispatch(new RecipeDeleted($recipe));
+                    Cache::tags(['recipes'])->flush();
+                    Log::info('Recipe deleted', ['id' => $recipe->id]);
+                }
+
+                return $deleted;
+            } catch (\Exception $e) {
+                Log::error('Failed to delete recipe', [
+                    'id' => $recipe->id,
+                    'error' => $e->getMessage()
+                ]);
+
+                throw $e;
+            }
+        });
+    }
+
+    /**
+     * Toggle the featured status of a recipe.
+     *
+     * @param Recipe $recipe
+     * @return Recipe
+     */
+    public function toggleFeatured(Recipe $recipe): Recipe
+    {
+        return DB::transaction(function () use ($recipe) {
+            try {
+                $recipe->is_featured = !$recipe->is_featured;
+                $recipe->save();
+
+                Cache::tags(['recipes'])->flush();
+
+                Log::info('Recipe featured status toggled', [
+                    'id' => $recipe->id,
+                    'is_featured' => $recipe->is_featured
+                ]);
+
+                return $recipe;
+            } catch (\Exception $e) {
+                Log::error('Failed to toggle recipe featured status', [
+                    'id' => $recipe->id,
+                    'error' => $e->getMessage()
+                ]);
+
+                throw $e;
+            }
+        });
+    }
+
+    /**
+     * Get featured recipes.
+     *
+     * @param int $limit
+     * @return Collection
+     */
+    public function getFeaturedRecipes(int $limit = 5): Collection
+    {
+        return Cache::remember(
+            'recipes.featured.' . $limit,
+            now()->addHours(1),
+            fn () => $this->repository->getFeatured($limit)
+        );
+    }
+}
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating service class structure and organization
+2. Checking for proper method signatures and return types
+3. Ensuring proper use of dependency injection
+4. Verifying proper transaction and error handling
+5. Validating proper documentation and PHPDoc blocks 

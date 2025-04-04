@@ -1,3 +1,8 @@
+---
+description: Laravel Jobs and Queues Standards
+globs: ["App/Jobs/*.php"]
+alwaysApply: true
+---
 # Laravel Jobs and Queues Standards
 
 This rule defines best practices and standards for using Laravel's job and queue system.

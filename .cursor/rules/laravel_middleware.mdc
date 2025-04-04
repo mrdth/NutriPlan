@@ -1,3 +1,8 @@
+---
+description: Laravel Middleware Standards
+globs: ["App/Http/Middleware/*.php"]
+alwaysApply: true
+---
 # Laravel Middleware Standards
 
 This rule defines best practices and standards for using Laravel's middleware system.

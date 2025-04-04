@@ -1,0 +1,147 @@
+---
+description: Laravel Testing Standards
+globs: ["tests/**/*Test.php"]
+alwaysApply: true
+---
+# Laravel Testing Standards
+
+This rule defines the testing standards and best practices for Laravel applications using Pest PHP.
+
+## Rule Details
+
+- **Name**: Laravel Testing Standards
+- **Type**: Testing Guidelines
+- **Scope**: Test files
+- **Priority**: High
+
+## Requirements
+
+1. Test Organization:
+   - Place tests in appropriate test directories based on type and domain:
+     - Feature/
+       - Api/ (API endpoint tests)
+       - Http/ (Web controller tests)
+       - Console/ (Artisan command tests)
+       - Auth/ (Authentication related tests)
+       - Settings/ (User settings tests)
+     - Unit/
+       - Models/ (Model behavior tests)
+       - Actions/ (Single-responsibility action tests)
+       - Policies/ (Authorization policy tests)
+       - Enums/ (Enum behavior tests)
+       - Services/ (Service class tests)
+       - ValueObjects/ (Value object tests)
+       - Http/ (Request/Response object tests)
+     - Fixtures/ (Test data files and fixtures)
+   - Use descriptive test names that reflect the feature or behavior being tested
+   - Follow the AAA pattern (Arrange, Act, Assert)
+   - Group related tests using test suites
+   - Use datasets for multiple test cases
+
+2. Test Types:
+   - Write unit tests for isolated components (Models, Actions, Value Objects)
+   - Use feature tests for HTTP endpoints and API routes
+   - Implement integration tests for complex features
+   - Use browser tests for JavaScript-heavy features
+   - Write model tests for complex model logic and relationships
+
+3. Testing Best Practices:
+   - Use factories for test data generation
+   - Mock external services and dependencies
+   - Use database transactions for database tests
+   - Clean up after each test
+   - Use meaningful assertions
+   - Use Pest's expressive syntax
+   - Use fixtures for complex test data scenarios
+   - Keep test data files in the Fixtures directory
+
+4. Test Documentation:
+   - Write clear test descriptions that explain the business logic being tested
+   - Document test setup requirements including factory states and fixtures
+   - Explain complex test scenarios
+   - Use meaningful variable names in tests
+
+## Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Models\Recipe;
+use App\Models\MealPlan;
+use App\Actions\MealPlan\AddRecipeToMealPlan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->recipe = Recipe::factory()->create();
+    $this->mealPlan = MealPlan::factory()->create();
+    $this->action = app(AddRecipeToMealPlan::class);
+});
+
+test('can add recipe to meal plan', function () {
+    // Arrange
+    $servings = 4;
+    $plannedDate = now()->addDays(2);
+
+    // Act
+    $mealPlanRecipe = $this->action->execute(
+        $this->mealPlan,
+        $this->recipe,
+        $servings,
+        $plannedDate
+    );
+
+    // Assert
+    expect($mealPlanRecipe)
+        ->mealPlan->id->toBe($this->mealPlan->id)
+        ->recipe->id->toBe($this->recipe->id)
+        ->servings->toBe($servings)
+        ->planned_date->toDateString()->toBe($plannedDate->toDateString());
+});
+
+test('validates recipe exists in meal plan', function () {
+    // Arrange
+    $existingMealPlanRecipe = $this->action->execute(
+        $this->mealPlan,
+        $this->recipe,
+        2,
+        now()
+    );
+
+    // Act & Assert
+    expect(fn () => $this->action->execute(
+        $this->mealPlan,
+        $this->recipe,
+        4,
+        now()
+    ))->toThrow(RecipeAlreadyInMealPlanException::class);
+});
+
+test('can parse recipe from HTML fixture', function () {
+    // Arrange
+    $htmlContent = file_get_contents(
+        base_path('tests/Fixtures/recipe-json-ld.html')
+    );
+
+    // Act
+    $recipe = RecipeParser::fromHtml($htmlContent);
+
+    // Assert
+    expect($recipe)
+        ->name->toBe('Chocolate Chip Cookies')
+        ->cookTime->toBe('PT12M')
+        ->ingredients->toHaveCount(8);
+});
+```
+
+## Validation
+
+The IDE will enforce these rules by:
+1. Validating test class structure and organization
+2. Checking for proper test directory placement
+3. Ensuring test documentation completeness
+4. Verifying proper use of Pest features
+5. Validating fixture file usage and organization 

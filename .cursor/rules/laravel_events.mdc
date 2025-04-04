@@ -1,3 +1,8 @@
+---
+description: Laravel Events Standards
+globs: ["app/Events/**/*.php"]
+alwaysApply: true
+---
 # Laravel Events Standards
 
 This rule defines best practices and standards for events and listeners in Laravel applications.

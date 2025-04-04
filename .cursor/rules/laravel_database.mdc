@@ -1,3 +1,8 @@
+---
+description: Laravel Database Standards
+globs: ["database/**/*.php"]
+alwaysApply: true
+---
 # Laravel Database Standards
 
 This rule defines best practices and standards for database management in Laravel applications.

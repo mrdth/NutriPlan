@@ -1,6 +1,6 @@
 # Automatic Git Commit Rule
 
-This rule specifies that after each change performed by Cursor IDE, an automatic Git commit should be created following the conventional commit format.
+This rule specifies that after each feature developed by Cursor IDE, an automatic Git commit should be created following the conventional commit format.
 
 ## Rule Details
 

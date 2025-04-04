@@ -1,3 +1,8 @@
+---
+description: Laravel Frontend Development Standards
+globs: ["resources/**/*"]
+alwaysApply: true
+---
 # Laravel Frontend Development Standards
 
 This rule defines best practices and standards for frontend development in Laravel applications using Vite, Inertia, and Vue.

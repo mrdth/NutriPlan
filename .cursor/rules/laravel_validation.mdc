@@ -1,3 +1,8 @@
+---
+description: Laravel Validation Standards
+globs: ["Http/Controllers/**/*.php", "Http/Requests/**/*.php"]
+alwaysApply: true
+---
 # Laravel Validation Standards
 
 This rule defines best practices and standards for using Laravel's validation system.
