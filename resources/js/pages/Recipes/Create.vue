@@ -1,5 +1,6 @@
 <template>
     <AppLayout>
+
         <Head title="Create New Recipe | NutriPlan" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
@@ -11,13 +12,8 @@
             </div>
 
             <div class="mt-8 overflow-hidden bg-white p-6 shadow-xl dark:bg-gray-800 sm:rounded-lg">
-                <RecipeForm
-                    :categories="categories"
-                    :ingredients="ingredients"
-                    :measurement-units="measurementUnits"
-                    submit-label="Create Recipe"
-                    @submit="createRecipe"
-                />
+                <RecipeForm :categories="categories" :ingredients="ingredients" :measurement-units="measurementUnits"
+                    submit-label="Create Recipe" @submit="createRecipe" />
             </div>
         </div>
     </AppLayout>
@@ -28,12 +24,13 @@ import RecipeForm from '@/components/Recipe/RecipeForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Category } from '@/types/category';
 import type { Ingredient } from '@/types/ingredient';
+import type { MeasurementUnit } from '@/types/recipe';
 import { Head } from '@inertiajs/vue3';
 
 interface Props {
     categories: Category[];
     ingredients: Ingredient[];
-    measurementUnits: Array<{ value: string; label: string }>;
+    measurementUnits: MeasurementUnit[];
 }
 
 defineProps<Props>();

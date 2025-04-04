@@ -67,17 +67,7 @@ class RecipeController extends Controller
         return Inertia::render('Recipes/Create', [
             'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
-            'measurementUnits' => [
-                ['value' => 'g', 'label' => 'Grams'],
-                ['value' => 'kg', 'label' => 'Kilograms'],
-                ['value' => 'ml', 'label' => 'Milliliters'],
-                ['value' => 'l', 'label' => 'Liters'],
-                ['value' => 'tsp', 'label' => 'Teaspoons'],
-                ['value' => 'tbsp', 'label' => 'Tablespoons'],
-                ['value' => 'cup', 'label' => 'Cups'],
-                ['value' => 'piece', 'label' => 'Pieces'],
-                ['value' => 'pinch', 'label' => 'Pinch'],
-            ],
+            'measurementUnits' => config('recipe.measurement_units'),
         ]);
     }
 
@@ -159,17 +149,7 @@ class RecipeController extends Controller
             'recipe' => $recipe,
             'categories' => \App\Models\Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'ingredients' => \App\Models\Ingredient::query()->orderBy('name')->get(['id', 'name']),
-            'measurementUnits' => [
-                ['value' => 'g', 'label' => 'Grams'],
-                ['value' => 'kg', 'label' => 'Kilograms'],
-                ['value' => 'ml', 'label' => 'Milliliters'],
-                ['value' => 'l', 'label' => 'Liters'],
-                ['value' => 'tsp', 'label' => 'Teaspoons'],
-                ['value' => 'tbsp', 'label' => 'Tablespoons'],
-                ['value' => 'cup', 'label' => 'Cups'],
-                ['value' => 'piece', 'label' => 'Pieces'],
-                ['value' => 'pinch', 'label' => 'Pinch'],
-            ],
+            'measurementUnits' => config('recipe.measurement_units'),
         ]);
     }
 

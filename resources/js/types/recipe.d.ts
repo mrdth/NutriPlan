@@ -1,5 +1,10 @@
 import { User } from './user';
 
+export interface MeasurementUnit {
+    value: string;
+    label: string;
+}
+
 export interface Recipe {
     id: number;
     title: string;

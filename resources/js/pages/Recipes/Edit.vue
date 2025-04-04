@@ -3,7 +3,7 @@ import DeleteRecipeModal from '@/components/Recipe/DeleteRecipeModal.vue';
 import RecipeForm from '@/components/Recipe/RecipeForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { Recipe } from '@/types/recipe';
+import type { Recipe, MeasurementUnit } from '@/types/recipe';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -17,10 +17,7 @@ defineProps<{
         id: number;
         name: string;
     }>;
-    measurementUnits: Array<{
-        value: string;
-        label: string;
-    }>;
+    measurementUnits: MeasurementUnit[];
 }>();
 
 const showDeleteModal = ref(false);
@@ -28,6 +25,7 @@ const showDeleteModal = ref(false);
 
 <template>
     <AppLayout>
+
         <Head :title="`Edit ${recipe.title}`" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
@@ -44,15 +42,9 @@ const showDeleteModal = ref(false);
             </div>
 
             <div class="mt-8">
-                <RecipeForm
-                    :recipe="recipe"
-                    :categories="categories"
-                    :ingredients="ingredients"
-                    :measurement-units="measurementUnits"
-                    :action="route('recipes.update', recipe.id)"
-                    method="put"
-                    @submit="(form) => form.put(route('recipes.update', recipe.slug))"
-                />
+                <RecipeForm :recipe="recipe" :categories="categories" :ingredients="ingredients"
+                    :measurement-units="measurementUnits" :action="route('recipes.update', recipe.id)" method="put"
+                    @submit="(form) => form.put(route('recipes.update', recipe.slug))" />
             </div>
         </div>
     </AppLayout>
