@@ -16,7 +16,14 @@ This rule defines the testing standards and best practices for Laravel applicati
 
 ## Requirements
 
-1. Test Organization:
+1. Global Configuration:
+   - All global test configuration should be in `tests/Pest.php`
+   - Common traits like `RefreshDatabase` should be configured in `Pest.php` using `pest()->extend()`
+   - Global helper functions should be defined in `Pest.php`
+   - Global expectations should be extended in `Pest.php`
+   - DO NOT use `uses()` in individual test files for traits that are already configured in `Pest.php`
+
+2. Test Organization:
    - Place tests in appropriate test directories based on type and domain:
      - Feature/
        - Api/ (API endpoint tests)
@@ -38,14 +45,14 @@ This rule defines the testing standards and best practices for Laravel applicati
    - Group related tests using test suites
    - Use datasets for multiple test cases
 
-2. Test Types:
+3. Test Types:
    - Write unit tests for isolated components (Models, Actions, Value Objects)
    - Use feature tests for HTTP endpoints and API routes
    - Implement integration tests for complex features
    - Use browser tests for JavaScript-heavy features
    - Write model tests for complex model logic and relationships
 
-3. Testing Best Practices:
+4. Testing Best Practices:
    - Use factories for test data generation
    - Mock external services and dependencies
    - Use database transactions for database tests
@@ -55,7 +62,7 @@ This rule defines the testing standards and best practices for Laravel applicati
    - Use fixtures for complex test data scenarios
    - Keep test data files in the Fixtures directory
 
-4. Test Documentation:
+5. Test Documentation:
    - Write clear test descriptions that explain the business logic being tested
    - Document test setup requirements including factory states and fixtures
    - Explain complex test scenarios
@@ -71,9 +78,6 @@ declare(strict_types=1);
 use App\Models\Recipe;
 use App\Models\MealPlan;
 use App\Actions\MealPlan\AddRecipeToMealPlan;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->recipe = Recipe::factory()->create();
@@ -137,11 +141,42 @@ test('can parse recipe from HTML fixture', function () {
 });
 ```
 
+## Example Pest.php Configuration
+
+```php
+<?php
+
+use Illuminate\Support\Sleep;
+
+pest()->extend(Tests\TestCase::class)
+    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->beforeEach(function () {
+        Str::createRandomStringsNormally();
+        Str::createUuidsNormally();
+        Http::preventStrayRequests();
+        Sleep::fake();
+
+        $this->freezeTime();
+    })
+    ->in('Feature', 'Unit');
+
+expect()->extend('toBeOne', function () {
+    return $this->toBe(1);
+});
+
+function createUser(array $attributes = []): App\Models\User
+{
+    return App\Models\User::factory()->create($attributes);
+}
+```
+
 ## Validation
 
 The IDE will enforce these rules by:
-1. Validating test class structure and organization
+1. Validating test file structure and organization
 2. Checking for proper test directory placement
 3. Ensuring test documentation completeness
 4. Verifying proper use of Pest features
-5. Validating fixture file usage and organization 
+5. Validating fixture file usage and organization
+6. Checking that global configuration is in `Pest.php`
+7. Warning about duplicate trait usage in individual test files 
