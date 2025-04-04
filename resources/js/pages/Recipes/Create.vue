@@ -1,6 +1,5 @@
 <template>
     <AppLayout>
-
         <Head title="Create New Recipe | NutriPlan" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
@@ -12,8 +11,13 @@
             </div>
 
             <div class="mt-8 overflow-hidden bg-white p-6 shadow-xl dark:bg-gray-800 sm:rounded-lg">
-                <RecipeForm :categories="categories" :ingredients="ingredients" :measurement-units="measurementUnits"
-                    submit-label="Create Recipe" @submit="createRecipe" />
+                <RecipeForm
+                    :categories="categories"
+                    :ingredients="ingredients"
+                    :measurement-units="measurementUnits"
+                    submit-label="Create Recipe"
+                    @submit="createRecipe"
+                />
             </div>
         </div>
     </AppLayout>

@@ -28,4 +28,4 @@ return [
         ['value' => 'clove', 'label' => 'Cloves'],
         ['value' => 'whole', 'label' => 'Whole'],
     ],
-]; 
+];
