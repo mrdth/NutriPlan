@@ -9,8 +9,7 @@
                 <div class="grid gap-4 py-4">
                     <div class="grid gap-2">
                         <Label for="url">Recipe URL</Label>
-                        <Input id="url" v-model="form.url" type="url" placeholder="https://example.com/recipe"
-                            required />
+                        <Input id="url" v-model="form.url" type="url" placeholder="https://example.com/recipe" required />
                         <InputError :message="form.errors.url" />
                     </div>
                 </div>

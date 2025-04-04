@@ -24,10 +24,12 @@
                     </div>
                 </div>
                 <div class="mt-4 flex flex-wrap items-center gap-2 sm:mt-0">
-                    <Button v-if="isOwner" variant="outline" size="sm" :href="route('recipes.edit', recipe.slug)">
-                        <PencilIcon class="mr-2 h-4 w-4" />
-                        Edit
-                    </Button>
+                    <Link v-if="isOwner" :href="route('recipes.edit', recipe.slug)">
+                        <Button variant="outline" size="sm">
+                            <PencilIcon class="mr-2 h-4 w-4" />
+                            Edit
+                        </Button>
+                    </Link>
 
                     <Button size="sm" @click="toggleFavorite" :variant="isFavorited ? 'default' : 'outline'">
                         <HeartIcon :class="['mr-2 h-4 w-4', { 'fill-current': isFavorited }]" />
