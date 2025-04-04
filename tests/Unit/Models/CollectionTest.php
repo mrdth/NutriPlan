@@ -2,63 +2,56 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models;
-
 use App\Models\Collection;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class CollectionTest extends TestCase
-{
-    use RefreshDatabase;
+test('collection belongs to a user', function () {
+    $user = User::factory()->create();
+    $collection = Collection::factory()->create([
+        'user_id' => $user->id,
+    ]);
 
-    public function test_it_belongs_to_a_user(): void
-    {
-        $user = User::factory()->create();
-        $collection = Collection::factory()->create([
-            'user_id' => $user->id,
-        ]);
+    expect($collection->user)
+        ->toBeInstanceOf(User::class)
+        ->id->toBe($user->id);
+});
 
-        $this->assertInstanceOf(User::class, $collection->user);
-        $this->assertEquals($user->id, $collection->user->id);
-    }
+test('collection can have many recipes', function () {
+    $user = User::factory()->create();
+    $collection = Collection::factory()->create([
+        'user_id' => $user->id,
+    ]);
+    $recipes = Recipe::factory()->count(3)->create([
+        'user_id' => $user->id,
+    ]);
 
-    public function test_it_can_have_many_recipes(): void
-    {
-        $user = User::factory()->create();
-        $collection = Collection::factory()->create([
-            'user_id' => $user->id,
-        ]);
-        $recipes = Recipe::factory()->count(3)->create([
-            'user_id' => $user->id,
-        ]);
+    $collection->recipes()->attach($recipes->pluck('id'));
 
-        $collection->recipes()->attach($recipes->pluck('id'));
+    expect($collection->recipes)
+        ->toHaveCount(3)
+        ->first()->toBeInstanceOf(Recipe::class);
+});
 
-        $this->assertCount(3, $collection->recipes);
-        $this->assertInstanceOf(Recipe::class, $collection->recipes->first());
-    }
+test('collection generates a slug from name', function () {
+    $collection = Collection::factory()->create([
+        'name' => 'Test Collection Name',
+    ]);
 
-    public function test_it_generates_a_slug_from_name(): void
-    {
-        $collection = Collection::factory()->create([
-            'name' => 'Test Collection Name',
-        ]);
+    expect($collection->slug)->toBe('test-collection-name');
+});
 
-        $this->assertEquals('test-collection-name', $collection->slug);
-    }
+test('collection can be found by slug', function () {
+    $collection = Collection::factory()->create([
+        'name' => 'Test Collection',
+    ]);
 
-    public function test_it_can_find_by_slug(): void
-    {
-        $collection = Collection::factory()->create([
-            'name' => 'Test Collection',
-        ]);
+    $foundCollection = Collection::query()
+        ->where('slug', 'test-collection')
+        ->first();
 
-        $foundCollection = Collection::query()->where('slug', 'test-collection')->first();
-
-        $this->assertNotNull($foundCollection);
-        $this->assertEquals($collection->id, $foundCollection->id);
-    }
-}
+    expect($foundCollection)
+        ->not->toBeNull()
+        ->id->toBe($collection->id);
+});

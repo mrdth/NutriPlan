@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Actions\FetchRecipe;
-use App\Exceptions\RecipeImport\ConnectionFailedException;
-use App\Exceptions\RecipeImport\NoStructuredDataException;
 use App\Models\Recipe;
+use App\Actions\FetchRecipe;
+use Illuminate\Support\Sleep;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\RecipeImport\ConnectionFailedException;
+use App\Exceptions\RecipeImport\NoStructuredDataException;
 
 class ReimportRecipesCommand extends Command
 {
@@ -55,7 +56,7 @@ class ReimportRecipesCommand extends Command
 
         $this->withProgressBar($recipes, function (Recipe $recipe) use ($action): void {
             $this->reimportRecipe($recipe, $action, false);
-            sleep(2); // Wait 2 seconds between requests, to avoid being rate-limited
+            Sleep::for(2)->seconds();; // Wait 2 seconds between requests, to avoid being rate-limited
         });
 
         $this->newLine(2);

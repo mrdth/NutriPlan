@@ -2,151 +2,140 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
-
 use App\Models\MealPlan;
 use App\Models\Recipe;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class MealPlanTest extends TestCase
-{
-    use RefreshDatabase;
+test('authenticated user can access meal plans page', function () {
+    $user = User::factory()->create();
 
-    public function test_authenticated_user_can_access_meal_plans_page(): void
-    {
-        $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('meal-plans.index'));
 
-        $response = $this->actingAs($user)->get(route('meal-plans.index'));
+    $response->assertStatus(200);
+});
 
-        $response->assertStatus(200);
-    }
+test('unauthenticated user cannot access meal plans page', function () {
+    $response = $this->get(route('meal-plans.index'));
 
-    public function test_unauthenticated_user_cannot_access_meal_plans_page(): void
-    {
-        $response = $this->get(route('meal-plans.index'));
+    $response->assertRedirect(route('login'));
+});
 
-        $response->assertRedirect(route('login'));
-    }
+test('user can create meal plan', function () {
+    $user = User::factory()->create();
+    $data = [
+        'name' => 'Test Meal Plan',
+        'start_date' => now()->format('Y-m-d'),
+        'duration' => 7,
+        'people_count' => 4,
+    ];
 
-    public function test_user_can_create_meal_plan(): void
-    {
-        $user = User::factory()->create();
+    $response = $this->actingAs($user)->post(route('meal-plans.store'), $data);
 
-        $response = $this->actingAs($user)->post(route('meal-plans.store'), [
-            'name' => 'Test Meal Plan',
-            'start_date' => now()->format('Y-m-d'),
-            'duration' => 7,
-            'people_count' => 4,
-        ]);
+    $response->assertRedirect(route('meal-plans.index'));
 
-        $response->assertRedirect(route('meal-plans.index'));
-        $this->assertDatabaseHas('meal_plans', [
-            'user_id' => $user->id,
-            'name' => 'Test Meal Plan',
-            'duration' => 7,
-            'people_count' => 4,
-        ]);
-    }
+    $this->assertDatabaseHas('meal_plans', [
+        'user_id' => $user->id,
+        'name' => $data['name'],
+        'duration' => $data['duration'],
+        'people_count' => $data['people_count'],
+    ]);
+});
 
-    public function test_user_can_create_meal_plan_without_name(): void
-    {
-        $user = User::factory()->create();
+test('user can create meal plan without name', function () {
+    $user = User::factory()->create();
+    $data = [
+        'start_date' => now()->format('Y-m-d'),
+        'duration' => 7,
+        'people_count' => 4,
+    ];
 
-        $response = $this->actingAs($user)->post(route('meal-plans.store'), [
-            'start_date' => now()->format('Y-m-d'),
-            'duration' => 7,
-            'people_count' => 4,
-        ]);
+    $response = $this->actingAs($user)->post(route('meal-plans.store'), $data);
 
-        $response->assertRedirect(route('meal-plans.index'));
-        $this->assertDatabaseHas('meal_plans', [
-            'user_id' => $user->id,
-            'name' => null,
-            'duration' => 7,
-            'people_count' => 4,
-        ]);
-    }
+    $response->assertRedirect(route('meal-plans.index'));
 
-    public function test_user_can_view_meal_plan(): void
-    {
-        $user = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
+    $this->assertDatabaseHas('meal_plans', [
+        'user_id' => $user->id,
+        'name' => null,
+        'duration' => $data['duration'],
+        'people_count' => $data['people_count'],
+    ]);
+});
 
-        // Add a recipe to the meal plan to test eager loading
-        $recipe = Recipe::factory()->create(['user_id' => $user->id]);
-        $mealPlan->recipes()->attach($recipe->id, ['scale_factor' => 1.0]);
+test('user can view meal plan', function () {
+    $user = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get(route('meal-plans.show', $mealPlan));
+    // Add a recipe to the meal plan to test eager loading
+    $recipe = Recipe::factory()->create(['user_id' => $user->id]);
+    $mealPlan->recipes()->attach($recipe->id, ['scale_factor' => 1.0]);
 
-        $response->assertStatus(200);
-        $response->assertInertia(
-            fn ($page) => $page
+    $response = $this->actingAs($user)->get(route('meal-plans.show', $mealPlan));
+
+    $response->assertStatus(200);
+    
+    $response->assertInertia(
+        fn ($page) => $page
             ->component('MealPlans/Show')
             ->has('mealPlan')
             ->has('availableMealPlans')
-        );
-    }
+    );
+});
 
-    public function test_user_cannot_view_meal_plan_of_another_user(): void
-    {
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user1->id]);
+test('user cannot view meal plan of another user', function () {
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user1->id]);
 
-        $response = $this->actingAs($user2)->get(route('meal-plans.show', $mealPlan));
+    $response = $this->actingAs($user2)->get(route('meal-plans.show', $mealPlan));
 
-        $response->assertStatus(403);
-    }
+    $response->assertStatus(403);
+});
 
-    public function test_edit_method_returns_null(): void
-    {
-        $user = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
+test('edit method returns null', function () {
+    $user = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
 
-        $controller = app(\App\Http\Controllers\MealPlanController::class);
-        $result = $controller->edit((string) $mealPlan->id);
+    $controller = app(\App\Http\Controllers\MealPlanController::class);
+    $result = $controller->edit((string) $mealPlan->id);
 
-        $this->assertNull($result);
-    }
+    expect($result)->toBeNull();
+});
 
-    public function test_update_method_returns_null(): void
-    {
-        $user = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
+test('update method returns null', function () {
+    $user = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
 
-        $controller = app(\App\Http\Controllers\MealPlanController::class);
-        $request = new \Illuminate\Http\Request();
-        $result = $controller->update($request, (string) $mealPlan->id);
+    $controller = app(\App\Http\Controllers\MealPlanController::class);
+    $request = new \Illuminate\Http\Request();
+    $result = $controller->update($request, (string) $mealPlan->id);
 
-        $this->assertNull($result);
-    }
+    expect($result)->toBeNull();
+});
 
-    public function test_user_can_delete_meal_plan(): void
-    {
-        $user = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
+test('user can delete meal plan', function () {
+    $user = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->delete(route('meal-plans.destroy', $mealPlan));
+    $response = $this->actingAs($user)->delete(route('meal-plans.destroy', $mealPlan));
 
-        $response->assertRedirect(route('meal-plans.index'));
-        $this->assertDatabaseMissing('meal_plans', [
-            'id' => $mealPlan->id,
-        ]);
-    }
+    $response->assertRedirect(route('meal-plans.index'));
+    
+    $this->assertDatabaseMissing('meal_plans', [
+        'id' => $mealPlan->id,
+    ]);
+});
 
-    public function test_user_cannot_delete_meal_plan_of_another_user(): void
-    {
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
-        $mealPlan = MealPlan::factory()->create(['user_id' => $user1->id]);
+test('user cannot delete meal plan of another user', function () {
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $mealPlan = MealPlan::factory()->create(['user_id' => $user1->id]);
 
-        $response = $this->actingAs($user2)->delete(route('meal-plans.destroy', $mealPlan));
+    $response = $this->actingAs($user2)->delete(route('meal-plans.destroy', $mealPlan));
 
-        $response->assertStatus(403);
-        $this->assertDatabaseHas('meal_plans', [
-            'id' => $mealPlan->id,
-        ]);
-    }
-}
+    $response->assertStatus(403);
+    
+    $this->assertDatabaseHas('meal_plans', [
+        'id' => $mealPlan->id,
+    ]);
+});
