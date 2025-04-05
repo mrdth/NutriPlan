@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/meal-assignments', [MealAssignmentController::class, 'store'])->name('meal-assignments.store');
     Route::put('/meal-assignments/{mealAssignment}', [MealAssignmentController::class, 'update'])->name('meal-assignments.update');
     Route::delete('/meal-assignments/{mealAssignment}', [MealAssignmentController::class, 'destroy'])->name('meal-assignments.destroy');
+    Route::post('/meal-assignments/{mealAssignment}/toggle-cook', [MealAssignmentController::class, 'toggleToCook'])->name('meal-assignments.toggle-cook');
 });
 
 require __DIR__.'/settings.php';

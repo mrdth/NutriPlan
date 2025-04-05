@@ -45,6 +45,7 @@ test('user can assign recipe to day', function () {
         'meal_plan_day_id' => $mealPlanDay->id,
         'meal_plan_recipe_id' => $mealPlanRecipe->id,
         'servings' => $assignedServings,
+        'to_cook' => false,
     ]);
 
     $response->assertRedirect();
@@ -76,6 +77,7 @@ test('user cannot assign more servings than available', function () {
         'meal_plan_day_id' => $mealPlanDay->id,
         'meal_plan_recipe_id' => $mealPlanRecipe->id,
         'servings' => $assignedServings,
+        'to_cook' => false,
     ]);
 
     // Expect a redirect back with validation errors

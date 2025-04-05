@@ -6,6 +6,7 @@ export interface MealAssignment {
     meal_plan_day_id: number;
     meal_plan_recipe_id: number;
     servings: number;
+    to_cook: boolean;
     created_at: string;
     updated_at: string;
     meal_plan_recipe: {

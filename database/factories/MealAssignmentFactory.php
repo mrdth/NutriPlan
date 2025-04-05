@@ -43,6 +43,7 @@ class MealAssignmentFactory extends Factory
                 return $pivot->id;
             },
             'servings' => $this->faker->randomFloat(2, 0.5, 3.0),
+            'to_cook' => $this->faker->boolean(),
         ];
     }
 }

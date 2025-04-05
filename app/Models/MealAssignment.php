@@ -19,6 +19,7 @@ class MealAssignment extends Model
      */
     protected $casts = [
         'servings' => 'decimal:2',
+        'to_cook' => 'boolean',
     ];
 
     /**
