@@ -3,7 +3,7 @@
 
         <Head :title="`${mealPlan.name || 'Meal Plan'} | NutriPlan`" />
 
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div class="mb-8 flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -92,7 +92,7 @@
             </div>
 
             <!-- Days Grid -->
-            <div class="mx-auto mt-8 max-w-7xl sm:px-6 lg:px-8">
+            <div class="mx-auto mt-8 w-full">
                 <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                     <div class="p-6">
                         <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Plan Days</h2>
@@ -116,7 +116,7 @@
                                                             {{ assignment.meal_plan_recipe.recipe.title }}
                                                         </p>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">{{
-                                                            assignment.servings }} servings</p>
+                                                            formatScaleFactor(assignment.servings) }} servings</p>
                                                     </div>
                                                     <!-- START: Replace buttons with dropdown -->
                                                     <DropdownMenu>
