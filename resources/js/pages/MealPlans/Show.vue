@@ -1,5 +1,6 @@
 <template>
     <AppLayout>
+
         <Head :title="`${mealPlan.name || 'Meal Plan'} | NutriPlan`" />
 
         <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
@@ -9,7 +10,8 @@
                         {{ mealPlan.name || `Meal Plan (${formatStartDate(mealPlan.start_date)})` }}
                     </h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
-                        {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date, mealPlan.duration) }} •
+                        {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
+                            mealPlan.duration) }} •
                         {{ mealPlan.people_count }} people
                     </p>
                 </div>
@@ -31,58 +33,10 @@
                         </Button>
                     </div>
 
-                    <div v-if="mealPlan.recipes && mealPlan.recipes.length > 0" class="space-y-4">
-                        <div
-                            v-for="recipe in mealPlan.recipes"
-                            :key="recipe.id"
-                            class="flex items-center justify-between rounded-md border p-4 dark:border-gray-700"
-                        >
-                            <div class="flex items-center gap-4">
-                                <div v-if="recipe.images && recipe.images.length > 0" class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
-                                    <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                        <Link :href="route('recipes.show', recipe.slug)" class="hover:underline">
-                                            {{ recipe.title }}
-                                        </Link>
-                                    </h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        Scale Factor: {{ formatScaleFactor(recipe.pivot.scale_factor) }}x ({{
-                                            calculateServings(recipe.servings, recipe.pivot.scale_factor)
-                                        }}
-                                        servings)
-                                        <span class="ml-2 text-green-600 dark:text-green-400">
-                                            • {{ formatScaleFactor(recipe.pivot.servings_available) }} available servings
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <!-- START: Replace recipe buttons with dropdown -->
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
-                                            <EllipsisVerticalIcon class="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem @click="editRecipeInPlan(recipe)">
-                                            <PencilIcon class="mr-2 h-4 w-4" />
-                                            Edit Scale Factor
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            @click="confirmRemoveRecipe(recipe)"
-                                            class="text-red-600 focus:text-red-600 dark:focus:text-red-400"
-                                        >
-                                            <TrashIcon class="mr-2 h-4 w-4" />
-                                            Remove from Plan
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <!-- END: Replace recipe buttons with dropdown -->
-                            </div>
-                        </div>
+                    <div v-if="mealPlan.recipes && mealPlan.recipes.length > 0"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <RecipeCard v-for="recipe in mealPlan.recipes" :key="recipe.id" :recipe="recipe"
+                            @edit="editRecipeInPlan" @remove="confirmRemoveRecipe" />
                     </div>
                     <div v-else class="rounded-md bg-gray-50 p-4 dark:bg-gray-800">
                         <p class="text-center text-gray-700 dark:text-gray-300">
@@ -98,20 +52,15 @@
                     <div class="p-6">
                         <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Plan Days</h2>
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                            <div
-                                v-for="day in daysWithDates"
-                                :key="day.id"
-                                class="flex min-h-[150px] flex-col justify-between rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-                            >
+                            <div v-for="day in daysWithDates" :key="day.id"
+                                class="flex min-h-[150px] flex-col justify-between rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                                 <div>
                                     <!-- Container for top part -->
-                                    <h3 class="flex items-center justify-between font-semibold text-gray-900 dark:text-white">
+                                    <h3
+                                        class="flex items-center justify-between font-semibold text-gray-900 dark:text-white">
                                         <span>Day {{ day.day_number }}</span>
-                                        <Badge
-                                            v-if="getToCookCount(day)"
-                                            variant="secondary"
-                                            class="ml-2 bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/50 dark:text-amber-400 dark:hover:bg-amber-900/50"
-                                        >
+                                        <Badge v-if="getToCookCount(day)" variant="secondary"
+                                            class="ml-2 bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/50 dark:text-amber-400 dark:hover:bg-amber-900/50">
                                             {{ getToCookCount(day) }} to cook
                                         </Badge>
                                     </h3>
@@ -120,22 +69,19 @@
                                     <!-- Meal Assignments -->
                                     <div class="mt-4 flex-grow space-y-2">
                                         <div v-if="day.meal_assignments?.length" class="space-y-2">
-                                            <MealAssignmentCard
-                                                v-for="assignment in day.meal_assignments"
-                                                :key="assignment.id"
-                                                :assignment="assignment"
-                                                @edit="editMealAssignment"
-                                                @remove="removeMealAssignment"
-                                                @toggled="handleToCookToggled"
-                                            />
+                                            <MealAssignmentCard v-for="assignment in day.meal_assignments"
+                                                :key="assignment.id" :assignment="assignment" @edit="editMealAssignment"
+                                                @remove="removeMealAssignment" @toggled="handleToCookToggled" />
                                         </div>
-                                        <div v-else class="text-sm text-gray-500 dark:text-gray-400">No meals assigned</div>
+                                        <div v-else class="text-sm text-gray-500 dark:text-gray-400">No meals assigned
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- Add Meal Button (always rendered if day exists) -->
                                 <div class="mt-2">
                                     <!-- Container for the button -->
-                                    <Button variant="outline" size="sm" class="w-full" @click="showAddMealAssignmentModal(day)">
+                                    <Button variant="outline" size="sm" class="w-full"
+                                        @click="showAddMealAssignmentModal(day)">
                                         <PlusIcon class="mr-2 h-4 w-4" />
                                         Add Meal
                                     </Button>
@@ -152,7 +98,8 @@
             <DialogContent class="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Delete Meal Plan</DialogTitle>
-                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone. </DialogDescription>
+                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone.
+                    </DialogDescription>
                 </DialogHeader>
                 <div class="flex items-center justify-end space-x-2 pt-4">
                     <Button variant="outline" @click="showDeleteDialog = false">Cancel</Button>
@@ -166,7 +113,8 @@
             <DialogContent class="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Remove Recipe</DialogTitle>
-                    <DialogDescription> Are you sure you want to remove "{{ recipeToRemove?.title }}" from this meal plan? </DialogDescription>
+                    <DialogDescription> Are you sure you want to remove "{{ recipeToRemove?.title }}" from this meal
+                        plan? </DialogDescription>
                 </DialogHeader>
                 <div class="flex items-center justify-end space-x-2 pt-4">
                     <Button variant="outline" @click="showRemoveRecipeDialog = false">Cancel</Button>
@@ -186,22 +134,22 @@
                     <div class="space-y-2">
                         <Label for="recipe-search">Search Recipes</Label>
                         <div class="relative">
-                            <Input id="recipe-search" v-model="searchQuery" placeholder="Type to search..." @input="debounceSearch" />
+                            <Input id="recipe-search" v-model="searchQuery" placeholder="Type to search..."
+                                @input="debounceSearch" />
                             <div v-if="isSearching" class="absolute right-3 top-2.5">
                                 <Spinner class="h-5 w-5 text-gray-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="searchResults.length > 0" class="max-h-60 overflow-y-auto rounded-md border p-2 dark:border-gray-700">
-                        <div
-                            v-for="recipe in searchResults"
-                            :key="recipe.id"
+                    <div v-if="searchResults.length > 0"
+                        class="max-h-60 overflow-y-auto rounded-md border p-2 dark:border-gray-700">
+                        <div v-for="recipe in searchResults" :key="recipe.id"
                             class="cursor-pointer rounded-md p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-                            @click="selectRecipe(recipe)"
-                        >
+                            @click="selectRecipe(recipe)">
                             <div class="flex items-center gap-3">
-                                <div v-if="recipe.images && recipe.images.length > 0" class="h-10 w-10 overflow-hidden rounded-md">
+                                <div v-if="recipe.images && recipe.images.length > 0"
+                                    class="h-10 w-10 overflow-hidden rounded-md">
                                     <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
                                 </div>
                                 <div>
@@ -212,7 +160,8 @@
                         </div>
                     </div>
 
-                    <div v-if="searchQuery && !isSearching && searchResults.length === 0" class="rounded-md bg-gray-50 p-3 dark:bg-gray-800">
+                    <div v-if="searchQuery && !isSearching && searchResults.length === 0"
+                        class="rounded-md bg-gray-50 p-3 dark:bg-gray-800">
                         <p class="text-center text-sm text-gray-500">No recipes found matching your search.</p>
                     </div>
 
@@ -221,9 +170,11 @@
                         <div class="mt-3 space-y-2">
                             <div>
                                 <Label for="scale-factor">Scale Factor</Label>
-                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.5" max="10" step="0.5" />
+                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.5" max="10"
+                                    step="0.5" />
                                 <p class="mt-1 text-xs text-gray-500">
-                                    This will make approximately {{ calculateServings(selectedRecipe.servings, scaleFactor) }} servings
+                                    This will make approximately {{ calculateServings(selectedRecipe.servings,
+                                        scaleFactor) }} servings
                                 </p>
                             </div>
                         </div>
@@ -246,9 +197,11 @@
                 <div class="space-y-4 py-4">
                     <div>
                         <Label for="edit-scale-factor">Scale Factor</Label>
-                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.5" max="10" step="0.5" />
+                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.5" max="10"
+                            step="0.5" />
                         <p class="mt-1 text-xs text-gray-500">
-                            This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings, editScaleFactor) : 0 }} servings
+                            This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings,
+                                editScaleFactor) : 0 }} servings
                         </p>
                     </div>
                 </div>
@@ -271,12 +224,14 @@
                 <form @submit.prevent="addMealAssignment" class="space-y-4">
                     <div>
                         <Label for="recipe">Recipe</Label>
-                        <Select id="recipe" v-model="assignmentForm.meal_plan_recipe_id" :options="availableRecipes" class="mt-1 block w-full" />
+                        <Select id="recipe" v-model="assignmentForm.meal_plan_recipe_id" :options="availableRecipes"
+                            class="mt-1 block w-full" />
                         <InputError :message="assignmentForm.errors.meal_plan_recipe_id" class="mt-2" />
                     </div>
                     <div>
                         <Label for="servings">Servings</Label>
-                        <Input id="servings" v-model="assignmentForm.servings" type="number" step="1" min="1" max="20" class="mt-1 block w-full" />
+                        <Input id="servings" v-model="assignmentForm.servings" type="number" step="1" min="1" max="20"
+                            class="mt-1 block w-full" />
                         <InputError :message="assignmentForm.errors.servings" class="mt-2" />
                     </div>
                     <div class="flex items-center space-x-2">
@@ -299,24 +254,19 @@
                     <DialogTitle>Edit Meal Assignment</DialogTitle>
                     <DialogDescription>Update the number of servings for this meal.</DialogDescription>
                 </DialogHeader>
-                <InputError v-if="editAssignmentForm.errors.error" :message="editAssignmentForm.errors.error" class="mt-2" />
+                <InputError v-if="editAssignmentForm.errors.error" :message="editAssignmentForm.errors.error"
+                    class="mt-2" />
 
                 <form @submit.prevent="updateMealAssignment" class="space-y-4">
                     <div>
                         <Label for="edit-servings">Servings</Label>
-                        <Input
-                            id="edit-servings"
-                            v-model="editAssignmentForm.servings"
-                            type="number"
-                            step="1"
-                            min="1"
-                            max="20"
-                            class="mt-1 block w-full"
-                        />
+                        <Input id="edit-servings" v-model="editAssignmentForm.servings" type="number" step="1" min="1"
+                            max="20" class="mt-1 block w-full" />
                         <InputError :message="editAssignmentForm.errors.servings" class="mt-2" />
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="secondary" @click="showEditAssignmentModal = false">Cancel</Button>
+                        <Button type="button" variant="secondary"
+                            @click="showEditAssignmentModal = false">Cancel</Button>
                         <Button type="submit" :disabled="editAssignmentForm.processing">Update</Button>
                     </DialogFooter>
                 </form>
@@ -346,6 +296,7 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import axios from 'axios';
 import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import RecipeCard from '@/components/MealPlan/RecipeCard.vue';
 
 interface RecipeWithPivot extends Recipe {
     pivot: {
