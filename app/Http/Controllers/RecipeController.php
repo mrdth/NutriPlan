@@ -132,8 +132,11 @@ class RecipeController extends Controller
             'hideDetails' => $hideDetails,
             'mealPlans' => $user->mealPlans()
                 ->where('start_date', '>=', Carbon::now()->format('Y-m-d'))
-                ->select(['id', 'name', 'start_date'])
-                ->get(),
+                ->select(['id', 'name', 'start_date', 'duration'])
+                ->get()
+                ->filter(function ($mealPlan) {
+                    return $mealPlan->start_date->addDays($mealPlan->duration) >= Carbon::now()->format('Y-m-d');
+                }),
         ]);
     }
 
