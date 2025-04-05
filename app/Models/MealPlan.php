@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 class MealPlan extends Model
@@ -42,6 +43,14 @@ class MealPlan extends Model
             ->using(MealPlanRecipe::class)
             ->withPivot(['scale_factor', 'servings_available'])
             ->withTimestamps();
+    }
+
+    /**
+     * Get the days for the meal plan.
+     */
+    public function days(): HasMany
+    {
+        return $this->hasMany(MealPlanDay::class)->orderBy('day_number');
     }
 
     /**

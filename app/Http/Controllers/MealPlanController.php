@@ -53,8 +53,14 @@ class MealPlanController extends Controller
         /** @var User|null $user */
         $user = $request->user();
 
+        $mealPlan = null;
         if ($user !== null) {
-            $user->mealPlans()->create($validated);
+            $mealPlan = $user->mealPlans()->create($validated);
+
+            // Create meal plan days
+            for ($i = 1; $i <= $mealPlan->duration; $i++) {
+                $mealPlan->days()->create(['day_number' => $i]);
+            }
         }
 
         return redirect()->route('meal-plans.index')
@@ -68,10 +74,13 @@ class MealPlanController extends Controller
     {
         Gate::authorize('view', $mealPlan);
 
-        // Eager load recipes with their pivot data
-        $mealPlan->load(['recipes' => function (\Illuminate\Database\Eloquent\Relations\BelongsToMany $query): void {
-            $query->with('user:id,name,slug');
-        }]);
+        // Eager load relationships
+        $mealPlan->load([
+            'days',
+            'recipes' => function (\Illuminate\Database\Eloquent\Relations\BelongsToMany $query): void {
+                $query->with('user:id,name,slug');
+            }
+        ]);
 
         return Inertia::render('MealPlans/Show', [
             'mealPlan' => $mealPlan,

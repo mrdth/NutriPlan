@@ -75,6 +75,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Days Grid -->
+            <div class="mt-8">
+                <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Plan Days</h2>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                    <div
+                        v-for="day in daysWithDates"
+                        :key="day.id"
+                        class="min-h-[150px] rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                    >
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Day {{ day.day_number }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ day.date }}</p>
+                        <!-- Placeholder for future meal assignments -->
+                        <div class="mt-2 text-xs text-gray-400 dark:text-gray-500">No meals assigned</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -203,7 +220,15 @@ import type { Recipe, RecipeWithPivot } from '@/types/recipe';
 import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PencilIcon, PlusIcon, TrashIcon, XIcon } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+interface MealPlanDay {
+    id: number;
+    meal_plan_id: number;
+    day_number: number;
+    created_at: string;
+    updated_at: string;
+}
 
 interface Props {
     mealPlan: MealPlan & {
@@ -215,6 +240,7 @@ interface Props {
                 };
             }
         >;
+        days?: MealPlanDay[];
     };
     availableMealPlans: Array<{
         id: number;
@@ -238,6 +264,28 @@ const isSearching = ref(false);
 const selectedRecipe = ref<Recipe | null>(null);
 const scaleFactor = ref(1.0);
 const editScaleFactor = ref(1.0);
+
+const daysWithDates = computed(() => {
+    if (!props.mealPlan.days || !props.mealPlan.start_date) {
+        return [];
+    }
+    const startDate = new Date(props.mealPlan.start_date);
+    // Adjust for timezone offset to avoid date shifting
+    startDate.setMinutes(startDate.getMinutes() + startDate.getTimezoneOffset());
+
+    return props.mealPlan.days.map((day) => {
+        const dayDate = new Date(startDate);
+        dayDate.setDate(startDate.getDate() + day.day_number - 1);
+        return {
+            ...day,
+            date: dayDate.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+            }),
+        };
+    });
+});
 
 const formatStartDate = (dateString: string) => {
     const date = new Date(dateString);
