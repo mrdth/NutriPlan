@@ -124,6 +124,10 @@ vi.mock('lucide-vue-next', () => ({
         name: 'UsersIcon',
         template: '<div class="users-icon"></div>',
     },
+    UtensilsIcon: {
+        name: 'UtensilsIcon',
+        template: '<div class="utensils-icon"></div>',
+    },
 }));
 
 // Mock the route function

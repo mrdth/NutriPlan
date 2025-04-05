@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Recipe;
+use App\Models\MealPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Actions\DeleteRecipeAction;
@@ -134,7 +135,7 @@ class RecipeController extends Controller
                 ->where('start_date', '>=', Carbon::now()->format('Y-m-d'))
                 ->select(['id', 'name', 'start_date', 'duration'])
                 ->get()
-                ->filter(function ($mealPlan) {
+                ->filter(function (MealPlan $mealPlan) {
                     return $mealPlan->start_date->addDays($mealPlan->duration) >= Carbon::now()->format('Y-m-d');
                 }),
         ]);
