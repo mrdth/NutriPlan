@@ -11,7 +11,7 @@
                     </h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
                         {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
-                            mealPlan.duration) }} •
+                        mealPlan.duration) }} •
                         {{ mealPlan.people_count }} people
                     </p>
                 </div>
@@ -34,7 +34,7 @@
                     </div>
 
                     <div v-if="mealPlan.recipes && mealPlan.recipes.length > 0"
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <RecipeCard v-for="recipe in mealPlan.recipes" :key="recipe.id" :recipe="recipe"
                             @edit="editRecipeInPlan" @remove="confirmRemoveRecipe" />
                     </div>
@@ -174,7 +174,7 @@
                                     step="0.5" />
                                 <p class="mt-1 text-xs text-gray-500">
                                     This will make approximately {{ calculateServings(selectedRecipe.servings,
-                                        scaleFactor) }} servings
+                                    scaleFactor) }} servings
                                 </p>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                             step="0.5" />
                         <p class="mt-1 text-xs text-gray-500">
                             This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings,
-                                editScaleFactor) : 0 }} servings
+                            editScaleFactor) : 0 }} servings
                         </p>
                     </div>
                 </div>
@@ -278,11 +278,11 @@
 
 <script setup lang="ts">
 import MealAssignmentCard from '@/components/MealPlan/MealAssignmentCard.vue';
+import RecipeCard from '@/components/MealPlan/RecipeCard.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import InputError from '@/components/ui/input-error/InputError.vue';
 import { Label } from '@/components/ui/label';
@@ -292,11 +292,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import type { MealAssignment, MealPlan, MealPlanDay } from '@/types/meal-plan';
 import type { Recipe } from '@/types/recipe';
 import { formatEndDate, formatStartDate } from '@/utils/date';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-vue-next';
+import { PlusIcon, TrashIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import RecipeCard from '@/components/MealPlan/RecipeCard.vue';
 
 interface RecipeWithPivot extends Recipe {
     pivot: {
@@ -525,11 +524,6 @@ const updateRecipeScaleFactor = () => {
             },
         },
     );
-};
-
-const formatScaleFactor = (factor: number | string): string => {
-    const num = Number(factor);
-    return Number.isInteger(num) ? num.toString() : num.toFixed(1);
 };
 
 const availableRecipes = computed(() => {

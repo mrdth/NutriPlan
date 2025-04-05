@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col rounded-md border p-4 dark:border-gray-700">
-        <div class="flex items-center gap-4 mb-2">
+        <div class="mb-2 flex items-center gap-4">
             <div v-if="recipe.images && recipe.images.length > 0"
                 class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                 <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
@@ -62,7 +62,7 @@ const props = defineProps<{
     recipe: RecipeWithPivot;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'edit', recipe: RecipeWithPivot): void;
     (e: 'remove', recipe: RecipeWithPivot): void;
 }>();

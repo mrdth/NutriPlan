@@ -8,11 +8,12 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Recipe;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Carbon;
 use App\Actions\DeleteRecipeAction;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Recipe\CreateRecipeRequest;
 use App\Http\Requests\Recipe\UpdateRecipeRequest;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -129,7 +130,10 @@ class RecipeController extends Controller
             'recipe' => $recipe,
             'isOwner' => $isOwner,
             'hideDetails' => $hideDetails,
-            'mealPlans' => $user->mealPlans()->select(['id', 'name', 'start_date'])->get(),
+            'mealPlans' => $user->mealPlans()
+                ->where('start_date', '>=', Carbon::now()->format('Y-m-d'))
+                ->select(['id', 'name', 'start_date'])
+                ->get(),
         ]);
     }
 

@@ -29,7 +29,7 @@ class MealPlanController extends Controller
         $sortedMealPlans = $mealPlans->sortBy(function ($mealPlan) {
             $endDate = date('Y-m-d', strtotime($mealPlan->start_date . ' + ' . $mealPlan->duration . ' days'));
             $isPast = $endDate < date('Y-m-d');
-            
+
             // Return a tuple for sorting: [isPast, start_date]
             // This puts all non-past plans first, then sorts by start date within each group
             return [$isPast, $mealPlan->start_date];

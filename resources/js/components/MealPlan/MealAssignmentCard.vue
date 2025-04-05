@@ -1,19 +1,18 @@
 <template>
-    <div :class="[
-        'border-t py-4 transition-colors',
-        assignment.to_cook ? 'border-amber-400 bg-amber-50 dark:border-amber-600 dark:bg-amber-900/20' : 'border-gray-200 dark:border-gray-700',
-    ]">
+    <div
+        :class="[
+            'border-t py-4 transition-colors',
+            assignment.to_cook ? 'border-amber-400 bg-amber-50 dark:border-amber-600 dark:bg-amber-900/20' : 'border-gray-200 dark:border-gray-700',
+        ]"
+    >
         <div class="flex items-center justify-between">
             <div class="flex items-start gap-2">
                 <div class="flex-1">
-
-                    <Link :href="route('recipes.show', assignment.meal_plan_recipe.recipe.slug)"
-                        class="hover:underline">
-                    {{ assignment.meal_plan_recipe.recipe.title }}
+                    <Link :href="route('recipes.show', assignment.meal_plan_recipe.recipe.slug)" class="hover:underline">
+                        {{ assignment.meal_plan_recipe.recipe.title }}
                     </Link>
 
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatServings(assignment.servings) }}
-                        servings</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatServings(assignment.servings) }} servings</p>
                 </div>
             </div>
 
@@ -33,15 +32,14 @@
                             <PencilIcon class="mr-2 h-4 w-4" />
                             Edit Servings
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="$emit('remove', assignment)"
-                            class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
+                        <DropdownMenuItem @click="$emit('remove', assignment)" class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
                             <TrashIcon class="mr-2 h-4 w-4" />
                             Remove
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <div v-if="assignment.to_cook" class="rounded p-1" title="Marked to cook">
-                    <ChefHatIcon class="h-5 w-5 transition-colors text-amber-600 dark:text-amber-400" />
+                    <ChefHatIcon class="h-5 w-5 text-amber-600 transition-colors dark:text-amber-400" />
                 </div>
             </div>
         </div>
@@ -52,10 +50,10 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import type { MealAssignment } from '@/types/meal-plan';
+import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ChefHatIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
 
 const props = defineProps<{
     assignment: MealAssignment;
