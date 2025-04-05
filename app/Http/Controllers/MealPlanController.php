@@ -22,11 +22,21 @@ class MealPlanController extends Controller
     {
         $mealPlans = MealPlan::query()
             ->where('user_id', Auth::id())
-            ->latest()
+            ->orderBy('start_date', 'asc')
             ->get();
 
+        // Calculate end dates and sort with current/future plans first
+        $sortedMealPlans = $mealPlans->sortBy(function ($mealPlan) {
+            $endDate = date('Y-m-d', strtotime($mealPlan->start_date . ' + ' . $mealPlan->duration . ' days'));
+            $isPast = $endDate < date('Y-m-d');
+            
+            // Return a tuple for sorting: [isPast, start_date]
+            // This puts all non-past plans first, then sorts by start date within each group
+            return [$isPast, $mealPlan->start_date];
+        })->values();
+
         return Inertia::render('MealPlans/Index', [
-            'mealPlans' => $mealPlans,
+            'mealPlans' => $sortedMealPlans,
         ]);
     }
 
