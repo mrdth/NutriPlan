@@ -26,12 +26,13 @@ This document provides an overview of all feature specifications for the NutriPl
 | Phase 3a: Meal Tracking | Calculate and track available meals for recipes in a plan | ✅ | [View Spec](specs/meal-planning-phase-3a-meal-tracking.md) |
 | Phase 3b: Day Structure | Create day-based organization for meal plans | ✅ | [View Spec](specs/meal-planning-phase-3b-day-structure.md) |
 | Phase 3c: Meal Assignments | Assign recipe servings to specific days within the plan | ✅ | [View Spec](specs/meal-planning-phase-3c-meal-assignments.md) |
-| Phase 4: Drag and Drop + "To Cook" Flags | Implement drag-and-drop interface and cooking flags | ⏳ | [View Spec](specs/meal-planning-phase-4-drag-and-drop.md) |
+| Phase 4: "To Cook" Flags | Implement cooking flags for meal assignments | ⏳ | [View Spec](specs/meal-planning-phase-4b-to-cook-flags.md) |
 | Phase 5: Plan Copying | Enable copying existing plans to create new ones | ⏳ | [View Spec](specs/meal-planning-phase-5-plan-copying.md) |
 | Phase 6: Mobile Optimization | Fully optimize the experience for mobile devices | ⏳ | [View Spec](specs/meal-planning-phase-6-mobile-optimization.md) |
 | Phase 7: Shopping List Integration | Automatically generate shopping lists from meal plans | 🔮 | [View Spec](specs/meal-planning-phase-7-shopping-list-integration.md) |
 | Phase 8: Nutritional Summaries | Show nutritional totals per day or week | 🔮 | [View Spec](specs/meal-planning-phase-8-nutritional-summaries.md) |
 | Phase 9: Cooking Notifications | Reminders for meals flagged "to cook" | 🔮 | [View Spec](specs/meal-planning-phase-9-cooking-notifications.md) |
+| Phase 10: Drag and Drop Interface | Implement drag-and-drop interface for meal assignments | 🔮 | [View Spec](specs/meal-planning-phase-4a-drag-and-drop.md) |
 
 ## Status Legend
 - ✅ Complete
