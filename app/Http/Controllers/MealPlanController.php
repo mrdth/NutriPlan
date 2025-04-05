@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MealPlan;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class MealPlanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(): Response|JsonResponse
     {
         $mealPlans = MealPlan::query()
             ->where('user_id', Auth::id())
@@ -34,6 +35,13 @@ class MealPlanController extends Controller
             // This puts all non-past plans first, then sorts by start date within each group
             return [$isPast, $mealPlan->start_date];
         })->values();
+
+        // Check if this is an AJAX request or if format=json query parameter is present
+        if (request()->query('format') === 'json') {
+            return response()->json([
+                'mealPlans' => $sortedMealPlans
+            ]);
+        }
 
         return Inertia::render('MealPlans/Index', [
             'mealPlans' => $sortedMealPlans,
