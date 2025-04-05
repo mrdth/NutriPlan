@@ -5,8 +5,6 @@ declare(strict_types=1);
 use App\Models\MealPlan;
 use App\Models\Recipe;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 test('user can add recipe to meal plan', function () {
     $user = User::factory()->create();

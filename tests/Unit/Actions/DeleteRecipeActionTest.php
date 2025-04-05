@@ -23,7 +23,7 @@ test('it deletes recipe and related records', function () {
 
     // Assert
     expect($result)->toBeTrue();
-    
+
     $this->assertDatabaseMissing('recipes', [
         'id' => $recipe->id
     ]);
@@ -39,7 +39,7 @@ test('it throws exception when recipe does not exist', function () {
 
     // Act & Assert
     $action = new DeleteRecipeAction();
-    
+
     expect(fn () => $action->execute($recipe))
         ->toThrow(ModelNotFoundException::class);
 });

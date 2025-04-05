@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Models\Collection;
 use App\Models\User;
 use App\Policies\CollectionPolicy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 beforeEach(function () {
     $this->policy = new CollectionPolicy();
@@ -13,7 +12,7 @@ beforeEach(function () {
 
 test('viewAny returns true for authenticated users', function () {
     $user = User::factory()->create();
-    
+
     expect($this->policy->viewAny($user))->toBeTrue();
 });
 
@@ -38,7 +37,7 @@ test('view returns false for non owner', function () {
 
 test('create returns true for authenticated users', function () {
     $user = User::factory()->create();
-    
+
     expect($this->policy->create($user))->toBeTrue();
 });
 

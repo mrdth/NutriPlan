@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Models\Collection;
 use App\Models\Recipe;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 test('collection belongs to a user', function () {
     $user = User::factory()->create();

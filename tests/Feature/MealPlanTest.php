@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Models\MealPlan;
 use App\Models\Recipe;
 use App\Models\User;
-use Tests\TestCase;
 
 test('authenticated user can access meal plans page', function () {
     $user = User::factory()->create();
@@ -73,7 +72,7 @@ test('user can view meal plan', function () {
     $response = $this->actingAs($user)->get(route('meal-plans.show', $mealPlan));
 
     $response->assertStatus(200);
-    
+
     $response->assertInertia(
         fn ($page) => $page
             ->component('MealPlans/Show')
@@ -120,7 +119,7 @@ test('user can delete meal plan', function () {
     $response = $this->actingAs($user)->delete(route('meal-plans.destroy', $mealPlan));
 
     $response->assertRedirect(route('meal-plans.index'));
-    
+
     $this->assertDatabaseMissing('meal_plans', [
         'id' => $mealPlan->id,
     ]);
@@ -134,7 +133,7 @@ test('user cannot delete meal plan of another user', function () {
     $response = $this->actingAs($user2)->delete(route('meal-plans.destroy', $mealPlan));
 
     $response->assertStatus(403);
-    
+
     $this->assertDatabaseHas('meal_plans', [
         'id' => $mealPlan->id,
     ]);
