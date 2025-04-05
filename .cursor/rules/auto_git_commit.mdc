@@ -11,7 +11,7 @@ This rule specifies that after each feature developed by Cursor IDE, an automati
 
 ## Requirements
 
-1. After each Cursor IDE change, automatically create a Git commit
+1. After each Cursor IDE change, automatically create a Git commit message
 2. Commit messages must follow the conventional commit format:
    ```
    type(scope): description
@@ -36,14 +36,12 @@ This rule specifies that after each feature developed by Cursor IDE, an automati
 ## Implementation
 
 When Cursor IDE makes changes:
-1. Stage all modified files
-2. Analyze the changes and prompts used to determine:
+1. Analyze the changes and prompts used to determine:
    - Appropriate commit type
    - Scope of changes
    - Description of changes
-3. Generate commit message following conventional format
-4. Include relevant details from the prompts in the commit body
-5. Execute the commit command
+2. Generate commit message following conventional format
+3. Include relevant details from the prompts in the commit body
 
 ## Example
 

@@ -72,22 +72,26 @@ class MealPlanController extends Controller
      */
     public function show(MealPlan $mealPlan): Response
     {
-        Gate::authorize('view', $mealPlan);
+        if (Gate::denies('view', $mealPlan)) {
+            abort(403);
+        }
 
-        // Eager load relationships
         $mealPlan->load([
-            'days',
-            'recipes' => function (\Illuminate\Database\Eloquent\Relations\BelongsToMany $query): void {
-                $query->with('user:id,name,slug');
-            }
+            'recipes',
+            'days.mealAssignments.mealPlanRecipe.recipe',
         ]);
+
+        // Fetch available meal plans for the current user (excluding the current one)
+        $availableMealPlans = MealPlan::query()
+            ->where('user_id', Auth::id())
+            ->where('id', '!=', $mealPlan->id)
+            ->orderBy('name') // Or latest(), start_date, etc.
+            ->select('id', 'name', 'start_date') // Select only needed fields
+            ->get();
 
         return Inertia::render('MealPlans/Show', [
             'mealPlan' => $mealPlan,
-            'availableMealPlans' => Auth::user()->mealPlans()
-                ->whereNot('id', $mealPlan->id)
-                ->select('id', 'name', 'start_date')
-                ->get(),
+            'availableMealPlans' => $availableMealPlans, // Pass the data
         ]);
     }
 

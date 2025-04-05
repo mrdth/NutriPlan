@@ -1,9 +1,7 @@
 <template>
-  <select
-    :value="modelValue"
+  <select :value="modelValue"
     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-    @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value === '' ? null : ($event.target as HTMLSelectElement).value)"
-  >
+    @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value === '' ? null : ($event.target as HTMLSelectElement).value)">
     <option v-if="allowEmpty" value="">None</option>
     <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.label }}

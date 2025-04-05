@@ -8,18 +8,21 @@ export interface MeasurementUnit {
 export interface Recipe {
     id: number;
     title: string;
+    name?: string;
     description: string;
-    instructions: string;
-    prep_time: number;
-    cooking_time: number;
     servings: number;
+    preparation_time: number;
+    cooking_time: number;
+    total_time?: number;
+    difficulty_level?: string;
+    created_at: string;
+    updated_at?: string;
     url: string | null;
     author: string | null;
     is_public: boolean;
     images: string[] | null;
     slug: string;
-    created_at: string;
-    user: User;
+    user?: User;
     categories: Array<{
         id: number;
         name: string;

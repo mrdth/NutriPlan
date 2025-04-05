@@ -1,6 +1,31 @@
 import { Recipe } from './recipe';
 import { User } from './user';
 
+export interface MealAssignment {
+    id: number;
+    meal_plan_day_id: number;
+    meal_plan_recipe_id: number;
+    servings: number;
+    created_at: string;
+    updated_at: string;
+    meal_plan_recipe: {
+        id: number;
+        recipe: Recipe;
+        scale_factor: number;
+        servings_available: number;
+    };
+}
+
+export interface MealPlanDay {
+    id: number;
+    meal_plan_id: number;
+    day_number: number;
+    date: string;
+    created_at: string;
+    updated_at: string;
+    meal_assignments: MealAssignment[];
+}
+
 export interface MealPlan {
     id: number;
     name: string | null;
@@ -20,4 +45,5 @@ export interface MealPlan {
             };
         }
     >;
+    days?: MealPlanDay[];
 }

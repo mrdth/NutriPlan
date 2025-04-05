@@ -11,6 +11,7 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeImportController;
 use App\Http\Controllers\UserRecipeController;
 use App\Http\Controllers\MealPlanRecipeController;
+use App\Http\Controllers\MealAssignmentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -48,6 +49,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Fix the parameter names to match the controller expectations
     Route::delete('meal-plans/{id}/recipes/{recipeId}', [MealPlanRecipeController::class, 'destroy'])
          ->name('meal-plans.remove-recipe');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/meal-assignments', [MealAssignmentController::class, 'store'])->name('meal-assignments.store');
+    Route::put('/meal-assignments/{mealAssignment}', [MealAssignmentController::class, 'update'])->name('meal-assignments.update');
+    Route::delete('/meal-assignments/{mealAssignment}', [MealAssignmentController::class, 'destroy'])->name('meal-assignments.destroy');
 });
 
 require __DIR__.'/settings.php';

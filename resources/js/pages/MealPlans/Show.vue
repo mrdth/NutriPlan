@@ -1,5 +1,6 @@
 <template>
     <AppLayout>
+
         <Head :title="`${mealPlan.name || 'Meal Plan'} | NutriPlan`" />
 
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -9,7 +10,8 @@
                         {{ mealPlan.name || `Meal Plan (${formatStartDate(mealPlan.start_date)})` }}
                     </h1>
                     <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
-                        {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date, mealPlan.duration) }} •
+                        {{ formatStartDate(mealPlan.start_date) }} to {{ formatEndDate(mealPlan.start_date,
+                            mealPlan.duration) }} •
                         {{ mealPlan.people_count }} people
                     </p>
                 </div>
@@ -32,19 +34,17 @@
                     </div>
 
                     <div v-if="mealPlan.recipes && mealPlan.recipes.length > 0" class="space-y-4">
-                        <div
-                            v-for="recipe in mealPlan.recipes"
-                            :key="recipe.id"
-                            class="flex items-center justify-between rounded-md border p-4 dark:border-gray-700"
-                        >
+                        <div v-for="recipe in mealPlan.recipes" :key="recipe.id"
+                            class="flex items-center justify-between rounded-md border p-4 dark:border-gray-700">
                             <div class="flex items-center gap-4">
-                                <div v-if="recipe.images && recipe.images.length > 0" class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
+                                <div v-if="recipe.images && recipe.images.length > 0"
+                                    class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                                     <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                                         <Link :href="route('recipes.show', recipe.slug)" class="hover:underline">
-                                            {{ recipe.title }}
+                                        {{ recipe.title }}
                                         </Link>
                                     </h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -53,18 +53,33 @@
                                         }}
                                         servings)
                                         <span class="ml-2 text-green-600 dark:text-green-400">
-                                            • {{ formatScaleFactor(recipe.pivot.servings_available) }} available servings
+                                            • {{ formatScaleFactor(recipe.pivot.servings_available) }} available
+                                            servings
                                         </span>
                                     </p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" @click="editRecipeInPlan(recipe)">
-                                    <PencilIcon class="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="sm" @click="confirmRemoveRecipe(recipe)">
-                                    <XIcon class="h-4 w-4 text-red-500" />
-                                </Button>
+                                <!-- START: Replace recipe buttons with dropdown -->
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" class="h-8 w-8 flex-shrink-0">
+                                            <EllipsisVerticalIcon class="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem @click="editRecipeInPlan(recipe)">
+                                            <PencilIcon class="mr-2 h-4 w-4" />
+                                            Edit Scale Factor
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="confirmRemoveRecipe(recipe)"
+                                            class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
+                                            <TrashIcon class="mr-2 h-4 w-4" />
+                                            Remove from Plan
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <!-- END: Replace recipe buttons with dropdown -->
                             </div>
                         </div>
                     </div>
@@ -77,18 +92,70 @@
             </div>
 
             <!-- Days Grid -->
-            <div class="mt-8">
-                <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Plan Days</h2>
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                    <div
-                        v-for="day in daysWithDates"
-                        :key="day.id"
-                        class="min-h-[150px] rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-                    >
-                        <h3 class="font-semibold text-gray-900 dark:text-white">Day {{ day.day_number }}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ day.date }}</p>
-                        <!-- Placeholder for future meal assignments -->
-                        <div class="mt-2 text-xs text-gray-400 dark:text-gray-500">No meals assigned</div>
+            <div class="mx-auto mt-8 max-w-7xl sm:px-6 lg:px-8">
+                <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
+                    <div class="p-6">
+                        <h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Plan Days</h2>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                            <div v-for="day in daysWithDates" :key="day.id"
+                                class="flex min-h-[150px] flex-col justify-between rounded-lg border bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                                <div>
+                                    <!-- Container for top part -->
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Day {{ day.day_number }}
+                                    </h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ day.date }}</p>
+
+                                    <!-- Meal Assignments -->
+                                    <div class="mt-4 flex-grow space-y-2">
+                                        <div v-if="day.meal_assignments?.length" class="space-y-2">
+                                            <div v-for="assignment in day.meal_assignments" :key="assignment.id"
+                                                class="rounded border border-gray-200 p-2 dark:border-gray-700">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                                            {{ assignment.meal_plan_recipe.recipe.title }}
+                                                        </p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{
+                                                            assignment.servings }} servings</p>
+                                                    </div>
+                                                    <!-- START: Replace buttons with dropdown -->
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon" class="h-6 w-6">
+                                                                <EllipsisVerticalIcon class="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem @click="editMealAssignment(assignment)">
+                                                                <PencilIcon class="mr-2 h-4 w-4" />
+                                                                Edit Servings
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem @click="removeMealAssignment(assignment)"
+                                                                class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
+                                                                <TrashIcon class="mr-2 h-4 w-4" />
+                                                                Remove
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                    <!-- END: Replace buttons with dropdown -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else class="text-sm text-gray-500 dark:text-gray-400">No meals assigned
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add Meal Button (always rendered if day exists) -->
+                                <div class="mt-2">
+                                    <!-- Container for the button -->
+                                    <Button variant="outline" size="sm" class="w-full"
+                                        @click="showAddMealAssignmentModal(day)">
+                                        <PlusIcon class="mr-2 h-4 w-4" />
+                                        Add Meal
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,7 +166,8 @@
             <DialogContent class="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Delete Meal Plan</DialogTitle>
-                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone. </DialogDescription>
+                    <DialogDescription> Are you sure you want to delete this meal plan? This action cannot be undone.
+                    </DialogDescription>
                 </DialogHeader>
                 <div class="flex items-center justify-end space-x-2 pt-4">
                     <Button variant="outline" @click="showDeleteDialog = false">Cancel</Button>
@@ -113,7 +181,8 @@
             <DialogContent class="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Remove Recipe</DialogTitle>
-                    <DialogDescription> Are you sure you want to remove "{{ recipeToRemove?.title }}" from this meal plan? </DialogDescription>
+                    <DialogDescription> Are you sure you want to remove "{{ recipeToRemove?.title }}" from this meal
+                        plan? </DialogDescription>
                 </DialogHeader>
                 <div class="flex items-center justify-end space-x-2 pt-4">
                     <Button variant="outline" @click="showRemoveRecipeDialog = false">Cancel</Button>
@@ -133,22 +202,22 @@
                     <div class="space-y-2">
                         <Label for="recipe-search">Search Recipes</Label>
                         <div class="relative">
-                            <Input id="recipe-search" v-model="searchQuery" placeholder="Type to search..." @input="debounceSearch" />
+                            <Input id="recipe-search" v-model="searchQuery" placeholder="Type to search..."
+                                @input="debounceSearch" />
                             <div v-if="isSearching" class="absolute right-3 top-2.5">
                                 <Spinner class="h-5 w-5 text-gray-400" />
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="searchResults.length > 0" class="max-h-60 overflow-y-auto rounded-md border p-2 dark:border-gray-700">
-                        <div
-                            v-for="recipe in searchResults"
-                            :key="recipe.id"
+                    <div v-if="searchResults.length > 0"
+                        class="max-h-60 overflow-y-auto rounded-md border p-2 dark:border-gray-700">
+                        <div v-for="recipe in searchResults" :key="recipe.id"
                             class="cursor-pointer rounded-md p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-                            @click="selectRecipe(recipe)"
-                        >
+                            @click="selectRecipe(recipe)">
                             <div class="flex items-center gap-3">
-                                <div v-if="recipe.images && recipe.images.length > 0" class="h-10 w-10 overflow-hidden rounded-md">
+                                <div v-if="recipe.images && recipe.images.length > 0"
+                                    class="h-10 w-10 overflow-hidden rounded-md">
                                     <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
                                 </div>
                                 <div>
@@ -159,7 +228,8 @@
                         </div>
                     </div>
 
-                    <div v-if="searchQuery && !isSearching && searchResults.length === 0" class="rounded-md bg-gray-50 p-3 dark:bg-gray-800">
+                    <div v-if="searchQuery && !isSearching && searchResults.length === 0"
+                        class="rounded-md bg-gray-50 p-3 dark:bg-gray-800">
                         <p class="text-center text-sm text-gray-500">No recipes found matching your search.</p>
                     </div>
 
@@ -168,9 +238,11 @@
                         <div class="mt-3 space-y-2">
                             <div>
                                 <Label for="scale-factor">Scale Factor</Label>
-                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.5" max="10" step="0.5" />
+                                <Input id="scale-factor" v-model.number="scaleFactor" type="number" min="0.5" max="10"
+                                    step="0.5" />
                                 <p class="mt-1 text-xs text-gray-500">
-                                    This will make approximately {{ calculateServings(selectedRecipe.servings, scaleFactor) }} servings
+                                    This will make approximately {{ calculateServings(selectedRecipe.servings,
+                                        scaleFactor) }} servings
                                 </p>
                             </div>
                         </div>
@@ -193,9 +265,11 @@
                 <div class="space-y-4 py-4">
                     <div>
                         <Label for="edit-scale-factor">Scale Factor</Label>
-                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.5" max="10" step="0.5" />
+                        <Input id="edit-scale-factor" v-model.number="editScaleFactor" type="number" min="0.5" max="10"
+                            step="0.5" />
                         <p class="mt-1 text-xs text-gray-500">
-                            This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings, editScaleFactor) : 0 }} servings
+                            This will make approximately {{ recipeToEdit ? calculateServings(recipeToEdit.servings,
+                                editScaleFactor) : 0 }} servings
                         </p>
                     </div>
                 </div>
@@ -205,41 +279,96 @@
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <!-- START: Add Meal Assignment Modal -->
+        <Dialog :open="showAssignMealModal" @update:open="showAssignMealModal = $event">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add Meal to Day</DialogTitle>
+                    <DialogDescription>Select a recipe and specify the number of servings.</DialogDescription>
+                </DialogHeader>
+                <InputError v-if="assignmentForm.errors.error" :message="assignmentForm.errors.error" class="mt-2" />
+
+                <form @submit.prevent="addMealAssignment" class="space-y-4">
+                    <div>
+                        <Label for="recipe">Recipe</Label>
+                        <Select id="recipe" v-model="assignmentForm.meal_plan_recipe_id" :options="availableRecipes"
+                            class="mt-1 block w-full" />
+                        <InputError :message="assignmentForm.errors.meal_plan_recipe_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <Label for="servings">Servings</Label>
+                        <Input id="servings" v-model="assignmentForm.servings" type="number" step="1" min="1" max="20"
+                            class="mt-1 block w-full" />
+                        <InputError :message="assignmentForm.errors.servings" class="mt-2" />
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" variant="secondary" @click="showAssignMealModal = false">Cancel</Button>
+                        <Button type="submit" :disabled="assignmentForm.processing">Add Meal</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+        <!-- END: Add Meal Assignment Modal -->
+
+        <!-- START: Edit Meal Assignment Modal -->
+        <Dialog :open="showEditAssignmentModal" @update:open="showEditAssignmentModal = $event">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Edit Meal Assignment</DialogTitle>
+                    <DialogDescription>Update the number of servings for this meal.</DialogDescription>
+                </DialogHeader>
+                <InputError v-if="editAssignmentForm.errors.error" :message="editAssignmentForm.errors.error"
+                    class="mt-2" />
+
+                <form @submit.prevent="updateMealAssignment" class="space-y-4">
+                    <div>
+                        <Label for="edit-servings">Servings</Label>
+                        <Input id="edit-servings" v-model="editAssignmentForm.servings" type="number" step="1" min="1"
+                            max="20" class="mt-1 block w-full" />
+                        <InputError :message="editAssignmentForm.errors.servings" class="mt-2" />
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" variant="secondary"
+                            @click="showEditAssignmentModal = false">Cancel</Button>
+                        <Button type="submit" :disabled="editAssignmentForm.processing">Update</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+        <!-- END: Edit Meal Assignment Modal -->
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import InputError from '@/components/ui/input-error/InputError.vue';
 import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
 import Spinner from '@/components/ui/spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { MealPlan } from '@/types/meal-plan';
-import type { Recipe, RecipeWithPivot } from '@/types/recipe';
-import { Head, Link, router } from '@inertiajs/vue3';
+import type { MealAssignment, MealPlan, MealPlanDay } from '@/types/meal-plan';
+import type { Recipe } from '@/types/recipe';
+import { formatEndDate, formatStartDate } from '@/utils/date';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-import { PencilIcon, PlusIcon, TrashIcon, XIcon } from 'lucide-vue-next';
+import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon, XIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
-interface MealPlanDay {
-    id: number;
-    meal_plan_id: number;
-    day_number: number;
-    created_at: string;
-    updated_at: string;
+interface RecipeWithPivot extends Recipe {
+    pivot: {
+        id: number;
+        scale_factor: number;
+        servings_available: number;
+    };
 }
 
 interface Props {
     mealPlan: MealPlan & {
-        recipes?: Array<
-            Recipe & {
-                pivot: {
-                    scale_factor: number;
-                    servings_available: number;
-                };
-            }
-        >;
+        recipes?: RecipeWithPivot[];
         days?: MealPlanDay[];
     };
     availableMealPlans: Array<{
@@ -249,13 +378,27 @@ interface Props {
     }>;
 }
 
+interface AssignmentFormData {
+    meal_plan_day_id: string;
+    meal_plan_recipe_id: string;
+    servings: number;
+    error?: string;
+    [key: string]: any;
+}
+
+interface EditAssignmentFormData {
+    servings: number;
+    error?: string;
+    [key: string]: any;
+}
+
 const props = defineProps<Props>();
 
 const showDeleteDialog = ref(false);
 const showAddRecipeModal = ref(false);
 const showRemoveRecipeDialog = ref(false);
 const showEditRecipeModal = ref(false);
-const recipeToRemove = ref<Recipe | null>(null);
+const recipeToRemove = ref<RecipeWithPivot | null>(null);
 const recipeToEdit = ref<RecipeWithPivot | null>(null);
 
 const searchQuery = ref('');
@@ -264,6 +407,21 @@ const isSearching = ref(false);
 const selectedRecipe = ref<Recipe | null>(null);
 const scaleFactor = ref(1.0);
 const editScaleFactor = ref(1.0);
+
+const showEditAssignmentModal = ref(false);
+const showAssignMealModal = ref(false);
+const selectedDay = ref<MealPlanDay | null>(null);
+const selectedAssignment = ref<MealAssignment | null>(null);
+
+const assignmentForm = useForm<AssignmentFormData>({
+    meal_plan_day_id: '',
+    meal_plan_recipe_id: '',
+    servings: 1,
+});
+
+const editAssignmentForm = useForm<EditAssignmentFormData>({
+    servings: 1,
+});
 
 const daysWithDates = computed(() => {
     if (!props.mealPlan.days || !props.mealPlan.start_date) {
@@ -286,17 +444,6 @@ const daysWithDates = computed(() => {
         };
     });
 });
-
-const formatStartDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
-
-const formatEndDate = (dateString: string, numDays: number) => {
-    const date = new Date(dateString);
-    date.setDate(date.getDate() + numDays);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
 
 const deleteMealPlan = () => {
     router.delete(route('meal-plans.destroy', props.mealPlan.id), {
@@ -372,14 +519,15 @@ const addRecipeToMealPlan = () => {
     );
 };
 
-const confirmRemoveRecipe = (recipe: Recipe) => {
+const confirmRemoveRecipe = (recipe: RecipeWithPivot) => {
+    console.log('Confirming removal of recipe:', recipe.title);
     recipeToRemove.value = recipe;
     showRemoveRecipeDialog.value = true;
 };
 
 const removeRecipe = () => {
     if (!recipeToRemove.value) return;
-
+    console.log('Removing recipe:', recipeToRemove.value.title);
     router.delete(
         route('meal-plans.remove-recipe', {
             id: props.mealPlan.id,
@@ -395,13 +543,16 @@ const removeRecipe = () => {
     );
 };
 
-const editRecipeInPlan = (recipe: Recipe & { pivot: { scale_factor: number } }) => {
-    recipeToEdit.value = recipe as RecipeWithPivot;
+const editRecipeInPlan = (recipe: RecipeWithPivot) => {
+    console.log('Editing recipe:', recipe.title);
+    recipeToEdit.value = recipe;
     editScaleFactor.value = recipe.pivot.scale_factor;
     showEditRecipeModal.value = true;
 };
 
 const updateRecipeScaleFactor = () => {
+    console.log('Updating scale factor for:', recipeToEdit.value?.title, 'to:', editScaleFactor.value);
+    showEditRecipeModal.value = false;
     if (!recipeToEdit.value) return;
 
     // First remove the recipe
@@ -438,4 +589,59 @@ const formatScaleFactor = (factor: number | string): string => {
     const num = Number(factor);
     return Number.isInteger(num) ? num.toString() : num.toFixed(1);
 };
+
+const availableRecipes = computed(() => {
+    const recipes =
+        props.mealPlan.recipes?.map((recipe: RecipeWithPivot) => {
+            const recipeTitle = recipe.title;
+            return {
+                value: recipe.pivot.id.toString(),
+                label: `${recipeTitle} (${recipe.pivot.servings_available} servings available)`,
+            };
+        }) ?? [];
+    return recipes;
+});
+
+function showAddMealAssignmentModal(day: MealPlanDay) {
+    selectedDay.value = day;
+    assignmentForm.meal_plan_day_id = day.id.toString();
+    showAssignMealModal.value = true;
+}
+
+async function addMealAssignment() {
+    await assignmentForm.post(route('meal-assignments.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            showAssignMealModal.value = false;
+            assignmentForm.reset();
+        },
+    });
+}
+
+function editMealAssignment(assignment: MealAssignment) {
+    selectedAssignment.value = assignment;
+    editAssignmentForm.servings = assignment.servings;
+    showEditAssignmentModal.value = true;
+}
+
+async function updateMealAssignment() {
+    if (!selectedAssignment.value) return;
+
+    await editAssignmentForm.put(route('meal-assignments.update', selectedAssignment.value.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            showEditAssignmentModal.value = false;
+            editAssignmentForm.reset();
+            selectedAssignment.value = null;
+        },
+    });
+}
+
+async function removeMealAssignment(assignment: MealAssignment) {
+    if (!confirm('Are you sure you want to remove this meal assignment?')) return;
+
+    await router.delete(route('meal-assignments.destroy', assignment.id), {
+        preserveScroll: true,
+    });
+}
 </script>
