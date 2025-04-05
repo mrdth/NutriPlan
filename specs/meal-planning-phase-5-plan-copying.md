@@ -32,6 +32,7 @@ This phase adds the ability for users to copy existing meal plans, supporting re
 
 ### Frontend Requirements
 - "Copy Plan" button on meal plan detail and index pages
+  - On index page, this should be an option in the dropdown menu
 - Copy configuration modal with:
   - Start date picker for new plan
   - Number of people adjustment (optional)
