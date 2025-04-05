@@ -74,6 +74,10 @@
                                             <TrashIcon class="mr-2 h-4 w-4" />
                                             Delete
                                         </DropdownMenuItem>
+                                        <DropdownMenuItem @click="showCopyModal(mealPlan)">
+                                            <CopyIcon class="mr-2 h-4 w-4" />
+                                            Copy Plan
+                                        </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -96,6 +100,55 @@
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <!-- Copy Meal Plan Modal -->
+        <Dialog :open="isCopyModalOpen" @update:open="isCopyModalOpen = $event">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Copy Meal Plan</DialogTitle>
+                    <DialogDescription>Create a new meal plan by copying this one.</DialogDescription>
+                </DialogHeader>
+                <form @submit.prevent="copyMealPlan">
+                    <div class="space-y-4 py-4">
+                        <div>
+                            <Label for="name">New Plan Name (Optional)</Label>
+                            <Input id="name" v-model="copyForm.name" placeholder="e.g., Copy of Weekly Plan" />
+                            <p class="mt-1 text-xs text-gray-500">Leave blank to use "Copy of {{ mealPlanToCopy?.name || 'Meal Plan' }}"</p>
+                        </div>
+                        <div>
+                            <Label for="start_date">Start Date</Label>
+                            <Input id="start_date" type="date" v-model="copyForm.start_date" required />
+                            <InputError :message="copyForm.errors.start_date" />
+                        </div>
+                        <div>
+                            <Label for="people_count">Number of People</Label>
+                            <div class="flex items-center space-x-2">
+                                <Button type="button" variant="outline" size="icon" @click="decrementPeople" :disabled="copyForm.people_count <= 1">
+                                    <MinusIcon class="h-4 w-4" />
+                                </Button>
+                                <Input
+                                    id="people_count"
+                                    type="number"
+                                    v-model="copyForm.people_count"
+                                    class="w-20 text-center"
+                                    min="1"
+                                    max="20"
+                                    required
+                                />
+                                <Button type="button" variant="outline" size="icon" @click="incrementPeople" :disabled="copyForm.people_count >= 20">
+                                    <PlusIcon class="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <InputError :message="copyForm.errors.people_count" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" variant="outline" @click="isCopyModalOpen = false">Cancel</Button>
+                        <Button type="submit" :disabled="copyForm.processing">Copy Plan</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>
 
@@ -104,9 +157,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { InputError } from '@/components/ui/input-error';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { CalendarIcon, EllipsisVerticalIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-vue-next';
+import { CalendarIcon, CopyIcon, EllipsisVerticalIcon, EyeIcon, MinusIcon, PlusIcon, TrashIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 interface MealPlan {
@@ -124,8 +180,16 @@ defineProps<{
 
 const isDeleteModalOpen = ref(false);
 const mealPlanToDelete = ref<MealPlan | null>(null);
+const isCopyModalOpen = ref(false);
+const mealPlanToCopy = ref<MealPlan | null>(null);
 
 const form = useForm({});
+
+const copyForm = useForm({
+    name: '',
+    start_date: new Date().toISOString().slice(0, 10), // Today's date in YYYY-MM-DD format
+    people_count: 2,
+});
 
 const formatStartDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -165,6 +229,37 @@ const deleteMealPlan = () => {
             onSuccess: () => {
                 isDeleteModalOpen.value = false;
                 mealPlanToDelete.value = null;
+            },
+        });
+    }
+};
+
+const showCopyModal = (mealPlan: MealPlan) => {
+    mealPlanToCopy.value = mealPlan;
+    copyForm.name = '';
+    copyForm.start_date = new Date().toISOString().slice(0, 10);
+    copyForm.people_count = mealPlan.people_count;
+    isCopyModalOpen.value = true;
+};
+
+const incrementPeople = () => {
+    if (copyForm.people_count < 20) {
+        copyForm.people_count++;
+    }
+};
+
+const decrementPeople = () => {
+    if (copyForm.people_count > 1) {
+        copyForm.people_count--;
+    }
+};
+
+const copyMealPlan = () => {
+    if (mealPlanToCopy.value) {
+        copyForm.post(route('meal-plans.copy', mealPlanToCopy.value.id), {
+            onSuccess: () => {
+                isCopyModalOpen.value = false;
+                mealPlanToCopy.value = null;
             },
         });
     }

@@ -1,14 +1,13 @@
 <template>
     <div class="flex flex-col rounded-md border p-4 dark:border-gray-700">
         <div class="mb-2 flex items-center gap-4">
-            <div v-if="recipe.images && recipe.images.length > 0"
-                class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
+            <div v-if="recipe.images && recipe.images.length > 0" class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                 <img :src="recipe.images[0]" alt="" class="h-full w-full object-cover" />
             </div>
             <div class="flex-grow">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     <Link :href="route('recipes.show', recipe.slug)" class="hover:underline">
-                    {{ recipe.title }}
+                        {{ recipe.title }}
                     </Link>
                 </h3>
             </div>
@@ -24,8 +23,7 @@
                             <PencilIcon class="mr-2 h-4 w-4" />
                             Edit Scale Factor
                         </DropdownMenuItem>
-                        <DropdownMenuItem @click="$emit('remove', recipe)"
-                            class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
+                        <DropdownMenuItem @click="$emit('remove', recipe)" class="text-red-600 focus:text-red-600 dark:focus:text-red-400">
                             <TrashIcon class="mr-2 h-4 w-4" />
                             Remove from Plan
                         </DropdownMenuItem>

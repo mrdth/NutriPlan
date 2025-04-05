@@ -15,7 +15,7 @@ This document provides an overview of all feature specifications for the NutriPl
 | My Recipes | Toggle to filter between all recipes and user's own recipes | ✅ | [View Spec](specs/my-recipes.md) |
 | Recipe Visibility | Control recipe privacy and visibility with special handling for imported recipes | ✅ | [View Spec](specs/recipe-visibility.md) |
 | User Recipe Filtering | Filter recipes by specific user, showing user profiles and replacing My Recipes toggle | ✅ | [View Spec](specs/user-recipe-filtering.md) |
-| Meal Planning | Create and manage meal plans with recipes | ⏳ | [View Spec](specs/meal-planning.md) |
+| Meal Planning | Create and manage meal plans with recipes | 🚧 | [View Spec](specs/meal-planning.md) |
 
 ### Meal Planning Phases
 
@@ -27,7 +27,7 @@ This document provides an overview of all feature specifications for the NutriPl
 | Phase 3b: Day Structure | Create day-based organization for meal plans | ✅ | [View Spec](specs/meal-planning-phase-3b-day-structure.md) |
 | Phase 3c: Meal Assignments | Assign recipe servings to specific days within the plan | ✅ | [View Spec](specs/meal-planning-phase-3c-meal-assignments.md) |
 | Phase 4: "To Cook" Flags | Implement cooking flags for meal assignments | ✅ | [View Spec](specs/meal-planning-phase-4b-to-cook-flags.md) |
-| Phase 5: Plan Copying | Enable copying existing plans to create new ones | ⏳ | [View Spec](specs/meal-planning-phase-5-plan-copying.md) |
+| Phase 5: Plan Copying | Enable copying existing plans to create new ones | ✅ | [View Spec](specs/meal-planning-phase-5-plan-copying.md) |
 | Phase 6: Shopping List Integration | Automatically generate shopping lists from meal plans | 🔮 | [View Spec](specs/meal-planning-phase-7-shopping-list-integration.md) |
 | Phase 7: Nutritional Summaries | Show nutritional totals per day or week | 🔮 | [View Spec](specs/meal-planning-phase-8-nutritional-summaries.md) |
 | Phase 8: Cooking Notifications | Reminders for meals flagged "to cook" | 🔮 | [View Spec](specs/meal-planning-phase-9-cooking-notifications.md) |

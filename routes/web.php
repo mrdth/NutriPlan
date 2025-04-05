@@ -12,6 +12,7 @@ use App\Http\Controllers\RecipeImportController;
 use App\Http\Controllers\UserRecipeController;
 use App\Http\Controllers\MealPlanRecipeController;
 use App\Http\Controllers\MealAssignmentController;
+use App\Http\Controllers\MealPlanCopyController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -44,7 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'meal-plans' => 'mealPlan'
     ]);
     Route::post('meal-plans/add-recipe', [MealPlanRecipeController::class, 'store'])->name('meal-plans.add-recipe');
-
+    Route::post('meal-plans/{mealPlan}/copy', MealPlanCopyController::class)->name('meal-plans.copy');
 
     // Fix the parameter names to match the controller expectations
     Route::delete('meal-plans/{id}/recipes/{recipeId}', [MealPlanRecipeController::class, 'destroy'])

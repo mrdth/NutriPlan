@@ -1,10 +1,10 @@
-# Automatic Git Commit Rule
+# Automatic Git Commit Message Rule
 
-This rule specifies that after each feature developed by Cursor IDE, an automatic Git commit should be created following the conventional commit format.
+This rule specifies that after each feature developed by Cursor IDE, an automatic Git commit message should be created following the conventional commit format.
 
 ## Rule Details
 
-- **Name**: Automatic Git Commit
+- **Name**: Automatic Git Commit Message
 - **Type**: Git Integration
 - **Scope**: Project-wide
 - **Priority**: High
