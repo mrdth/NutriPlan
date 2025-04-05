@@ -1,14 +1,17 @@
 <template>
     <div :class="[
-        'border-t py-2 transition-colors',
+        'border-t py-4 transition-colors',
         assignment.to_cook ? 'border-amber-400 bg-amber-50 dark:border-amber-600 dark:bg-amber-900/20' : 'border-gray-200 dark:border-gray-700',
     ]">
         <div class="flex items-center justify-between">
             <div class="flex items-start gap-2">
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">
-                        {{ assignment.meal_plan_recipe.recipe.title }}
-                    </p>
+
+                    <Link :href="route('recipes.show', assignment.meal_plan_recipe.recipe.slug)"
+                        class="hover:underline">
+                    {{ assignment.meal_plan_recipe.recipe.title }}
+                    </Link>
+
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatServings(assignment.servings) }}
                         servings</p>
                 </div>
@@ -37,11 +40,8 @@
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <div class="rounded p-1" :title="assignment.to_cook ? 'Marked to cook' : 'Not marked to cook'">
-                    <ChefHatIcon :class="[
-                        'h-5 w-5 transition-colors',
-                        assignment.to_cook ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-600',
-                    ]" />
+                <div v-if="assignment.to_cook" class="rounded p-1" title="Marked to cook">
+                    <ChefHatIcon class="h-5 w-5 transition-colors text-amber-600 dark:text-amber-400" />
                 </div>
             </div>
         </div>
@@ -55,6 +55,7 @@ import type { MealAssignment } from '@/types/meal-plan';
 import axios from 'axios';
 import { ChefHatIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
 const props = defineProps<{
     assignment: MealAssignment;

@@ -67,8 +67,8 @@
                                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ day.date }}</p>
 
                                     <!-- Meal Assignments -->
-                                    <div class="mt-4 flex-grow space-y-2">
-                                        <div v-if="day.meal_assignments?.length" class="space-y-2">
+                                    <div class="mt-6 flex-grow space-y-2">
+                                        <div v-if="day.meal_assignments?.length" class="space-y-4">
                                             <MealAssignmentCard v-for="assignment in day.meal_assignments"
                                                 :key="assignment.id" :assignment="assignment" @edit="editMealAssignment"
                                                 @remove="removeMealAssignment" @toggled="handleToCookToggled" />
